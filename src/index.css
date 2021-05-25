@@ -34,3 +34,9 @@ code {
   display: block;
 }
 
+/* Header */
+
+.header div{
+  background-color:rgb(184, 198, 224);
+}
+

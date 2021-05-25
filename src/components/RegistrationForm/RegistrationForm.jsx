@@ -42,7 +42,6 @@ const RegistrationForm = () => {
             return response.json();
         })
         .then((data) => {
-            console.log(rawResponse)
             if(!rawResponse.ok)
             {
                 
