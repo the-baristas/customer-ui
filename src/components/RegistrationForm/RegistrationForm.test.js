@@ -5,12 +5,14 @@ import {rest} from "msw";
 import {setupServer} from "msw/node";
 
 
+
 const serverOk = setupServer(rest.post('http://localhost:8080/users', (req, resp, ctx) => {
     return resp(ctx.status(200), ctx.json( { payload: 'Would normally return user data'} ));
     }))
 const serverBadRequest = setupServer(rest.post('http://localhost:8080/users', (req, resp, ctx) => {
     return resp(ctx.status(409), ctx.json( { message: 'nope' }));
     }))
+window.alert = jest.fn();
 
 
 it("check register button makes fetch requests; error response with message", async () => {
@@ -33,6 +35,7 @@ it("check register button makes fetch requests; error response with message", as
 })
 
 xit("check register button makes fetch requests; 200 request success", async () => {
+    window.alert.mockClear();
     serverOk.listen();
     const {getByTestId} = render(<RegistrationForm></RegistrationForm>);
     const form = getByTestId("formRegistration");
@@ -90,6 +93,7 @@ it("check register form input fields are all blank at start", () => {
 })
 
 it("check invalid email, phone, password, and passwordConfirm makes error divs display", () => {
+
     const {getByTestId}  = render(<RegistrationForm></RegistrationForm>);
     const inputEmail = getByTestId("inputEmail");
     const inputPhone = getByTestId("inputPhone");

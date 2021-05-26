@@ -6,6 +6,7 @@ import {checkEmailIsValid, checkPhoneIsValid, checkPasswordIsValid} from '../../
 
 const RegistrationForm = () => {
     //Form Fields
+
     const [givenName, setGivenName] = useState('');
     const [familyName, setFamilyName] = useState('');
     const [username, setUsername] = useState('');
@@ -44,7 +45,6 @@ const RegistrationForm = () => {
         .then((data) => {
             if(!rawResponse.ok)
             {
-                
                 if(data.message)
                     throw Error(data.message);
                 else

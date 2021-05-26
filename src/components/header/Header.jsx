@@ -12,6 +12,7 @@ const Header = () => {
             
             { !userLoggedIn && <Link to='/login'>
                 <button 
+                    data-testid="loginButton"
                     className="btn btn-primary"
                     style={{marginLeft: 20}}>
                     Login</button>

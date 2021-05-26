@@ -12,6 +12,7 @@ const LoginForm = (props) => {
     const [password, setPassword] = useState('');
 
     const [isPending, setIsPending] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const userLoggedIn = useSelector( state => state.userLoggedIn)
     const dispatch = useDispatch();
@@ -19,6 +20,7 @@ const LoginForm = (props) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        setErrorMessage('');
         setIsPending(true);
 
         fetch('http://localhost:8080/login', {
@@ -27,12 +29,27 @@ const LoginForm = (props) => {
             body: JSON.stringify({username, password})    
         })
         .then(response => {
+            if(!response.ok){
+                if(response.status === 403){
+                    throw Error("Username and/or password are incorrect.");
+                }
+                else{
+                    throw Error("There was a problem while trying to communicate with our server. Please try again later.")
+                }
+                
+            }
            saveToken(response.headers.get('Authorization'));
            dispatch(login());
            setIsPending(false);
            history.push('/')
         })
         .catch((error) => {
+            if(error.name === 'TypeError'){
+                setErrorMessage("There was a problem while trying to communicate with our server. Please try again later.");
+            }
+            else{
+                setErrorMessage(error.message);
+            }
             setIsPending(false);
         })
         
@@ -45,7 +62,8 @@ const LoginForm = (props) => {
 
     return ( 
         <div>
-            {userLoggedIn && <h3>logged in</h3>}
+            <h1>Login</h1>
+        <div data-testid="divError" style={{ backgroundColor: 'red', color: 'white' }} >{errorMessage}</div>
             <Form data-testid="formLogin" onSubmit={handleSubmit}>
                 <Form.Group>
                     <Form.Label>Username</Form.Label>
@@ -70,7 +88,7 @@ const LoginForm = (props) => {
                 </Form.Group>
 
                 {!isPending && <button 
-                            data-testid="registerButton"
+                            data-testid="loginButton"
                             className="btn btn-primary" 
                             disabled={allFieldsAreValid()}>
                                 Login

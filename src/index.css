@@ -34,9 +34,23 @@ code {
   display: block;
 }
 
-/* Header */
+/* Login */
 
-.header div{
-  background-color:rgb(184, 198, 224);
+.loginForm{
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
 }
 
+.loginForm label {
+  text-align: left;
+  display: block;
+}
+
+.loginForm input{
+  width: 100%;
+  padding: 6px 10px;
+  margin: 10px 0;
+  border: 1px solid black;
+  display: block;
+}
