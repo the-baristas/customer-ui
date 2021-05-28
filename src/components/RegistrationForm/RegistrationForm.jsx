@@ -6,6 +6,7 @@ import {checkEmailIsValid, checkPhoneIsValid, checkPasswordIsValid} from '../../
 
 const RegistrationForm = () => {
     //Form Fields
+
     const [givenName, setGivenName] = useState('');
     const [familyName, setFamilyName] = useState('');
     const [username, setUsername] = useState('');
@@ -42,10 +43,8 @@ const RegistrationForm = () => {
             return response.json();
         })
         .then((data) => {
-            console.log(rawResponse)
             if(!rawResponse.ok)
             {
-                
                 if(data.message)
                     throw Error(data.message);
                 else
@@ -54,7 +53,7 @@ const RegistrationForm = () => {
             setIsPending(false);
             setError(null);
             alert("Thank you for registering.")
-            history.push('/')
+            history.push('/login')
         })
         .catch((error) => {
             setIsPending(false);
