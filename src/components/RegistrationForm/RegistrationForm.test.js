@@ -47,7 +47,7 @@ xit("check register button makes fetch requests; 200 request success", async () 
         screen.getByTestId("formRegistration")
     )
     fireEvent.submit(form);
-    await waitForElementToBeRemoved( () => screen.getByTestId('processing') );
+    //await waitForElementToBeRemoved( () => screen.getByTestId('processing') );
     expect(error.innerHTML).toEqual('');
 
     serverOk.close();

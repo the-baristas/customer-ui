@@ -53,7 +53,7 @@ const RegistrationForm = () => {
             setIsPending(false);
             setError(null);
             alert("Thank you for registering.")
-            history.push('/')
+            history.push('/login')
         })
         .catch((error) => {
             setIsPending(false);
