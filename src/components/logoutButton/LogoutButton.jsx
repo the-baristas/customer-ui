@@ -2,11 +2,12 @@ import { removeToken } from "../../utils/Login";
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../redux/userStatus/UserStatusActions';
 import { useHistory } from 'react-router-dom';
+import Nav from 'react-bootstrap/Nav';
 
 
 const LogoutButton = () => {
 
-    const userLoggedIn = useSelector( state => state.userLoggedIn);
+    const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn);
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -17,12 +18,11 @@ const LogoutButton = () => {
     }
 
     return ( 
-        <button 
-        data-testid="logoutButton"
-        className="btn btn-primary"
-        onClick={handleLogout}>
-            Logout
-        </button>
+        <Nav.Link 
+                id="nav-links" 
+                href="/register" 
+                onClick={handleLogout}
+                data-testid="logoutButton" >Logout</Nav.Link>
      );
 }
  

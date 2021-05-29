@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form } from 'react-bootstrap';
+import { Form, Container } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import {checkEmailIsValid, checkPhoneIsValid, checkPasswordIsValid} from '../../utils/Validators';
 
@@ -98,6 +98,7 @@ const RegistrationForm = () => {
 
     return ( <div className='registrationForm'>
         <h1>Register</h1>
+        <Container>
         <div data-testid="divError" style={{ backgroundColor: 'red', color: 'white' }} >{error}</div>
         <Form data-testid="formRegistration" onSubmit={handleSubmit}>
             <Form.Group>
@@ -202,6 +203,7 @@ const RegistrationForm = () => {
 
             {isPending && <h3 data-testid='processing' >Processing...</h3>}
         </Form>
+        </Container>
     </div>
         
         );

@@ -1,0 +1,11 @@
+#logo {
+    font-family: 'Nunito', sans-serif;
+    letter-spacing: 5px;
+}
+
+#nav-links{
+    color: #c46329 !important;
+    font-size: .8em;
+    font-weight: 600;
+    text-transform: uppercase;
+}

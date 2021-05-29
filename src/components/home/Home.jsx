@@ -1,13 +1,16 @@
-import {Link} from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import Image from 'react-bootstrap/Image';
+import mainImage from './customer-ui-01.jpg';
+import FlightSearch from '../flight-search/FlightSearch';
 
 const Home = () => {
 
-    const userLoggedIn = useSelector( state => state.userLoggedIn);
+    const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn);
 
     return ( 
         <div>
-            {!userLoggedIn && <Link to='/register'><h3>Register</h3></Link>}
+            {!userLoggedIn && <FlightSearch /> }
+            {!userLoggedIn && <Image src={mainImage} fluid />}
             {userLoggedIn && <h1>Welcome</h1>}
         </div>
      );
