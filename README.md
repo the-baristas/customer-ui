@@ -35,3 +35,4 @@ https://the-baristas.atlassian.net/browse/BAR-100
 https://the-baristas.atlassian.net/browse/BAR-106
 
 5/28/2021 (Gabrielle Alexa Noel): Added home page and made edits to header/layout. Set up flight search form inputs (non-functional).
+https://the-baristas.atlassian.net/browse/BAR-10
