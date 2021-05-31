@@ -1,24 +1,37 @@
 import {Link} from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import LogoutButton from '../logoutButton/LogoutButton';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import Button from 'react-bootstrap/Button';
+import './Header.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 const Header = () => {
 
-    const userLoggedIn = useSelector( state => state.userLoggedIn)
+    const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn)
 
     return ( 
-        <div style={{backgroundColor: 'rgb(184, 198, 224)'}}>
-            <Link to='/'><h2 style={{display: 'inline'}}>Home</h2></Link>
-            
-            { !userLoggedIn && <Link to='/login'>
-                <button 
-                    data-testid="loginButton"
-                    className="btn btn-primary"
-                    style={{marginLeft: 20}}>
-                    Login</button>
-            </Link>}
-            { userLoggedIn && <div style={{display: 'inline', marginLeft: 20}}><LogoutButton ></LogoutButton></div>}
-        </div>
+
+                <Navbar bg="light" expand="lg">
+                    <Navbar.Brand id="logo" href="/">UTOPIA</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="mr-auto">
+                        <Nav.Link id="nav-links" href="/bookings">Manage Trips</Nav.Link>
+                        <Nav.Link id="nav-links" href="/check-in">Check-In</Nav.Link>
+                        <Nav.Link id="nav-links" href="/flight-status">Flight Status</Nav.Link>
+                        <Nav.Link id="nav-links" href="/travel-info">Travel Information</Nav.Link>
+                        <Nav.Link id="nav-links" href="/deals">Deals</Nav.Link>
+                        </Nav>
+                        { !userLoggedIn && <FontAwesomeIcon icon={faUser} /> } { !userLoggedIn && <Nav.Link id="nav-links" href="/login">Login</Nav.Link> } 
+                        {!userLoggedIn &&<Nav.Link id="nav-links" href="/register">Register</Nav.Link> }
+                        
+            {userLoggedIn &&<Nav.Link id="nav-links" href="/my-account">My Account</Nav.Link> }
+            { userLoggedIn && <LogoutButton ></LogoutButton>}
+                    </Navbar.Collapse>
+                    </Navbar>
      );
 }
  

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form } from 'react-bootstrap';
+import { Form, Container } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { login } from '../../redux/userStatus/UserStatusActions';
@@ -14,7 +14,7 @@ const LoginForm = (props) => {
     const [isPending, setIsPending] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const userLoggedIn = useSelector(state => state.userLoggedIn)
+    const userLoggedIn = useSelector(state => state.userStatus.userLoggedIn)
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -64,6 +64,7 @@ const LoginForm = (props) => {
     return (
         <div className='loginForm'>
             <h1>Login</h1>
+            <Container>
             <div data-testid="divError" style={{ backgroundColor: 'red', color: 'white' }} >{errorMessage}</div>
             <Form data-testid="formLogin" onSubmit={handleSubmit}>
                 <Form.Group>
@@ -97,6 +98,7 @@ const LoginForm = (props) => {
 
                 {isPending && <h3 data-testid='processing' >Processing...</h3>}
             </Form>
+            </Container>
         </div>
 
     );

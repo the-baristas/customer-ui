@@ -1,0 +1,35 @@
+  
+  .search-container {
+    background: rgba(255, 255, 255, 0.2);
+    height: 200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+    z-index: 1;
+    position: absolute;
+  }
+  
+  .flight-search {
+    background: white;
+    width: 50%;
+    padding: 20px;
+    overflow: visible;
+  }
+
+  .prepend-txt{
+    color: #c46329;
+    font-size: .8em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .date-picker{
+      height: 36px;
+      border-radius: 5px;
+      border-width: 1px;
+      border-color: lightgray;
+  }
