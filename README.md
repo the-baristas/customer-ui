@@ -24,6 +24,9 @@
 	Used to select dates.
 	npm install react-datepicker
 
+## stripe
+	npm install @stripe/stripe-js @stripe/react-stripe-js
+
 -----------------
 
 ## Features Added

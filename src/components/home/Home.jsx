@@ -6,7 +6,6 @@ import FlightSearch from '../flight-search/FlightSearch';
 const Home = () => {
 
     const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn);
-
     return ( 
         <div>
             {!userLoggedIn && <FlightSearch /> }

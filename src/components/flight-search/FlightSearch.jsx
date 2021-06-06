@@ -1,8 +1,7 @@
 import { useSelector } from 'react-redux';
 import { Form, Row, Col, InputGroup } from 'react-bootstrap';
 import './FlightSearch.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
+
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";

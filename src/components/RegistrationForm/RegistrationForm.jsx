@@ -33,7 +33,7 @@ const RegistrationForm = () => {
 
         setIsPending(true);
         let rawResponse = null;
-        fetch('http://localhost:8080/users', {
+        fetch('http://localhost:8081/users', {
             method: 'POST',
             headers: { "Content-Type": "application/json"},
             body: JSON.stringify(user)    
