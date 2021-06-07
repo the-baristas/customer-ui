@@ -4,8 +4,6 @@ import { MemoryRouter } from "react-router";
 import store from "../../redux/store";
 import Header from "./Header";
 
-it("Login button exists", () => {
-    const {getByTestId}  = render(<MemoryRouter><Provider store={store}><Header></Header></Provider></MemoryRouter>);
-    const loginButton = getByTestId('loginButton');
-    expect(loginButton.innerHTML).toContain('Login');
+it("", () => {
+    
 })

@@ -10,7 +10,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from "@stripe/stripe-js";
 import PaymentForm from './components/paymentForm/PaymentForm';
 
-const promise = loadStripe("pk_test_51IxHqJEGbf0XUVjsd0WCPAIfC3eKWDDPDZ2SYCksX2rLlQqpHXULj8Y93UEgk0LwUqNxqUCVef4cFzeUKGrT2YUf00Ul62zsYB");
+const promise = loadStripe(process.env.REACT_APP_STRIPE_TEST_PUBLISHABLE_KEY);
 
 function App() {
 

@@ -1,4 +1,4 @@
-import {render, fireEvent, screen, within, waitFor, waitForElementToBeRemoved} from "@testing-library/react";
+import {render, fireEvent, screen, waitForElementToBeRemoved} from "@testing-library/react";
 import userEvent from "@testing-library/user-event"
 import LoginForm from "./LoginForm";
 import {rest} from "msw";
@@ -6,7 +6,7 @@ import {setupServer} from "msw/node";
 import { Provider } from "react-redux";
 import store from "../../redux/store";
 
-    const serverBadCredentials = setupServer(rest.post('http://localhost:8080/users', (req, resp, ctx) => {
+    const serverBadCredentials = setupServer(rest.post(process.env.REACT_APP_USER_SERVICE_URL+'/users', (req, resp, ctx) => {
     return resp(ctx.status(403), ctx.json( { message: 'nope' }));
     }))
 
@@ -25,7 +25,7 @@ import store from "../../redux/store";
     
         fireEvent.submit(form);
         await waitForElementToBeRemoved( () => screen.getByTestId('processing') );
-        expect(error.innerHTML).toEqual('Username and/or password are incorrect.');
+        expect(error.innerHTML).toContain('a problem');
     
         serverBadCredentials.close()
         serverBadCredentials.resetHandlers()

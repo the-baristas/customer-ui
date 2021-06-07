@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useDebugValue } from "react";
 import {CardElement, useStripe, useElements} from "@stripe/react-stripe-js";
 import './PaymentForm.css';
-import { Redirect, useHistory } from "react-router";
-import { propTypes } from "react-bootstrap/esm/Image";
+import { useHistory } from "react-router";
 import { useSelector } from "react-redux";
 import { createPayment } from "../../services/paymentService/PaymentService";
 
@@ -19,18 +18,12 @@ const PaymentForm = () => {
   const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn)
 
   //TODO: WIll be dynamic based on the booking the user is purchasing
-  const bookingId = 1;
+  const bookingId = 130;
   const amount = 9001;
   const currency = "usd";
   
 
   useEffect(() => {
-
-    if(!userLoggedIn){
-      console.log('no')
-      //history.push('/');
-      //return;
-    }
 
     // Create PaymentIntent as soon as the page loads
     window
@@ -124,6 +117,7 @@ const PaymentForm = () => {
     <form id="payment-form" onSubmit={handleSubmit}>
       <CardElement id="card-element" options={cardStyle} onChange={handleChange} />
       <button
+        data-testid="payButton"
         disabled={processing || disabled || succeeded}
         id="submit"
       >
