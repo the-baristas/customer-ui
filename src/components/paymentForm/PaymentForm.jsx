@@ -88,9 +88,7 @@ const PaymentForm = () => {
     } else {
 
       createPayment(clientSecret, bookingId).then(res => {
-        console.log(res)
         if(!res.ok){
-            console.log("failed");
           throw Error(res.status)
         }
         else{
