@@ -6,6 +6,7 @@ import RegistrationForm from './components/RegistrationForm/RegistrationForm';
 import LoginForm from './components/loginForm/LoginForm';
 import Header from './components/header/Header';
 import Home from './components/home/Home';
+import SearchResults from './components/search-results/SearchResults';
 
 function App() {
 
@@ -16,15 +17,19 @@ function App() {
             <Header></Header>
                 <Switch>
                     <Route exact path='/'> 
-                        <Home></Home>
+                        <Home />
                     </Route>
                     
                     <Route path="/register">
-                        <RegistrationForm></RegistrationForm>
+                        <RegistrationForm />
                     </Route>
 
                     <Route path='/login'>
-                        <LoginForm></LoginForm>
+                        <LoginForm />
+                    </Route>
+
+                    <Route path="/search-results">
+                        <SearchResults />
                     </Route>
                 </Switch>
         </Router>

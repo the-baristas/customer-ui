@@ -11,7 +11,8 @@ const Home = () => {
         <div>
             {!userLoggedIn && <FlightSearch /> }
             {!userLoggedIn && <Image src={mainImage} fluid />}
-            {userLoggedIn && <h1>Welcome</h1>}
+            {userLoggedIn && <FlightSearch />}
+            {userLoggedIn && <Image src={mainImage} fluid />}
         </div>
      );
 }
