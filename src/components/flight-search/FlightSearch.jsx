@@ -68,14 +68,14 @@ const FlightSearch = (props) => {
                     <InputGroup.Prepend>
                     <InputGroup.Text className="prepend-txt">FROM</InputGroup.Text>
                     </InputGroup.Prepend>
-                    <Form.Control placeholder="Airport Code" onChange={handleOriginChange} />
+                    <Form.Control placeholder="City or Airport Code" onChange={handleOriginChange} />
                     </InputGroup>
     
                     <InputGroup className="mb-2">
                     <InputGroup.Prepend>
                     <InputGroup.Text className="prepend-txt">TO</InputGroup.Text>
                     </InputGroup.Prepend>
-                    <Form.Control placeholder="Airport Code" onChange={handleDestChange} />
+                    <Form.Control placeholder="City or Airport Code" onChange={handleDestChange} />
                     </InputGroup>
                    
                     <InputGroup className="mb-2">

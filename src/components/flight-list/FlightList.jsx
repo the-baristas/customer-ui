@@ -8,7 +8,8 @@ const FlightList = (props) => {
 
     return (
             <div className="search-results">
-                <h2>Results from Search</h2><br />
+                <br />
+                <center><h4>Results from Search</h4></center>
                 { props.flights.map(flightObj => {
                     return <FlightCard flight={flightObj} />
                     })}
