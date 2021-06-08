@@ -1,7 +1,8 @@
-  
-  .search-container {
+.search-container {
     background: rgba(255, 255, 255, 0.2);
+    height: 200px;
     width: 100%;
+    top: 20%;
     margin: 0 auto;
     padding: 20px;
     display: flex;
@@ -10,31 +11,32 @@
     overflow: visible;
     z-index: 1;
     position: absolute;
-  }
-  
-  .flight-search {
+}
+
+.flight-search {
     background: white;
+    width: 45%;
     padding: 20px;
     overflow: visible;
-  }
+}
 
-  .prepend-txt{
+.prepend-txt {
     color: #c46329;
-    font-size: .8em;
+    font-size: 0.8em;
     font-weight: 600;
     text-transform: uppercase;
-  }
+}
 
-  .date-picker{
-      height: 36px;
-      border-style: solid;
-      border-radius: 0px 4px 4px 0px;
-      border-width: 1px 1px 1px 1px;
-      border-color: lightgray;
-      width: 100%;
-  }
+.date-picker {
+    height: 36px;
+    border-style: solid;
+    border-radius: 0px 4px 4px 0px;
+    border-width: 1px 1px 1px 1px;
+    border-color: lightgray;
+    width: 100%;
+}
 
-  #search-submit {
+#search-submit {
     background-color: #c46329 !important;
     border-color: #c46329 !important;
-  }
+}

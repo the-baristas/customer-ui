@@ -5,11 +5,11 @@ import { Image } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import Checkout from "../Checkout";
+import FlightList from "../flight-list/FlightList";
 import FlightSearch from "../flight-search/FlightSearch";
 import FlightTable from "../FlightTable";
 import PassengerInfoForm from "../PassengerInfoForm";
 import PaymentForm from "../paymentForm/PaymentForm";
-import SearchResults from "../search-results/SearchResults";
 import mainImage from "./customer-ui-01.jpg";
 
 const Home = () => {
@@ -42,18 +42,18 @@ const Home = () => {
             {userLoggedIn && <h1>Welcome {userStatus.username}</h1>}
             <Switch>
                 <Route exact path={path}>
-                    <FlightSearch onFlightSearch={handleFlightSearch} />
                     <Image src={mainImage} fluid />
+                    <FlightSearch
+                        onFlightSearch={handleFlightSearch}
+                    ></FlightSearch>
                 </Route>
-                {/* <Route path={`${path}/flights`}> */}
-                <Route path="/flights">
-                    <SearchResults
+                <Route path={`${path}/flights`}>
+                    <FlightList
                         flights={flights}
                         onFlightSelection={handleFlightSelection}
                     />
                 </Route>
-                {/* <Route path={`${path}/checkout`}> */}
-                <Route path="/checkout">
+                <Route path={`${path}/checkout`}>
                     <Checkout
                         flightTable={flightTable}
                         passengerInfoForm={passengerInfoForm}
