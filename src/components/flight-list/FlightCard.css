@@ -1,0 +1,30 @@
+#logo {
+    font-family: 'Nunito', sans-serif;
+    letter-spacing: 5px;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.fc-container{
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+
+.flight-card{
+    width: 40%;
+    margin: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.book-button{
+    background-color: #c46329 !important;
+    border-color: #c46329 !important;
+}
