@@ -6,7 +6,7 @@ import RegistrationForm from './components/RegistrationForm/RegistrationForm';
 import LoginForm from './components/loginForm/LoginForm';
 import Header from './components/header/Header';
 import Home from './components/home/Home';
-import SearchResults from './components/search-results/SearchResults';
+import SearchResults from './components/flight-list/FlightList';
 
 function App() {
 
@@ -26,10 +26,6 @@ function App() {
 
                     <Route path='/login'>
                         <LoginForm />
-                    </Route>
-
-                    <Route path="/search-results">
-                        <SearchResults />
                     </Route>
                 </Switch>
         </Router>

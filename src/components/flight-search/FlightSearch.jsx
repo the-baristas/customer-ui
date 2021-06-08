@@ -3,13 +3,13 @@ import { Form, Row, Col, InputGroup, Button } from 'react-bootstrap';
 import './FlightSearch.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
-import React, { useState } from "react";
+import React, { useState, createContext } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useHistory } from 'react-router-dom';
 
 
-const FlightSearch = () => {
+const FlightSearch = (props) => {
 
     const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn);
 
@@ -50,10 +50,8 @@ const FlightSearch = () => {
             .then(resp => resp.json())
             .then(data => {
                 console.log(data);
-                alert('Found ' + data.length + ' flights!');
-                data.map(flightObj => {
-                    alert('Flight: ' + flightObj.departureTime);
-                })
+                props.onFlightSearch(data);
+                history.push('/search-results');
             })
             .catch(error => {
                 console.log(error);
