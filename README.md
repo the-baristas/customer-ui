@@ -2,6 +2,9 @@
 
 ## Packages Used
 
+## prettier
+    Used to maintain a consistent code style.
+
 ## msw (mock service worker)
 	Used for mocking http responses in tests
 	npm install msw --save-dev

@@ -1,3 +1,4 @@
+import React from 'react';
 import {render, fireEvent, screen, within, waitFor, waitForElementToBeRemoved} from "@testing-library/react";
 import userEvent from "@testing-library/user-event"
 import RegistrationForm from "./RegistrationForm";

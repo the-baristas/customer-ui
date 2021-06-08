@@ -1,45 +1,51 @@
-import './App.css';
-import {Provider} from 'react-redux';
-import store from './redux/store';
-import {BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom';
-import RegistrationForm from './components/registrationForm/RegistrationForm';
-import LoginForm from './components/loginForm/LoginForm';
-import Header from './components/header/Header';
-import Home from './components/home/Home';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from "@stripe/stripe-js";
+import React from 'react';
+import { Provider } from 'react-redux';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import './App.css';
+import Header from './components/header/Header';
+import Home from './components/home/Home';
+import LoginForm from './components/loginForm/LoginForm';
 import PaymentForm from './components/paymentForm/PaymentForm';
+import RegistrationForm from './components/RegistrationForm/RegistrationForm';
+import SearchResults from './components/search-results/SearchResults';
+import store from './redux/store';
 
 const promise = loadStripe(process.env.REACT_APP_STRIPE_TEST_PUBLISHABLE_KEY);
 
 function App() {
-
-
     return (
-        
-    <Provider store={store}>
-        <Router>
-            <Header></Header>
+        <Provider store={store}>
+            <Router>
+                <Header></Header>
                 <Switch>
-                    <Route exact path='/'> 
-                        <Home></Home>
+                    <Route exact path='/'>
+                        <Redirect to="/booking"/>
                     </Route>
-                    
+                    <Route path="/booking">
+                        <Home />
+                    </Route>
+
                     <Route path="/register">
-                        <RegistrationForm></RegistrationForm>
+                        <RegistrationForm />
                     </Route>
 
                     <Route path='/login'>
-                        <LoginForm></LoginForm>
+                        <LoginForm />
+                    </Route>
+
+                    <Route path="/search-results">
+                        <SearchResults />
                     </Route>
 
                     <Route path='/payment'>
                         <Elements stripe={promise} ><PaymentForm></PaymentForm></Elements>
                     </Route>
                 </Switch>
-        </Router>
-    </Provider>
-  );
+            </Router>
+        </Provider>
+    );
 }
 
 export default App;
