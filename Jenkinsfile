@@ -6,18 +6,28 @@ pipeline {
     }
 
     stages {
+        
         stage('installs') {
             steps {
                 sh 'export NG_CLI_ANALYTICS=false'
                 sh 'npm install'
             }
         }
+        
         stage('Build') {
             steps {
                 echo 'Building...'
                 sh 'npm run build'
             }
         }
+        
+        stage('Test') {
+            steps {
+                echo 'Beginning Tests'
+                sh 'npm test'
+            }
+        }
+        
         stage('Deploy to S3') {
             steps {
                 echo 'Deploying to S3'
