@@ -31,10 +31,8 @@ pipeline {
         stage('Deploy to S3') {
             steps {
                 echo 'Deploying to S3'
-                sh "aws s3 sync build/ s3://${S3_BUCKET} --delete"
+                sh "aws s3 sync ./build/ s3://${S3_BUCKET} --delete"
                 echo 'Finished Deploying'
-                echo 'DEBUG'
-                sh 'ls -R'
             }
         }
     }
