@@ -16,8 +16,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Beginning Tests'
-                sh 'export CI=true'
-                sh 'npm test'
+                sh 'CI=true npm test'
             }
         }
         
