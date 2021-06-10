@@ -5,23 +5,23 @@
     padding-top: 20px;
 }
 
-.fc-container{
+.flight-card-component{
     width: 100%;
     margin: 0 auto;
     padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
 }
 
 .flight-card{
     width: 40%;
-    margin: 20px;
+    margin: 0px;
     text-align: center;
+    align-items: center;
     display: flex;
     justify-content: center;
-    align-items: center;
+    position: relative;
 }
 
 .book-button{
