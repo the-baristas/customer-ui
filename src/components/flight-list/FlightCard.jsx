@@ -9,6 +9,8 @@ import './FlightCard.css';
 
 const FlightCard = (props) => {
 
+    console.log(props.flight)
+
 return(
     <div className="flight-card-component">
         <Card className="flight-card">
