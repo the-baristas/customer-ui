@@ -42,7 +42,7 @@ const FlightSearch = (props) => {
             let theDate = date.getDate();
             let theYear = date.getFullYear();
             
-            fetch(`http://localhost:8080/flights/query?originId=${origin}&destinationId=${dest}`, {
+            fetch(`http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json", "Authorization": localStorage.getItem('utopiaCustomerKey') },
                 body: JSON.stringify({month: theMonth, date: theDate, year: theYear})
@@ -55,6 +55,7 @@ const FlightSearch = (props) => {
             })
             .catch(error => {
                 console.log(error);
+                alert("No flights found, try again!");
             })
         }
     }
@@ -66,7 +67,7 @@ const FlightSearch = (props) => {
 
                     <InputGroup className="mb-2">
                     <InputGroup.Prepend>
-                    <InputGroup.Text className="prepend-txt">FROM</InputGroup.Text>
+                    <InputGroup.Text className="prepend-txt" id="from-prepend">FROM</InputGroup.Text>
                     </InputGroup.Prepend>
                     <Form.Control placeholder="City or Airport Code" onChange={handleOriginChange} />
                     </InputGroup>

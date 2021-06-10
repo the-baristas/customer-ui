@@ -2,20 +2,10 @@ import {render, fireEvent, screen, within, waitFor, waitForElementToBeRemoved} f
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import store from "../../redux/store";
-import Header from "./Header";
+import FlightSearch from "./FlightSearch";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as reactRedux from 'react-redux';
-
-
-// anthony
-it("Login button exists", () => {
-    const {getByTestId}  = render(<MemoryRouter><Provider store={store}><Header></Header></Provider></MemoryRouter>);
-    const loginButton = getByTestId('loginButton');
-    expect(loginButton.innerHTML).toContain('Login');
-})
-
-//gabby
 
 describe('test suite', () => {
     const useSelectorMock = jest.spyOn(reactRedux, 'useSelector');
@@ -26,21 +16,20 @@ describe('test suite', () => {
         useDispatchMock.mockClear()
       });
 
-    it('renders logo', () => {
+    it('renders search box', () => {
         const root = document.createElement("div");
     
-        ReactDOM.render(<Header />, root);
+        ReactDOM.render(<FlightSearch />, root);
     
-        expect(root.querySelector('#logo').textContent).toBe("UTOPIA");
+        expect(root.querySelector('#from-prepend').textContent).toBe("FROM");
       });
 
       it('renders nav links', () => {
         const root = document.createElement("div");
     
-        ReactDOM.render(<Header />, root);
+        ReactDOM.render(<FlightSearch />, root);
     
-        expect(root.querySelector('#nav-links').textContent).toBe("Manage Trips");
+        expect(root.querySelector('#search-submit').textContent).toBe("Search Flights");
       });
 
   });
-
