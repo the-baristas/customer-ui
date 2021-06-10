@@ -32,6 +32,8 @@ const FlightSearch = (props) => {
         setDest(event.target.value);
     }
 
+
+
     function handleSubmit(event) {
         event.preventDefault();
         if (origin === '' || dest === '' || date === '') {
@@ -42,7 +44,7 @@ const FlightSearch = (props) => {
             let theDate = date.getDate();
             let theYear = date.getFullYear();
             
-            fetch(`http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}`, {
+            fetch(`http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json", "Authorization": localStorage.getItem('utopiaCustomerKey') },
                 body: JSON.stringify({month: theMonth, date: theDate, year: theYear})
@@ -58,6 +60,7 @@ const FlightSearch = (props) => {
                 alert("No flights found, try again!");
             })
         }
+    
     }
 
     return(

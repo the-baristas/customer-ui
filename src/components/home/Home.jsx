@@ -13,6 +13,9 @@ const Home = () => {
     const userStatus = useSelector((state) => state.userStatus);
     const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn);
     const [selectedFlight, setSelectedFlight] = useState({});
+
+    const [sortBy, setSortBy] = useState('departureTime');
+
     const [flights, setFlights] = useState([]);
 
     const handleFlightSelection = (flight) => {
@@ -20,8 +23,12 @@ const Home = () => {
     };
 
     const handleFlightSearch = (flights) => {
-        setFlights(flights);
+        setFlights(flights.content);
     };
+
+    function handleSortByChange(event) {
+        setSortBy(event.target.value);
+    }
 
     return ( 
         <div>
@@ -34,12 +41,14 @@ const Home = () => {
                         <Image src={mainImage} fluid />
                         <FlightSearch
                             onFlightSearch={handleFlightSearch}
+                            sortBy={sortBy}
                         ></FlightSearch>
                     </Route>
                     <Route path="/search-results">
                         <FlightList
                             flights={flights}
                             onFlightSelection={handleFlightSelection}
+                            onSortBy={handleSortByChange}
                         />
                     </Route>
                 </Switch>
