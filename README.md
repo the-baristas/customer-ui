@@ -30,6 +30,9 @@
 ## stripe
 	npm install @stripe/stripe-js @stripe/react-stripe-js
 
+## jwt-decode
+	npm install jwt-decode
+
 -----------------
 
 ## Features Added
