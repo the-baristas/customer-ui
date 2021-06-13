@@ -1,8 +1,9 @@
+import { getUsername, loggedIn } from "../../utils/Login";
 import * as actions from "./UserStatusActionTypes";
 
 const initialState = {
-    userLoggedIn: false,
-    username: ""
+    userLoggedIn: loggedIn(),
+    username: getUsername()
 }
 
 const userStatusReducer = (state = initialState, action) => {
