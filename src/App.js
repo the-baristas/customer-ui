@@ -23,7 +23,7 @@ function App() {
                         <Redirect to="/booking" />
                     </Route>
 
-                    <Route path="/booking">
+                    <Route path='/booking'> 
                         <Home />
                     </Route>
 

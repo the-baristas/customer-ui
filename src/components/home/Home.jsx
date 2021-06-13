@@ -17,24 +17,17 @@ import PaymentForm from "../paymentForm/PaymentForm";
 import mainImage from "./customer-ui-01.jpg";
 
 const Home = () => {
+    // Redux
+
     const userStatus = useSelector((state) => state.userStatus);
 
-    const [selectedFlight, setSelectedFlight] = useState({
-        id: 0,
-        airplane: null,
-        departureTime: "",
-        arrivalTime: "",
-        firstReserved: 0,
-        firstPrice: 0,
-        businessReserved: 0,
-        businessPrice: 0,
-        economyReserved: 0,
-        economyPrice: 0,
-        isActive: false,
-        route: null
-    });
-    const [flights, setFlights] = useState([]);
-    const [seatClass, setSeatClass] = useState("");
+    // Router
+
+    const { path } = useRouteMatch();
+    const history = useHistory();
+
+    // States
+
     const [booking, setBooking] = useState({
         confirmationCode: "",
         layoverCount: 0,
@@ -50,13 +43,32 @@ const Home = () => {
         state: "",
         zipCode: ""
     });
+    const [seatClass, setSeatClass] = useState("");
     const [totalPrice, setTotalPrice] = useState(0);
+    const [flights, setFlights] = useState([]);
+    const [selectedFlight, setSelectedFlight] = useState({
+        id: 0,
+        airplane: null,
+        departureTime: "",
+        arrivalTime: "",
+        firstReserved: 0,
+        firstPrice: 0,
+        businessReserved: 0,
+        businessPrice: 0,
+        economyReserved: 0,
+        economyPrice: 0,
+        isActive: false,
+        route: null
+    });
+    const [date, setDate] = useState(new Date());
+    const [origin, setOrigin] = useState("");
+    const [dest, setDest] = useState("");
+    const [sortBy, setSortBy] = useState("departureTime");
 
-    const { path } = useRouteMatch();
-    const history = useHistory();
+    // Callbacks
 
     const handleFlightSearch = (flights) => {
-        setFlights(flights);
+        setFlights(flights.content);
     };
 
     const handleFlightSelection = (selectedFlight, seatClass) => {
@@ -82,6 +94,89 @@ const Home = () => {
         setPassengerInfo(passengerInfo);
         history.push(`${path}/checkout`);
     };
+
+    function handleSortByChange(event) {
+        setSortBy(event.target.value);
+
+        let theMonth = date.getMonth() + 1;
+        let theDate = date.getDate();
+        let theYear = date.getFullYear();
+
+        fetch(
+            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("utopiaCustomerKey")
+                },
+                body: JSON.stringify({
+                    month: theMonth,
+                    date: theDate,
+                    year: theYear
+                })
+            }
+        )
+            .then((resp) => resp.json())
+            .then((data) => {
+                console.log(data);
+                setFlights(data.content);
+                history.push("/booking/search-results");
+            })
+            .catch((error) => {
+                console.log(error);
+                alert("No flights found, try again!");
+            });
+    }
+
+    function onDateChange(date) {
+        setDate(date);
+    }
+
+    function handleOriginChange(event) {
+        setOrigin(event.target.value);
+    }
+
+    function handleDestChange(event) {
+        setDest(event.target.value);
+    }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        if (origin === "" || dest === "" || date === "") {
+            alert("Please make sure all search fields are completed.");
+        } else {
+            let theMonth = date.getMonth() + 1;
+            let theDate = date.getDate();
+            let theYear = date.getFullYear();
+
+            fetch(
+                `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: localStorage.getItem("utopiaCustomerKey")
+                    },
+                    body: JSON.stringify({
+                        month: theMonth,
+                        date: theDate,
+                        year: theYear
+                    })
+                }
+            )
+                .then((resp) => resp.json())
+                .then((data) => {
+                    console.log(data);
+                    setFlights(data.content);
+                    history.push("/booking/search-results");
+                })
+                .catch((error) => {
+                    console.log(error);
+                    alert("No flights found, try again!");
+                });
+        }
+    }
 
     const handlePaymentCreation = () => {
         const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
@@ -113,6 +208,8 @@ const Home = () => {
         history.push(`${path}`);
     };
 
+    // Elements
+
     const flightTable = (
         <FlightTable selectedFlight={selectedFlight} seatClass={seatClass} />
     );
@@ -126,16 +223,30 @@ const Home = () => {
             onFlightSelection={handleFlightSelection}
         />
     ));
+
     return (
         <div>
             {userStatus.userLoggedIn && <h1>Welcome {userStatus.username}</h1>}
             <Switch>
                 <Route exact path={path}>
                     <Image src={mainImage} fluid />
-                    <FlightSearch onFlightSearch={handleFlightSearch} />
+                    <FlightSearch
+                        onFlightSearch={handleFlightSearch}
+                        sortBy={sortBy}
+                        handleSubmit={handleSubmit}
+                        handleOriginChange={handleOriginChange}
+                        handleDestChange={handleDestChange}
+                        date={date}
+                        onDateChange={onDateChange}
+                    ></FlightSearch>
                 </Route>
                 <Route path={`${path}/search-results`}>
-                    <FlightList flights={flights} flightCards={flightCards} />
+                    <FlightList
+                        flights={flights}
+                        flightCards={flightCards}
+                        onFlightSelection={handleFlightSelection}
+                        onSortBy={handleSortByChange}
+                    />
                 </Route>
                 <Route path={`${path}/passenger-info`}>
                     {flightTable}
@@ -164,7 +275,11 @@ Home.propTypes = {
     seatClass: PropTypes.string,
     booking: PropTypes.object,
     passenger: PropTypes.object,
-    totalPrice: PropTypes.number
+    totalPrice: PropTypes.number,
+    sortBy: PropTypes.string,
+    date: PropTypes.object,
+    origin: PropTypes.string,
+    dest: PropTypes.string
 };
 
 export default Home;

@@ -1,9 +1,44 @@
-import {render, fireEvent, screen, within, waitFor, waitForElementToBeRemoved} from "@testing-library/react";
+import { render } from "@testing-library/react";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import * as reactRedux from 'react-redux';
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import store from "../../redux/store";
 import Header from "./Header";
 
-it("", () => {
-    
+// anthony
+it("Login button exists", () => {
+    const {getByTestId}  = render(<MemoryRouter><Provider store={store}><Header></Header></Provider></MemoryRouter>);
+    const loginButton = getByTestId('loginButton');
+    expect(loginButton.innerHTML).toContain('Login');
 })
+
+//gabby
+
+describe('test suite', () => {
+    const useSelectorMock = jest.spyOn(reactRedux, 'useSelector');
+    const useDispatchMock = jest.spyOn(reactRedux, 'useDispatch');
+
+    beforeEach(() => {
+        useSelectorMock.mockClear()
+        useDispatchMock.mockClear()
+      });
+
+    it('renders logo', () => {
+        const root = document.createElement("div");
+    
+        ReactDOM.render(<Header />, root);
+    
+        expect(root.querySelector('#logo').textContent).toBe("UTOPIA");
+      });
+
+      it('renders nav links', () => {
+        const root = document.createElement("div");
+    
+        ReactDOM.render(<Header />, root);
+    
+        expect(root.querySelector('#nav-links').textContent).toBe("Manage Trips");
+      });
+
+  });
