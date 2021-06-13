@@ -5,7 +5,7 @@ import { Button, Form, InputGroup } from 'react-bootstrap';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import './FlightSearch.css';
 
 const FlightSearch = (props) => {
@@ -18,6 +18,7 @@ const FlightSearch = (props) => {
     const [results, setResults] = useState([]);
 
     const history = useHistory();
+    const { path } = useRouteMatch();
 
     function onDateChange(date) {
         setDate(date);
@@ -41,16 +42,16 @@ const FlightSearch = (props) => {
             let theDate = date.getDate();
             let theYear = date.getFullYear();
             
-            fetch(`http://localhost:8080/flights/query?originId=${origin}&destinationId=${dest}`, {
+            const url = `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`;
+            fetch(url, {
                 method: "POST",
                 headers: {"Content-Type": "application/json", "Authorization": localStorage.getItem('utopiaCustomerKey') },
                 body: JSON.stringify({month: theMonth, date: theDate, year: theYear})
             })
             .then(resp => resp.json())
             .then(data => {
-                console.log(data);
-                props.onFlightSearch(data);
-                history.push('/search-results');
+                props.onFlightSearch(data.content);
+                history.push(`${path}/search-results`);
             })
             .catch(error => {
                 console.log(error);

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useDebugValue } from "react";
-import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import "./PaymentForm.css";
-import { useHistory } from "react-router";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import { createPayment } from "../../services/paymentService/PaymentService";
+import "./PaymentForm.css";
 
-const PaymentForm = () => {
+const PaymentForm = (props) => {
     const [succeeded, setSucceeded] = useState(false);
     const [error, setError] = useState(null);
     const [processing, setProcessing] = useState("");
@@ -17,9 +17,6 @@ const PaymentForm = () => {
     const history = useHistory();
     const userLoggedIn = useSelector((state) => state.userStatus.userLoggedIn);
 
-    //TODO: WIll be dynamic based on the booking the user is purchasing
-    const bookingId = 130;
-    const amount = 9001;
     const currency = "usd";
 
     useEffect(() => {
@@ -33,7 +30,7 @@ const PaymentForm = () => {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ amount, currency })
+                    body: JSON.stringify({ amount: props.totalPrice, currency })
                 }
             )
             .then((res) => {
@@ -90,7 +87,7 @@ const PaymentForm = () => {
             setError(`Payment failed ${payload.error.message}`);
             setProcessing(false);
         } else {
-            createPayment(clientSecret, bookingId)
+            createPayment(clientSecret, props.bookingId)
                 .then((res) => {
                     if (!res.ok) {
                         throw Error(res.status);
@@ -100,8 +97,7 @@ const PaymentForm = () => {
                         setProcessing(false);
                         setSucceeded(true);
 
-                        //TODO: Should redirect somewhere besides home
-                        history.push("/");
+                        props.onPaymentCreation();
                     }
                 })
                 .catch((error) => {

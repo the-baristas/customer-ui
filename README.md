@@ -2,9 +2,6 @@
 
 ## Packages Used
 
-## prettier
-    Used to maintain a consistent code style.
-
 ## msw (mock service worker)
 	Used for mocking http responses in tests
 	npm install msw --save-dev
@@ -29,6 +26,12 @@
 
 ## stripe
 	npm install @stripe/stripe-js @stripe/react-stripe-js
+
+## prettier
+    Used to maintain a consistent code style.
+
+## uuid
+    Used to create random strings.
 
 -----------------
 
