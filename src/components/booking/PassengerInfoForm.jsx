@@ -1,4 +1,3 @@
-import moment from "moment";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
