@@ -16,6 +16,7 @@ const Home = () => {
     const [selectedFlight, setSelectedFlight] = useState({});
 
     const [sortBy, setSortBy] = useState('departureTime');
+    const [filter, setFilter] = useState('');
 
     const [flights, setFlights] = useState([]);
 
@@ -33,11 +34,13 @@ const Home = () => {
         let theMonth = date.getMonth() + 1;
         let theDate = date.getDate();
         let theYear = date.getFullYear();
+        let theHour = '00';
+        let theMin = '00';
 
         fetch(`http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}`, {
         method: "POST",
                 headers: {"Content-Type": "application/json", "Authorization": localStorage.getItem('utopiaCustomerKey') },
-                body: JSON.stringify({month: theMonth, date: theDate, year: theYear})
+                body: JSON.stringify({month: theMonth, date: theDate, year: theYear, hour: theHour, min: theMin})
             })
             .then(resp => resp.json())
             .then(data => {
@@ -52,7 +55,33 @@ const Home = () => {
     
         }
 
-    // ---
+    function handleFilterChange(event){
+        console.log("works!");
+        setFilter(event.target.value);
+
+        let theMonth = date.getMonth() + 1;
+        let theDate = date.getDate();
+        let theYear = date.getFullYear();
+        let theHour = '05';
+        let theMin = '00';
+
+        fetch(`http://localhost:8090/flights/flt-query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}&filterBy=${filter}`, {
+            method: "POST",
+                    headers: {"Content-Type": "application/json", "Authorization": localStorage.getItem('utopiaCustomerKey') },
+                    body: JSON.stringify({month: theMonth, date: theDate, year: theYear, hour: theHour, min: theMin})
+                })
+                .then(resp => resp.json())
+                .then(data => {
+                    console.log(data);
+                    setFlights(data.content);
+                    history.push('/booking/search-results');
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert("No flights found, try again!");
+                })
+
+    }
 
     const [date, setDate] = useState(new Date());
     const [origin, setOrigin] = useState('');
@@ -83,11 +112,13 @@ const Home = () => {
             let theMonth = date.getMonth() + 1;
             let theDate = date.getDate();
             let theYear = date.getFullYear();
+            let theHour = '00';
+            let theMin = '00';
             
             fetch(`http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json", "Authorization": localStorage.getItem('utopiaCustomerKey') },
-                body: JSON.stringify({month: theMonth, date: theDate, year: theYear})
+                body: JSON.stringify({month: theMonth, date: theDate, year: theYear, hour: theHour, min: theMin})
             })
             .then(resp => resp.json())
             .then(data => {
@@ -127,6 +158,7 @@ const Home = () => {
                             flights={flights}
                             onFlightSelection={handleFlightSelection}
                             onSortBy={handleSortByChange}
+                            onFilter={handleFilterChange}
                         />
                     </Route>
                 </Switch>
