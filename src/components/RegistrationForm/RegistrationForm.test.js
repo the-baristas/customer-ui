@@ -1,3 +1,4 @@
+import React from 'react';
 import {render, fireEvent, screen, within, waitFor, waitForElementToBeRemoved} from "@testing-library/react";
 import userEvent from "@testing-library/user-event"
 import RegistrationForm from "./RegistrationForm";
@@ -6,10 +7,10 @@ import {setupServer} from "msw/node";
 
 
 
-const serverOk = setupServer(rest.post('http://localhost:8080/users', (req, resp, ctx) => {
+const serverOk = setupServer(rest.post(process.env.REACT_APP_USER_SERVICE_URL+'/users', (req, resp, ctx) => {
     return resp(ctx.status(200), ctx.json( { payload: 'Would normally return user data'} ));
     }))
-const serverBadRequest = setupServer(rest.post('http://localhost:8080/users', (req, resp, ctx) => {
+const serverBadRequest = setupServer(rest.post(process.env.REACT_APP_USER_SERVICE_URL+'/users', (req, resp, ctx) => {
     return resp(ctx.status(409), ctx.json( { message: 'nope' }));
     }))
 window.alert = jest.fn();
@@ -28,7 +29,7 @@ it("check register button makes fetch requests; error response with message", as
     )
     fireEvent.submit(form);
     await waitForElementToBeRemoved( () => screen.getByTestId('processing') );
-    expect(error.innerHTML).toEqual('nope');
+    expect(error.innerHTML).toContain("a problem");
 
     serverBadRequest.close()
     serverBadRequest.resetHandlers()
