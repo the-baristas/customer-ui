@@ -77,7 +77,7 @@ const Home = () => {
         // TODO: Calculate total price.
         setTotalPrice(50);
         (async () => {
-            const confirmationCode = uuidv4();
+            const confirmationCode = uuidv4().toUpperCase();
             const layoverCount = 0;
             setBooking(
                 await createBooking({
