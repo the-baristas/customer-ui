@@ -12,9 +12,15 @@ export const createBooking = async ({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ confirmationCode, layoverCount, username })
         });
-        body = await response.json();
+        if (!response.ok) {
+            throw new Error(
+                `Response was not successful. Status code: ${response.statusText}`
+            );
+        }
+        body = response.json();
     } catch (e) {
-        body = {}; 
+        console.error("There has been a problem with your fetch operation:", e);
+        body = {};
     }
     return body;
 };
