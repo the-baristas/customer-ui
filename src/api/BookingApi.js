@@ -5,7 +5,7 @@ export const createBooking = async ({
 }) => {
     const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/bookings`;
     let response;
-    let body;
+    let data;
     try {
         response = await fetch(url, {
             method: "POST",
@@ -17,12 +17,12 @@ export const createBooking = async ({
                 `Response was not successful. Status code: ${response.statusText}`
             );
         }
-        body = response.json();
+        data = await response.json();
     } catch (e) {
         console.error("There has been a problem with your fetch operation:", e);
-        body = {};
+        data = {};
     }
-    return body;
+    return data;
 };
 
 export const updateBooking = async ({}) => {};
