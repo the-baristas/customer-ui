@@ -103,7 +103,7 @@ const Home = () => {
         let theYear = date.getFullYear();
 
         fetch(
-            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}`,
+            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}`,
             {
                 method: "POST",
                 headers: {
