@@ -26,6 +26,14 @@ const FlightTable = (props) => {
     // TODO: Allow creation of more than 1 passenger at a time.
     const passengerCount = 1;
     const totalPrice = totalPerPassenger * passengerCount;
+    const duration = moment.duration(
+        moment(props.selectedFlight.arrivalTime, "YYYY-MM-DDThh:mm:ss").diff(
+            props.selectedFlight.departureTime,
+            "YYYY-MM-DDThh:mm:ss"
+        )
+    );
+    const durationHours = Math.floor(duration.asHours());
+    const durationMinutes = duration.minutes();
 
     return (
         <Table bordered borderless>
@@ -38,8 +46,10 @@ const FlightTable = (props) => {
             </thead>
             <tbody>
                 <tr>
-                    <td>JFK</td>
-                    <td>LAX</td>
+                    <td>{props.selectedFlight.route.originAirport.iataId}</td>
+                    <td>
+                        {props.selectedFlight.route.destinationAirport.iataId}
+                    </td>
                     <td rowSpan="1">Duration</td>
                     <td rowSpan="5">{seatClassDisplayName} class</td>
                     <td rowSpan="1">Price per Passenger</td>
@@ -50,7 +60,9 @@ const FlightTable = (props) => {
                     <td rowSpan="4">
                         {moment(props.selectedFlight.arrivalTime).toISOString()}
                     </td>
-                    <td rowSpan="4">x hr x min</td>
+                    <td rowSpan="4">
+                        {durationHours} hr {durationMinutes} min
+                    </td>
                     <td>Taxes per Passenger</td>
                     <td>{taxesPerPassenger}</td>
                 </tr>

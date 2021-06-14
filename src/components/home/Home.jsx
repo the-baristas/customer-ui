@@ -151,7 +151,7 @@ const Home = () => {
             let theYear = date.getFullYear();
 
             fetch(
-                `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
+                `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
                 {
                     method: "POST",
                     headers: {
@@ -197,7 +197,7 @@ const Home = () => {
                     gender: passengerInfo.gender,
                     address,
                     seatClass: seatClass,
-                    // TODO: Allow user to chhose seat.
+                    // TODO: Allow user to choose seat.
                     seatNumber: 1,
                     // TODO: Create a seat class to check-in group map.
                     checkInGroup: 1
