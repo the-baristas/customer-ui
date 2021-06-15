@@ -3,8 +3,6 @@ import "./FlightList.css";
 
 const FlightList = (props) => {
 
-    console.log(props.onSortBy);
-
     return (
             <div className="search-results">
                 <br />

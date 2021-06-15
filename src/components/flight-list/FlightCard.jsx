@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import './FlightCard.css';
+import SeatClass from "../SeatClass";
 
 const FlightCard = (props) => {
     const handleClick = (e, seatClass) => {
@@ -21,9 +22,9 @@ const FlightCard = (props) => {
             <Card.Subtitle className="mb-2 text-muted">Departing: { moment(props.flight.departureTime).format('MMMM Do, YYYY @ h:mm a') }</Card.Subtitle>
             <br />
             <ListGroup id="price-list" horizontal={'lg'}>
-            <ListGroupItem><b>Economy</b><br /> ${ props.flight.economyPrice } <br /><Button className="book-button" onClick={(e) => handleClick(e, "economy")}>Book Flight</Button></ListGroupItem>
-            <ListGroupItem><b>Business</b><br /> ${ props.flight.businessPrice } <br /><Button className="book-button" onClick={(e) => handleClick(e, "business")}>Book Flight</Button></ListGroupItem>
-            <ListGroupItem><b>First</b><br /> ${ props.flight.firstPrice } <br /><Button className="book-button" onClick={(e) => handleClick(e, "first")}>Book Flight</Button></ListGroupItem>
+            <ListGroupItem><b>Economy</b><br /> ${ props.flight.economyPrice } <br /><Button className="book-button" onClick={(e) => handleClick(e, SeatClass.ECONOMY)}>Book Flight</Button></ListGroupItem>
+            <ListGroupItem><b>Business</b><br /> ${ props.flight.businessPrice } <br /><Button className="book-button" onClick={(e) => handleClick(e, SeatClass.BUSINESS)}>Book Flight</Button></ListGroupItem>
+            <ListGroupItem><b>First</b><br /> ${ props.flight.firstPrice } <br /><Button className="book-button" onClick={(e) => handleClick(e, SeatClass.FIRST)}>Book Flight</Button></ListGroupItem>
             </ListGroup>
             </Card.Body>
             </Card>

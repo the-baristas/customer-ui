@@ -14,6 +14,7 @@ import FlightCard from "../flight-list/FlightCard";
 import FlightList from "../flight-list/FlightList";
 import FlightSearch from "../flight-search/FlightSearch";
 import PaymentForm from "../paymentForm/PaymentForm";
+import SeatClass from "../SeatClass";
 import mainImage from "./customer-ui-01.jpg";
 
 const Home = () => {
@@ -44,6 +45,10 @@ const Home = () => {
         zipCode: ""
     });
     const [seatClass, setSeatClass] = useState("");
+    const [pricePerPassenger, setPricePerPassenger] = useState(0);
+    const [taxesPerPassenger, setTaxesPerPassenger] = useState(0);
+    const [passengerCount, setPassengerCount] = useState(1);
+    const [totalPerPassenger, setTotalPerPassenger] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [flights, setFlights] = useState([]);
     const [selectedFlight, setSelectedFlight] = useState({
@@ -74,8 +79,7 @@ const Home = () => {
     const handleFlightSelection = (selectedFlight, seatClass) => {
         setSelectedFlight(selectedFlight);
         setSeatClass(seatClass);
-        // TODO: Calculate total price.
-        setTotalPrice(50);
+        calculateTotalPrice(selectedFlight, seatClass);
         (async () => {
             const confirmationCode = uuidv4().toUpperCase();
             const layoverCount = 0;
@@ -88,6 +92,35 @@ const Home = () => {
             );
             history.push(`${path}/passenger-info`);
         })();
+    };
+
+    /**
+     * Calculates price per passenger, taxes per passenger, total per passenger,
+     * and total price, and sets them as state.
+     */
+    const calculateTotalPrice = (selectedFlight, seatClass) => {
+        let pricePerPassenger;
+        switch (seatClass) {
+            case SeatClass.ECONOMY:
+                pricePerPassenger = selectedFlight.economyPrice;
+                break;
+            case SeatClass.BUSINESS:
+                pricePerPassenger = selectedFlight.businessPrice;
+                break;
+            case SeatClass.FIRST:
+                pricePerPassenger = selectedFlight.firstPrice;
+                break;
+            default:
+                throw new Error(`Invalid seatClass: ${seatClass}`);
+        }
+        const taxesPerPassenger = pricePerPassenger * 0.07;
+        const totalPerPassenger = pricePerPassenger + taxesPerPassenger;
+
+        setPricePerPassenger(pricePerPassenger);
+        setTaxesPerPassenger(taxesPerPassenger);
+        setTotalPerPassenger(totalPerPassenger);
+        // TODO: Allow creation of more than 1 passenger at a time.
+        setTotalPrice(totalPerPassenger * passengerCount);
     };
 
     const handlePassengerInfoSubmit = (passengerInfo) => {
@@ -211,7 +244,15 @@ const Home = () => {
     // Elements
 
     const flightTable = (
-        <FlightTable selectedFlight={selectedFlight} seatClass={seatClass} />
+        <FlightTable
+            selectedFlight={selectedFlight}
+            seatClass={seatClass}
+            pricePerPassenger={pricePerPassenger}
+            taxesPerPassenger={taxesPerPassenger}
+            totalPerPassenger={totalPerPassenger}
+            passengerCount={passengerCount}
+            totalPrice={totalPrice}
+        />
     );
     const promise = loadStripe(
         process.env.REACT_APP_STRIPE_TEST_PUBLISHABLE_KEY
@@ -242,9 +283,7 @@ const Home = () => {
                 </Route>
                 <Route path={`${path}/search-results`}>
                     <FlightList
-                        flights={flights}
                         flightCards={flightCards}
-                        onFlightSelection={handleFlightSelection}
                         onSortBy={handleSortByChange}
                     />
                 </Route>
