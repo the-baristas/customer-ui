@@ -21,11 +21,20 @@ const FlightTable = (props) => {
         default:
             throw new Error(`Invalid seatClass: ${props.seatClass}`);
     }
-    const taxesPerPassenger = pricePerPassenger * 0.07;
+    pricePerPassenger = (Math.round(pricePerPassenger * 100) / 100);
+    const taxesPerPassenger = (
+        Math.round(pricePerPassenger * 0.07 * 100) / 100
+    );
     const totalPerPassenger = pricePerPassenger + taxesPerPassenger;
     // TODO: Allow creation of more than 1 passenger at a time.
     const passengerCount = 1;
     const totalPrice = totalPerPassenger * passengerCount;
+    const departureTime = moment(props.selectedFlight.departureTime).format(
+        "MM/DD/YYYY hh:mm"
+    );
+    const arrivalTime = moment(props.selectedFlight.arrivalTime).format(
+        "MM/DD/YYYY hh:mm"
+    );
     const duration = moment.duration(
         moment(props.selectedFlight.arrivalTime, "YYYY-MM-DDThh:mm:ss").diff(
             props.selectedFlight.departureTime,
@@ -51,32 +60,30 @@ const FlightTable = (props) => {
                         {props.selectedFlight.route.destinationAirport.iataId}
                     </td>
                     <td rowSpan="1">Duration</td>
-                    <td rowSpan="5">{seatClassDisplayName} class</td>
+                    <td rowSpan="5">{seatClassDisplayName}</td>
                     <td rowSpan="1">Price per Passenger</td>
-                    <td>{pricePerPassenger}</td>
+                    <td>{pricePerPassenger.toFixed(2)}</td>
                 </tr>
                 <tr>
-                    <td rowSpan="4">{props.selectedFlight.departureTime}</td>
-                    <td rowSpan="4">
-                        {moment(props.selectedFlight.arrivalTime).toISOString()}
-                    </td>
+                    <td rowSpan="4">{departureTime}</td>
+                    <td rowSpan="4">{arrivalTime}</td>
                     <td rowSpan="4">
                         {durationHours} hr {durationMinutes} min
                     </td>
                     <td>Taxes per Passenger</td>
-                    <td>{taxesPerPassenger}</td>
+                    <td>{taxesPerPassenger.toFixed(2)}</td>
                 </tr>
                 <tr>
                     <td>Total per Passenger</td>
-                    <td>{totalPerPassenger}</td>
+                    <td>{totalPerPassenger.toFixed(2)}</td>
                 </tr>
                 <tr>
                     <td>Passenger(s)</td>
-                    <td>{passengerCount}</td>
+                    <td>x {passengerCount}</td>
                 </tr>
                 <tr>
                     <td>Flight total</td>
-                    <td>{totalPrice}</td>
+                    <td>{totalPrice.toFixed(2)}</td>
                 </tr>
             </tbody>
         </Table>
