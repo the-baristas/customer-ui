@@ -15,13 +15,12 @@ const LogoutButton = () => {
     const handleLogout = () => {
         removeToken();
         dispatch(logout());
-        history.push('/')
+        history.push('/login')
     }
 
     return ( 
         <Nav.Link 
                 id="nav-links" 
-                href="/register" 
                 onClick={handleLogout}
                 data-testid="logoutButton" >Logout</Nav.Link>
      );

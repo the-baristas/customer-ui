@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Container } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
+import { registerUser } from '../../services/usersService/UsersService';
 import {checkEmailIsValid, checkPhoneIsValid, checkPasswordIsValid} from '../../utils/Validators';
 
 
@@ -32,18 +33,14 @@ const RegistrationForm = () => {
             active: true, role: 'ROLE_CUSTOMER'};
 
         setIsPending(true);
-        let rawResponse = null;
-        fetch(process.env.REACT_APP_USER_SERVICE_URL + '/users', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json"},
-            body: JSON.stringify(user)    
-        })
+        let responseOk = true;
+        registerUser(user)
         .then(response => {
-            rawResponse = response
+            responseOk = response.ok;
             return response.json();
         })
         .then((data) => {
-            if(!rawResponse.ok)
+            if(!responseOk)
             {
                 if(data.message)
                     throw Error(data.message);

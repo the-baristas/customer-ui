@@ -1,0 +1,24 @@
+.user-profile-component{
+    width: 55%;
+    margin: 0 auto;
+    background-color: rgb(232, 240, 255);
+    border: 1px solid black;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-profile-title{
+    width: 100%;
+    background-color:rgb(240, 239, 234);
+    margin: 0 auto;
+    padding: 10px;
+    display:run-in;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.user-profile-item{
+    padding: 10px;
+
+}
