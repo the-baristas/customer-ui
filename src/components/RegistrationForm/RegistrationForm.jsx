@@ -33,7 +33,7 @@ const RegistrationForm = () => {
 
         setIsPending(true);
         let rawResponse = null;
-        fetch('http://localhost:8080/users', {
+        fetch(process.env.REACT_APP_USER_SERVICE_URL + '/users', {
             method: 'POST',
             headers: { "Content-Type": "application/json"},
             body: JSON.stringify(user)    

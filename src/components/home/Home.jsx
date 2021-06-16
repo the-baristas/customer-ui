@@ -1,31 +1,99 @@
-import { useSelector } from 'react-redux';
-import Image from 'react-bootstrap/Image';
-import mainImage from './customer-ui-01.jpg';
-import FlightSearch from '../flight-search/FlightSearch';
-import FlightList from '../flight-list/FlightList';
-import Checkout from '../checkout/Checkout';
-import PassengerInfoForm from '../passenger-info-form/PassengerInfoForm';
-import { useState } from 'react';
-import {BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
+import { Image } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import { createBooking } from "../../api/BookingApi";
+import { createPassenger } from "../../api/PassengerApi";
+import FlightTable from "../booking/FlightTable";
+import PassengerInfoForm from "../booking/PassengerInfoForm";
+import FlightCard from "../flight-list/FlightCard";
+import FlightList from "../flight-list/FlightList";
+import FlightSearch from "../flight-search/FlightSearch";
+import PaymentForm from "../paymentForm/PaymentForm";
+import mainImage from "./customer-ui-01.jpg";
 
 const Home = () => {
+    // Redux
 
     const userStatus = useSelector((state) => state.userStatus);
-    const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn);
-    const [selectedFlight, setSelectedFlight] = useState({});
 
-    const [sortBy, setSortBy] = useState('departureTime');
-    const [filter, setFilter] = useState('');
+    // Router
 
+    const { path } = useRouteMatch();
+    const history = useHistory();
+
+    // States
+
+    const [booking, setBooking] = useState({
+        confirmationCode: "",
+        layoverCount: 0,
+        username: ""
+    });
+    const [passengerInfo, setPassengerInfo] = useState({
+        givenName: "",
+        familyName: "",
+        dateOfBirth: "",
+        gender: "",
+        streetAddress: "",
+        city: "",
+        state: "",
+        zipCode: ""
+    });
+    const [seatClass, setSeatClass] = useState("");
+    const [totalPrice, setTotalPrice] = useState(0);
     const [flights, setFlights] = useState([]);
+    const [flightPage, setFlightPage] = useState({});
+    const [selectedFlight, setSelectedFlight] = useState({
+        id: 0,
+        airplane: null,
+        departureTime: "",
+        arrivalTime: "",
+        firstReserved: 0,
+        firstPrice: 0,
+        businessReserved: 0,
+        businessPrice: 0,
+        economyReserved: 0,
+        economyPrice: 0,
+        isActive: false,
+        route: null
+    });
+    const [date, setDate] = useState(new Date());
+    const [origin, setOrigin] = useState("");
+    const [dest, setDest] = useState("");
+    const [sortBy, setSortBy] = useState("departureTime");
 
-    const handleFlightSelection = (flight) => {
-        setSelectedFlight(flight);
-    };
+    // Callbacks
 
     const handleFlightSearch = (flights) => {
         setFlights(flights.content);
+    };
+
+    const handleFlightSelection = (selectedFlight, seatClass) => {
+        setSelectedFlight(selectedFlight);
+        setSeatClass(seatClass);
+        // TODO: Calculate total price.
+        setTotalPrice(50);
+        (async () => {
+            const confirmationCode = uuidv4();
+            const layoverCount = 0;
+            setBooking(
+                await createBooking({
+                    confirmationCode,
+                    layoverCount,
+                    username: userStatus.username
+                })
+            );
+            history.push(`${path}/passenger-info`);
+        })();
+    };
+
+    const handlePassengerInfoSubmit = (passengerInfo) => {
+        setPassengerInfo(passengerInfo);
+        history.push(`${path}/checkout`);
     };
 
     function handleSortByChange(event) {
@@ -34,65 +102,36 @@ const Home = () => {
         let theMonth = date.getMonth() + 1;
         let theDate = date.getDate();
         let theYear = date.getFullYear();
-        let theHour = '00';
-        let theMin = '00';
 
-        fetch(`http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}`, {
-        method: "POST",
-                headers: {"Content-Type": "application/json", "Authorization": localStorage.getItem('utopiaCustomerKey') },
-                body: JSON.stringify({month: theMonth, date: theDate, year: theYear, hour: theHour, min: theMin})
-            })
-            .then(resp => resp.json())
-            .then(data => {
+        fetch(
+            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${event.target.value}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("utopiaCustomerKey")
+                },
+                body: JSON.stringify({
+                    month: theMonth,
+                    date: theDate,
+                    year: theYear
+                })
+            }
+        )
+            .then((resp) => resp.json())
+            .then((data) => {
                 console.log(data);
                 setFlights(data.content);
-                history.push('/booking/search-results');
             })
-            .catch(error => {
+            .catch((error) => {
                 console.log(error);
                 alert("No flights found, try again!");
-            })
-    
-        }
-
-    function handleFilterChange(event){
-        console.log("works!");
-        setFilter(event.target.value);
-
-        let theMonth = date.getMonth() + 1;
-        let theDate = date.getDate();
-        let theYear = date.getFullYear();
-        let theHour = '05';
-        let theMin = '00';
-
-        fetch(`http://localhost:8090/flights/flt-query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}&filterBy=${filter}`, {
-            method: "POST",
-                    headers: {"Content-Type": "application/json", "Authorization": localStorage.getItem('utopiaCustomerKey') },
-                    body: JSON.stringify({month: theMonth, date: theDate, year: theYear, hour: theHour, min: theMin})
-                })
-                .then(resp => resp.json())
-                .then(data => {
-                    console.log(data);
-                    setFlights(data.content);
-                    history.push('/booking/search-results');
-                })
-                .catch(error => {
-                    console.log(error);
-                    alert("No flights found, try again!");
-                })
-
+            });
     }
-
-    const [date, setDate] = useState(new Date());
-    const [origin, setOrigin] = useState('');
-    const [dest, setDest] = useState('');
-    const [results, setResults] = useState([]);
-
-    const history = useHistory();
 
     function onDateChange(date) {
         setDate(date);
-      }
+    }
 
     function handleOriginChange(event) {
         setOrigin(event.target.value);
@@ -102,70 +141,179 @@ const Home = () => {
         setDest(event.target.value);
     }
 
-
     function handleSubmit(event) {
         event.preventDefault();
-        if (origin === '' || dest === '' || date === '') {
-            alert ('Please make sure all search fields are completed.');
+        if (origin === "" || dest === "" || date === "") {
+            alert("Please make sure all search fields are completed.");
         } else {
-            
             let theMonth = date.getMonth() + 1;
             let theDate = date.getDate();
             let theYear = date.getFullYear();
-            let theHour = '00';
-            let theMin = '00';
-            
-            fetch(`http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`, {
-                method: "POST",
-                headers: {"Content-Type": "application/json", "Authorization": localStorage.getItem('utopiaCustomerKey') },
-                body: JSON.stringify({month: theMonth, date: theDate, year: theYear, hour: theHour, min: theMin})
-            })
-            .then(resp => resp.json())
-            .then(data => {
-                console.log(data);
-                setFlights(data.content);
-                history.push('/booking/search-results');
-            })
-            .catch(error => {
-                console.log(error);
-                alert("No flights found, try again!");
-            })
+
+            fetch(
+                `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: localStorage.getItem("utopiaCustomerKey")
+                    },
+                    body: JSON.stringify({
+                        month: theMonth,
+                        date: theDate,
+                        year: theYear
+                    })
+                }
+            )
+                .then((resp) => resp.json())
+                .then((data) => {
+                    setFlights(data.content);
+                    setFlightPage(data);
+                    history.push("/booking/search-results");
+                })
+                .catch((error) => {
+                    console.log(error);
+                    alert("No flights found, try again!");
+                });
         }
-    
     }
 
-    return ( 
+    function handlePageChange(newPage) {
+        let theMonth = date.getMonth() + 1;
+        let theDate = date.getDate();
+        let theYear = date.getFullYear();
+
+        fetch(
+            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=economyPrice`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("utopiaCustomerKey")
+                },
+                body: JSON.stringify({
+                    month: theMonth,
+                    date: theDate,
+                    year: theYear
+                })
+            }
+        )
+            .then((resp) => resp.json())
+            .then((data) => {
+                setFlights(data.content);
+                setFlightPage(data);
+                console.log(data);
+            })
+            .catch((error) => {
+                console.log(error);
+                alert("No flights found, try again!");
+            });
+    }
+
+    const handlePaymentCreation = () => {
+        const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
+        (async () => {
+            setPassengerInfo(
+                await createPassenger({
+                    bookingConfirmationCode: booking.confirmationCode,
+                    originAirportCode:
+                        selectedFlight.route.originAirport.iataId,
+                    destinationAirportCode:
+                        selectedFlight.route.destinationAirport.iataId,
+                    airplaneModel: selectedFlight.airplane.model,
+                    departureTime: selectedFlight.departureTime,
+                    arrivalTime: selectedFlight.arrivalTime,
+                    givenName: passengerInfo.givenName,
+                    familyName: passengerInfo.familyName,
+                    dateOfBirth: passengerInfo.dateOfBirth,
+                    gender: passengerInfo.gender,
+                    address,
+                    seatClass: seatClass,
+                    // TODO: Allow user to chhose seat.
+                    seatNumber: 1,
+                    // TODO: Create a seat class to check-in group map.
+                    checkInGroup: 1
+                })
+            );
+        })();
+        //TODO: Should redirect somewhere besides root
+        history.push(`${path}`);
+    };
+
+    // Elements
+
+    const flightTable = (
+        <FlightTable selectedFlight={selectedFlight} seatClass={seatClass} />
+    );
+    const promise = loadStripe(
+        process.env.REACT_APP_STRIPE_TEST_PUBLISHABLE_KEY
+    );
+    const flightCards = flights.map((flight) => (
+        <FlightCard
+            key={flight.id}
+            flight={flight}
+            onFlightSelection={handleFlightSelection}
+        />
+    ));
+
+    return (
         <div>
-
-{userLoggedIn && <h1>Welcome {userStatus.username}</h1>}
-            <div>
-                
-                <Switch>
-                    <Route exact path="/booking">
-                        <Image src={mainImage} fluid />
-                        <FlightSearch
-                            onFlightSearch={handleFlightSearch}
-                            sortBy={sortBy}
-                            handleSubmit={handleSubmit}
-                            handleOriginChange={handleOriginChange}
-                            handleDestChange={handleDestChange}
-                            date={date}
-                            onDateChange={onDateChange}
-                        ></FlightSearch>
-                    </Route>
-                    <Route path="/booking/search-results">
-                        <FlightList
-                            flights={flights}
-                            onFlightSelection={handleFlightSelection}
-                            onSortBy={handleSortByChange}
-                            onFilter={handleFilterChange}
+            {userStatus.userLoggedIn && <h1>Welcome {userStatus.username}</h1>}
+            <Switch>
+                <Route exact path={path}>
+                    <Image src={mainImage} fluid />
+                    <FlightSearch
+                        onFlightSearch={handleFlightSearch}
+                        sortBy={sortBy}
+                        handleSubmit={handleSubmit}
+                        handleOriginChange={handleOriginChange}
+                        handleDestChange={handleDestChange}
+                        date={date}
+                        onDateChange={onDateChange}
+                    ></FlightSearch>
+                </Route>
+                <Route path={`${path}/search-results`}>
+                    <FlightList
+                        flights={flights}
+                        flightCards={flightCards}
+                        flightPage={flightPage}
+                        handlePageChange={handlePageChange}
+                        onFlightSelection={handleFlightSelection}
+                        onSortBy={handleSortByChange}
+                    />
+                </Route>
+                <Route path={`${path}/passenger-info`}>
+                    {flightTable}
+                    <PassengerInfoForm
+                        onPassengerInfoSubmit={handlePassengerInfoSubmit}
+                    />
+                </Route>
+                <Route path={`${path}/checkout`}>
+                    {flightTable}
+                    <Elements stripe={promise}>
+                        <PaymentForm
+                            bookingId={booking.id}
+                            totalPrice={totalPrice}
+                            onPaymentCreation={handlePaymentCreation}
                         />
-                    </Route>
-                </Switch>
-            </div>
-
+                    </Elements>
+                </Route>
+            </Switch>
         </div>
-     );
-}
- 
+    );
+};
+
+Home.propTypes = {
+    selectedFlight: PropTypes.object,
+    flights: PropTypes.node,
+    seatClass: PropTypes.string,
+    booking: PropTypes.object,
+    passenger: PropTypes.object,
+    totalPrice: PropTypes.number,
+    sortBy: PropTypes.string,
+    date: PropTypes.object,
+    origin: PropTypes.string,
+    dest: PropTypes.string
+};
+
 export default Home;

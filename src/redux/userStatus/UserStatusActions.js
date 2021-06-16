@@ -1,7 +1,7 @@
 import * as actions from './UserStatusActionTypes';
 
-export const login = () => {
-    return { type: actions.USER_LOGGED_IN}
+export const login = (username) => {
+    return { type: actions.USER_LOGGED_IN, username: username}
 }
 
 export const logout = () => {

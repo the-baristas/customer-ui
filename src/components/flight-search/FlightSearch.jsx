@@ -1,17 +1,12 @@
-import { useSelector, createStore } from 'react-redux';
-import { Form, Row, Col, InputGroup, Button } from 'react-bootstrap';
-import './FlightSearch.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
-import React, { useState, createContext } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from "react";
+import { Button, Form, InputGroup } from 'react-bootstrap';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useHistory } from 'react-router-dom';
-
+import './FlightSearch.css';
 
 const FlightSearch = (props) => {
-
-    const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn);
 
     return(
         <div className="search-container">
@@ -44,9 +39,9 @@ const FlightSearch = (props) => {
                     </Button>
                   
                 </Form>
-                </div>
             </div>
-        );
-}
- 
+        </div>
+    );
+};
+
 export default FlightSearch;

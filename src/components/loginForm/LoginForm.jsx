@@ -4,7 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { login } from '../../redux/userStatus/UserStatusActions';
 import { saveToken } from '../../utils/Login';
+
 import { useHistory } from 'react-router-dom';
+import { userLogin } from '../../services/loginService/LoginService';
 
 const LoginForm = (props) => {
 
@@ -23,11 +25,7 @@ const LoginForm = (props) => {
         setErrorMessage('');
         setIsPending(true);
 
-        fetch('http://localhost:8080/login', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password })
-        })
+        userLogin(username, password)
             .then(response => {
                 if (!response.ok) {
                     if (response.status === 403) {
@@ -39,7 +37,7 @@ const LoginForm = (props) => {
 
                 }
                 saveToken(response.headers.get('Authorization'));
-                dispatch(login());
+                dispatch(login(username));
                 setIsPending(false);
                 history.push('/')
             })

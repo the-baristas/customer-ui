@@ -1,19 +1,23 @@
+import { getUsername, loggedIn } from "../../utils/Login";
 import * as actions from "./UserStatusActionTypes";
 
 const initialState = {
-    userLoggedIn: false
+    userLoggedIn: loggedIn(),
+    username: getUsername()
 }
 
 const userStatusReducer = (state = initialState, action) => {
     switch(action.type){
         case actions.USER_LOGGED_IN:
             return { ...state,
-                userLoggedIn: true
+                userLoggedIn: true,
+                username: action.username
             }
 
         case actions.USER_LOGGED_OUT:
             return { ...state,
-                userLoggedIn: false
+                userLoggedIn: false,
+                username: ""
             }
 
         default:

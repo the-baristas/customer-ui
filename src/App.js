@@ -1,20 +1,23 @@
-import './App.css';
-import {Provider} from 'react-redux';
-import store from './redux/store';
-import {BrowserRouter as Router, Route, Switch, Link, Redirect} from 'react-router-dom';
-import RegistrationForm from './components/RegistrationForm/RegistrationForm';
-import LoginForm from './components/loginForm/LoginForm';
-import Header from './components/header/Header';
-import Home from './components/home/Home';
-import SearchResults from './components/flight-list/FlightList';
+import React from "react";
+import { Provider } from "react-redux";
+import {
+    BrowserRouter as Router,
+    Redirect,
+    Route,
+    Switch
+} from "react-router-dom";
+import "./App.css";
+import Header from "./components/header/Header";
+import Home from "./components/home/Home";
+import LoginForm from "./components/loginForm/LoginForm";
+import RegistrationForm from "./components/RegistrationForm/RegistrationForm";
+import store from "./redux/store";
 
 function App() {
-
-
     return (
-    <Provider store={store}>
-        <Router>
-            <Header></Header>
+        <Provider store={store}>
+            <Router>
+                <Header />
                 <Switch>
                     <Route exact path="/">
                         <Redirect to="/booking" />
@@ -23,18 +26,18 @@ function App() {
                     <Route path='/booking'> 
                         <Home />
                     </Route>
-                    
+
                     <Route path="/register">
                         <RegistrationForm />
                     </Route>
 
-                    <Route path='/login'>
+                    <Route path="/login">
                         <LoginForm />
                     </Route>
                 </Switch>
-        </Router>
-    </Provider>
-  );
+            </Router>
+        </Provider>
+    );
 }
 
 export default App;
