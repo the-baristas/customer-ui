@@ -6,8 +6,13 @@ import { Image } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { createBooking } from "../../api/BookingApi";
-import { createPassenger } from "../../api/PassengerApi";
+import {
+    createBooking,
+    deleteBooking,
+    updateBooking
+} from "../../api/BookingApi";
+import { createPassenger, deletePassenger } from "../../api/PassengerApi";
+import { createPayment, deletePayment } from "../../services/paymentService/PaymentService";
 import FlightTable from "../booking/FlightTable";
 import PassengerInfoForm from "../booking/PassengerInfoForm";
 import FlightCard from "../flight-list/FlightCard";
@@ -29,12 +34,19 @@ const Home = () => {
 
     // States
 
-    const [booking, setBooking] = useState({
+    const [bookingToCreate, setBookingToCreate] = useState({
+        confirmationCode: "",
+        layoverCount: 0,
+        username: ""
+    });
+    const [createdBooking, setCreatedBooking] = useState({
+        id: 0,
         confirmationCode: "",
         layoverCount: 0,
         username: ""
     });
     const [passengerInfo, setPassengerInfo] = useState({
+        id: 0,
         givenName: "",
         familyName: "",
         dateOfBirth: "",
@@ -83,13 +95,11 @@ const Home = () => {
         (async () => {
             const confirmationCode = uuidv4().toUpperCase();
             const layoverCount = 0;
-            setBooking(
-                await createBooking({
-                    confirmationCode,
-                    layoverCount,
-                    username: userStatus.username
-                })
-            );
+            setBookingToCreate({
+                confirmationCode,
+                layoverCount,
+                username: userStatus.username
+            });
             history.push(`${path}/passenger-info`);
         })();
     };
@@ -152,7 +162,6 @@ const Home = () => {
         )
             .then((resp) => resp.json())
             .then((data) => {
-                console.log(data);
                 setFlights(data.content);
                 history.push("/booking/search-results");
             })
@@ -200,7 +209,6 @@ const Home = () => {
             )
                 .then((resp) => resp.json())
                 .then((data) => {
-                    console.log(data);
                     setFlights(data.content);
                     history.push("/booking/search-results");
                 })
@@ -211,12 +219,38 @@ const Home = () => {
         }
     }
 
-    const handlePaymentCreation = () => {
-        const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
+    const handlePaymentCreation = (clientSecret) => {
         (async () => {
-            setPassengerInfo(
-                await createPassenger({
-                    bookingConfirmationCode: booking.confirmationCode,
+            let newBooking;
+            try {
+                newBooking = await createBooking({
+                    confirmationCode: bookingToCreate.confirmationCode,
+                    layoverCount: bookingToCreate.layoverCount,
+                    username: userStatus.username
+                });
+                setCreatedBooking(newBooking);
+                // TODO: Remove.
+                console.log(newBooking);
+            } catch (e) {
+                console.error(e);
+                // TODO: Cancel stripe payment.
+                return;
+            }
+            let payment;
+            try {
+                payment = await createPayment(clientSecret, newBooking.id);
+            } catch (e) {
+                console.error(e);
+                await deleteBooking(newBooking.id);
+                // TODO: Cancel stripe payment.
+                return;
+            }
+            console.log(payment);
+            const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
+            let newPassengerInfo;
+            try {
+                newPassengerInfo = await createPassenger({
+                    bookingConfirmationCode: newBooking.confirmationCode,
                     originAirportCode:
                         selectedFlight.route.originAirport.iataId,
                     destinationAirportCode:
@@ -234,11 +268,33 @@ const Home = () => {
                     seatNumber: 1,
                     // TODO: Create a seat class to check-in group map.
                     checkInGroup: 1
-                })
-            );
+                });
+                setPassengerInfo(newPassengerInfo);
+                console.log(newPassengerInfo);
+            } catch (e) {
+                // TODO: Delete payment.
+                await deleteBooking(newBooking.id);
+                // TODO: Cancel stripe payment.
+                return;
+            }
+            try {
+                throw new Error("test");
+                // await updateBooking({
+                //     id: newBooking.id,
+                //     confirmationCode: newBooking.confirmationCode,
+                //     layoverCount: newBooking.layoverCount,
+                //     totalPrice,
+                //     username: newBooking.username
+                // });
+                // // TODO: Should redirect to booking confirmation page.
+                // history.push(`${path}`);
+            } catch (e) {
+                await deletePassenger(newPassengerInfo.id);
+                await deletePayment(payment.stripeId);
+                await deleteBooking(newBooking.id);
+                // TODO: Cancel stripe payment.
+            }
         })();
-        //TODO: Should redirect somewhere besides root
-        history.push(`${path}`);
     };
 
     // Elements
@@ -297,7 +353,6 @@ const Home = () => {
                     {flightTable}
                     <Elements stripe={promise}>
                         <PaymentForm
-                            bookingId={booking.id}
                             totalPrice={totalPrice}
                             onPaymentCreation={handlePaymentCreation}
                         />

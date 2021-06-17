@@ -87,26 +87,12 @@ const PaymentForm = (props) => {
             setError(`Payment failed ${payload.error.message}`);
             setProcessing(false);
         } else {
-            createPayment(clientSecret, props.bookingId)
-                .then((res) => {
-                    if (!res.ok) {
-                        throw Error(res.status);
-                    } else {
-                        alert("Thank you for your purchase.");
-                        setError(null);
-                        setProcessing(false);
-                        setSucceeded(true);
+            alert("Thank you for your purchase.");
+            setError(null);
+            setProcessing(false);
+            setSucceeded(true);
 
-                        props.onPaymentCreation();
-                    }
-                })
-                .catch((error) => {
-                    setError(
-                        "There was a problem while processing your payment. Please try again later."
-                    );
-                    setProcessing(false);
-                    return;
-                });
+            props.onPaymentCreation(clientSecret);
         }
     };
 

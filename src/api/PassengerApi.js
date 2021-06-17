@@ -40,13 +40,34 @@ export const createPassenger = async ({
         });
         if (response.ok === false) {
             throw new Error(
-                `Response was not successful. Status code: ${response.statusText}`
+                `Response was not successful. Status code: ${response.status}`
             );
         }
         data = await response.json();
     } catch (e) {
-        console.error("There has been a problem with your fetch operation:", e);
-        data = {};
+        throw new Error(
+            "There has been a problem with creating the passenger:",
+            e
+        );
     }
     return data;
+};
+
+export const deletePassenger = async (id) => {
+    const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers/${id}`;
+    try {
+        const response = await fetch(url, {
+            method: "DELETE"
+        });
+        if (response.ok === false) {
+            throw new Error(
+                `Response was not successful. Status code: ${response.status}`
+            );
+        }
+    } catch (e) {
+        console.error(
+            "There has been a problem with deleting the passenger:",
+            e
+        );
+    }
 };

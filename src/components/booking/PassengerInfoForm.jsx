@@ -60,7 +60,6 @@ const PassengerInfoForm = (props) => {
     };
 
     const handleStateChange = (event) => {
-        console.log(event.target.value.toUpperCase());
         setState(event.target.value.toUpperCase());
     };
 
