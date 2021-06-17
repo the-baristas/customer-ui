@@ -1,7 +1,7 @@
 import moment from "moment";
 import React from "react";
 import Table from "react-bootstrap/Table";
-import SeatClass from "../SeatClass";
+import SeatClass from "./SeatClass";
 
 const FlightTable = (props) => {
     let seatClassDisplayName;

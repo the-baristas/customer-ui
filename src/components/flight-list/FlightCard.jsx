@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import './FlightCard.css';
-import SeatClass from "../SeatClass";
+import SeatClass from "../booking/SeatClass";
 
 const FlightCard = (props) => {
     const handleClick = (e, seatClass) => {

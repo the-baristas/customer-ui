@@ -123,6 +123,7 @@ const PassengerInfoForm = (props) => {
                     <option value="">Select One</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
+                    <option value="other">Other</option>
                 </Form.Control>
                 <Form.Control.Feedback type="invalid">
                     Please provide a gender.

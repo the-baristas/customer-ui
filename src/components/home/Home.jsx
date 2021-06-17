@@ -19,7 +19,7 @@ import FlightCard from "../flight-list/FlightCard";
 import FlightList from "../flight-list/FlightList";
 import FlightSearch from "../flight-search/FlightSearch";
 import PaymentForm from "../paymentForm/PaymentForm";
-import SeatClass from "../SeatClass";
+import SeatClass from "../booking/SeatClass";
 import mainImage from "./customer-ui-01.jpg";
 
 const Home = () => {
