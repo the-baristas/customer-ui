@@ -16,7 +16,8 @@ const FlightTable = (props) => {
             seatClassDisplayName = "First Class";
             break;
         default:
-            throw new Error(`Invalid seatClass: ${props.seatClass}`);
+            // TODO: Go to error page.
+            break;
     }
     const pricePerPassenger = Math.round(props.pricePerPassenger * 100) / 100;
     const taxesPerPassenger = Math.round(props.taxesPerPassenger * 100) / 100;

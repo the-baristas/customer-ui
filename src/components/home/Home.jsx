@@ -121,7 +121,8 @@ const Home = () => {
                 pricePerPassenger = selectedFlight.firstPrice;
                 break;
             default:
-                throw new Error(`Invalid seatClass: ${seatClass}`);
+                // TODO: Go to error page.
+                break;
         }
         const taxesPerPassenger = pricePerPassenger * 0.07;
         const totalPerPassenger = pricePerPassenger + taxesPerPassenger;
