@@ -65,6 +65,7 @@ const Home = () => {
     const [origin, setOrigin] = useState("");
     const [dest, setDest] = useState("");
     const [sortBy, setSortBy] = useState("departureTime");
+    const [filter, setFilter] = useState("all");
 
     // Callbacks
 
@@ -102,6 +103,9 @@ const Home = () => {
         let theMonth = date.getMonth() + 1;
         let theDate = date.getDate();
         let theYear = date.getFullYear();
+        let theHours = '00';
+        let theMins = '00';
+        let theFilter = filter;
 
         fetch(
             `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${event.target.value}`,
@@ -114,7 +118,49 @@ const Home = () => {
                 body: JSON.stringify({
                     month: theMonth,
                     date: theDate,
-                    year: theYear
+                    year: theYear,
+                    hours: theHours,
+                    mins: theMins,
+                    filter: theFilter
+                })
+            }
+        )
+            .then((resp) => resp.json())
+            .then((data) => {
+                console.log(data);
+                setFlights(data.content);
+            })
+            .catch((error) => {
+                console.log(error);
+                alert("No flights found, try again!");
+            });
+    }
+
+    function handleFilterChange(event) {
+        setFilter(event.target.value);
+
+        let theMonth = date.getMonth() + 1;
+        let theDate = date.getDate();
+        let theYear = date.getFullYear();
+        let theHours = '00';
+        let theMins = '00';
+        let theFilter = event.target.value;
+
+        fetch(
+            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("utopiaCustomerKey")
+                },
+                body: JSON.stringify({
+                    month: theMonth,
+                    date: theDate,
+                    year: theYear,
+                    hours: theHours,
+                    mins: theMins,
+                    filter: theFilter
                 })
             }
         )
@@ -149,6 +195,9 @@ const Home = () => {
             let theMonth = date.getMonth() + 1;
             let theDate = date.getDate();
             let theYear = date.getFullYear();
+            let theHours = '00';
+            let theMins = '00';
+            let theFilter = "all";
 
             fetch(
                 `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
@@ -161,7 +210,10 @@ const Home = () => {
                     body: JSON.stringify({
                         month: theMonth,
                         date: theDate,
-                        year: theYear
+                        year: theYear,
+                        hours: theHours,
+                        mins: theMins,
+                        filter: theFilter
                     })
                 }
             )
@@ -182,6 +234,9 @@ const Home = () => {
         let theMonth = date.getMonth() + 1;
         let theDate = date.getDate();
         let theYear = date.getFullYear();
+        let theHours = '00';
+        let theMins = '00';
+        let theFilter = filter;
 
         fetch(
             `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=economyPrice`,
@@ -194,7 +249,10 @@ const Home = () => {
                 body: JSON.stringify({
                     month: theMonth,
                     date: theDate,
-                    year: theYear
+                    year: theYear,
+                    hours: theHours,
+                    mins: theMins,
+                    filter: theFilter
                 })
             }
         )
@@ -278,6 +336,7 @@ const Home = () => {
                         flightCards={flightCards}
                         flightPage={flightPage}
                         handlePageChange={handlePageChange}
+                        handleFilterChange={handleFilterChange}
                         onFlightSelection={handleFlightSelection}
                         onSortBy={handleSortByChange}
                     />

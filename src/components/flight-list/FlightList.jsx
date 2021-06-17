@@ -36,16 +36,30 @@ const FlightList = (props) => {
     return (
             <div className="search-results">
                 <br />
-                <center><h4>Results from Search</h4></center>
-                <label htmlFor="sort-by">Sort by: </label> 
 
+                <Container>
+                <center><h4>Results from Search</h4></center>
+                <label htmlFor="sort-by"><b>Sort by:</b></label> 
+                {'  '}
 
                 <select name="sort-by" id="sort-by" onChange={props.onSortBy}>
                 <option value="economyPrice">Price</option>
                 <option value="departureTime">Departure</option>
                 <option value="arrivalTime">Arrival</option>
                 </select>
+                </Container>
 
+                <Container>
+                <label htmlFor="filter"><b>Filter:</b></label> 
+                {'  '}
+
+                <select name="filter" id="filter" onChange={props.handleFilterChange}>
+                <option value="all">All</option>
+                <option value="morning">Morning Flights Only</option>
+                <option value="afternoon">Afternoon Flights Only</option>
+                <option value="evening">Evening Flights Only</option>
+                </select>
+                </Container>
 
                 <Container className="pagination-container">
                 <Pagination>
