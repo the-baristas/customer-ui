@@ -279,16 +279,15 @@ const Home = () => {
                 return;
             }
             try {
-                throw new Error("test");
-                // await updateBooking({
-                //     id: newBooking.id,
-                //     confirmationCode: newBooking.confirmationCode,
-                //     layoverCount: newBooking.layoverCount,
-                //     totalPrice,
-                //     username: newBooking.username
-                // });
-                // // TODO: Should redirect to booking confirmation page.
-                // history.push(`${path}`);
+                await updateBooking({
+                    id: newBooking.id,
+                    confirmationCode: newBooking.confirmationCode,
+                    layoverCount: newBooking.layoverCount,
+                    totalPrice,
+                    username: newBooking.username
+                });
+                // TODO: Should redirect to booking confirmation page.
+                history.push(`${path}`);
             } catch (e) {
                 await deletePassenger(newPassengerInfo.id);
                 await deletePayment(payment.stripeId);
