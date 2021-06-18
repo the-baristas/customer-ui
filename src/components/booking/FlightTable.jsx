@@ -1,6 +1,6 @@
 import moment from "moment";
 import React from "react";
-import Table from "react-bootstrap/Table";
+import { Col, Container, Row } from "react-bootstrap";
 import SeatClass from "./SeatClass";
 
 const FlightTable = (props) => {
@@ -41,48 +41,93 @@ const FlightTable = (props) => {
     const durationMinutes = duration.minutes();
 
     return (
-        <Table bordered borderless>
-            <thead>
-                <tr>
-                    <th scope="col" colSpan="5">
-                        Flight Details
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{props.selectedFlight.route.originAirport.iataId}</td>
-                    <td>
-                        {props.selectedFlight.route.destinationAirport.iataId}
-                    </td>
-                    <td rowSpan="1">Duration</td>
-                    <td rowSpan="5">{seatClassDisplayName}</td>
-                    <td rowSpan="1">Price per Passenger</td>
-                    <td>${pricePerPassenger.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td rowSpan="4">{departureTime}</td>
-                    <td rowSpan="4">{arrivalTime}</td>
-                    <td rowSpan="4">
-                        {durationHours} hr {durationMinutes} min
-                    </td>
-                    <td>Taxes per Passenger</td>
-                    <td>${taxesPerPassenger.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td>Total per Passenger</td>
-                    <td>${totalPerPassenger.toFixed(2)}</td>
-                </tr>
-                <tr>
-                    <td>Passenger(s)</td>
-                    <td>x {passengerCount}</td>
-                </tr>
-                <tr>
-                    <td>Flight total</td>
-                    <td>${totalPrice.toFixed(2)}</td>
-                </tr>
-            </tbody>
-        </Table>
+        <Container fluid>
+            <Row className="border border-dark">
+                <Col xs={12} sm={12} className="p-2">
+                    <h5>Flight Details</h5>
+                </Col>
+            </Row>
+            <Row>
+                <Col xs={12} sm={5} className="border-bottom border-dark p-3">
+                    <Row>
+                        <Col xs={6} sm={6} className="text-center p-2">
+                            {props.selectedFlight.route.originAirport.iataId}
+                        </Col>
+                        <Col xs={6} sm={6} className="text-center p-2">
+                            {
+                                props.selectedFlight.route.destinationAirport
+                                    .iataId
+                            }
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs sm={6} className="text-center">
+                            {departureTime}
+                        </Col>
+                        <Col xs sm={6} className="text-center">
+                            {arrivalTime}
+                        </Col>
+                    </Row>
+                </Col>
+                <Col xs={12} sm={3} className="border-bottom border-dark p-3">
+                    <Row>
+                        <Col xs={6} sm={6} className="text-center p-2">
+                            Duration
+                        </Col>
+                        <Col xs={6} sm={6} className="text-center p-2">
+                            {seatClassDisplayName}
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={6} sm={6} className="text-center">
+                            {durationHours} hr {durationMinutes} min
+                        </Col>
+                    </Row>
+                </Col>
+                <Col xs={12} sm={4} className="border-bottom border-dark p-3">
+                    <Row className="p-2">
+                        <Col xs={6} sm={7}>
+                            Price per Passenger
+                        </Col>
+                        <Col xs={5} sm={5} className="text-right">
+                            ${pricePerPassenger.toFixed(2)}
+                        </Col>
+                    </Row>
+                    <Row className="p-2">
+                        <Col xs={6} sm={7}>
+                            Taxes per Passenger
+                        </Col>
+                        <Col xs={5} sm={5} className="text-right">
+                            ${taxesPerPassenger.toFixed(2)}
+                        </Col>
+                    </Row>
+                    <Row className="p-2">
+                        <Col xs={6} sm={7}>
+                            Total per Passenger
+                        </Col>
+                        <Col xs={5} sm={5} className="text-right">
+                            ${totalPerPassenger.toFixed(2)}
+                        </Col>
+                    </Row>
+                    <Row className="p-2">
+                        <Col xs={6} sm={7}>
+                            Passenger(s)
+                        </Col>
+                        <Col xs={5} sm={5} className="text-right">
+                            x {passengerCount}
+                        </Col>
+                    </Row>
+                    <Row className="p-2">
+                        <Col xs={6} sm={7}>
+                            Flight total
+                        </Col>
+                        <Col xs={5} sm={5} className="text-right">
+                            ${totalPrice.toFixed(2)}
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
+        </Container>
     );
 };
 
