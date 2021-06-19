@@ -1,35 +1,66 @@
 import React from 'react';
 import { render, fireEvent, screen, waitForElementToBeRemoved } from "@testing-library/react";
-import userEvent from "@testing-library/user-event"
 import LoginForm from "./LoginForm";
-import { rest } from "msw";
-import { setupServer } from "msw/node";
 import { Provider } from "react-redux";
 import store from "../../redux/store";
+import { MemoryRouter } from 'react-router-dom';
+import * as loginService from '../../services/loginService/LoginService';
+import * as loginUtils from '../../utils/Login';
 
-const serverBadCredentials = setupServer(rest.post(process.env.REACT_APP_USER_SERVICE_URL + '/users', (req, resp, ctx) => {
-    return resp(ctx.status(403), ctx.json({ message: 'nope' }));
-}))
+
+it("Login with valid credentials redirects to home", async () => {
+    const loginMock = jest.spyOn(loginService, 'userLogin');
+    loginMock.mockResolvedValue({ok: true, status: 200, headers: { get: () => {return "token";}}})
+
+    const saveTokenMock = jest.spyOn(loginUtils, 'saveToken');
 
 
-xit("invalid login credentials makes error message appear", async () => {
-    serverBadCredentials.listen()
-    const { getByTestId } = render(<Provider store={store}><LoginForm></LoginForm></Provider>);
+    const { getByTestId } = render(<MemoryRouter><Provider store={store}><LoginForm></LoginForm></Provider></MemoryRouter>);
     const form = getByTestId("formLogin");
     const error = getByTestId("divError");
 
     expect(error.innerHTML).toEqual('');
 
-    userEvent.click(
-        screen.getByTestId("formLogin")
-    )
+    fireEvent.submit(form);
+    await waitForElementToBeRemoved(() => screen.getByTestId('processing'));
+    expect(saveTokenMock).toBeCalledWith("token");
+
+    loginMock.mockRestore();
+    saveTokenMock.mockRestore();
+})
+
+it("invalid login credentials makes error message appear", async () => {
+    const loginMock = jest.spyOn(loginService, 'userLogin');
+    loginMock.mockResolvedValue({ok: false, status: 403})
+
+    const { getByTestId } = render(<MemoryRouter><Provider store={store}><LoginForm></LoginForm></Provider></MemoryRouter>);
+    const form = getByTestId("formLogin");
+    const error = getByTestId("divError");
+
+    expect(error.innerHTML).toEqual('');
 
     fireEvent.submit(form);
     await waitForElementToBeRemoved(() => screen.getByTestId('processing'));
     expect(error.innerHTML).toContain('incorrect');
 
-    serverBadCredentials.close()
-    serverBadCredentials.resetHandlers()
+    loginMock.mockRestore();
+})
+
+it("error besides 403 makes error message appear", async () => {
+    const loginMock = jest.spyOn(loginService, 'userLogin');
+    loginMock.mockResolvedValue({ok: false, status: 500})
+
+    const { getByTestId } = render(<MemoryRouter><Provider store={store}><LoginForm></LoginForm></Provider></MemoryRouter>);
+    const form = getByTestId("formLogin");
+    const error = getByTestId("divError");
+
+    expect(error.innerHTML).toEqual('');
+
+    fireEvent.submit(form);
+    await waitForElementToBeRemoved(() => screen.getByTestId('processing'));
+    expect(error.innerHTML).toContain('problem');
+
+    loginMock.mockRestore();
 })
 
 it("Login button exists", () => {

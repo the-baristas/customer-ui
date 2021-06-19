@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event"
 import RegistrationForm from "./RegistrationForm";
 import {rest} from "msw";
 import {setupServer} from "msw/node";
-import { Router } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 
 
 
@@ -17,7 +17,7 @@ const serverBadRequest = setupServer(rest.post(process.env.REACT_APP_USER_SERVIC
 window.alert = jest.fn();
 
 
-xit("check register button makes fetch requests; error response with message", async () => {
+it("check register button makes fetch requests; error response with message", async () => {
     serverBadRequest.listen()
     const {getByTestId} = render(<RegistrationForm></RegistrationForm>);
     const form = getByTestId("formRegistration");
@@ -34,12 +34,12 @@ xit("check register button makes fetch requests; error response with message", a
 
     serverBadRequest.close()
     serverBadRequest.resetHandlers()
+    window.alert.mockClear();
 })
 
-xit("check register button makes fetch requests; 200 request success", async () => {
-    window.alert.mockClear();
+it("check register button makes fetch requests; 200 request success", async () => {
     serverOk.listen(); 
-    const {getByTestId} = render(<Router><RegistrationForm></RegistrationForm></Router>);
+    const {getByTestId} = render(<MemoryRouter><RegistrationForm></RegistrationForm></MemoryRouter>);
     const form = getByTestId("formRegistration");
     const error = getByTestId("divError");
 

@@ -10,25 +10,35 @@ import { faAlignJustify } from '@fortawesome/free-solid-svg-icons';
 
 let user = { userId: 1, givenName: "First", familyName: "Last", 
             username: "username", email: "email@email.com", 
-            phone: "8056744000", role: "ROLE_CUSTOMER", active: true }
+            phone: "8051112222", role: "ROLE_CUSTOMER", active: true }
 
-// jest.mock('../../services/usersService/UsersService');
-// mockService.getUserByUsername.mockImplementation( () => 
-//             Promise.resolve(user));
-// const mockService = jest.mock('../../services/usersService/UsersService', () => ({
-//     getUserByUsername: (username) => Promise.resolve({json: () => Promise.resolve({
-//         user
-//     })})
-// }));
 
-//jest.spyOn(usersService, 'getUserByUsername').mockReturnValue(  )
-usersService.getUserByUsername.mockImplementation( () => {Promise.resolve({json: Promise.resolve({user})})} )
+it("check profile loads", async () => {
+    const getUserMock = jest.spyOn(usersService, 'getUserByUsername');
+    getUserMock.mockResolvedValue({ok: true, status: 200, json: () => {return Promise.resolve(user)}})
 
-xit("check profile loads", async () => {
     const {getByTestId} = render(<Provider store={store}><UserProfile></UserProfile></Provider>);
-    await waitForElementToBeRemoved( () => screen.getByTestId('loading') );
-    expect(getUserByUsername).toHaveBeenCalled();
+    await waitForElementToBeRemoved( () => getByTestId('loadingProfile') );
+    expect(getUserMock).toHaveBeenCalled();
     
-    const givenNameField = screen.getByTestId('givenName');
-    expect(givenNameField.innerHTML).toContain(user.givenName);
+    expect(getByTestId('givenName').innerHTML).toContain(user.givenName);
+
+    expect(getByTestId('phoneNumber').innerHTML).toContain("(805) 111-2222")
+
+    getUserMock.mockRestore();
+})
+
+it("check user info failing shows error message", async () => {
+    window.alert = jest.fn();
+    
+    const getUserMock = jest.spyOn(usersService, 'getUserByUsername');
+    getUserMock.mockResolvedValue({ok: false, status: 404})
+
+    const {getByTestId} = render(<Provider store={store}><UserProfile></UserProfile></Provider>);
+    await waitForElementToBeRemoved( () => getByTestId('loadingProfile') );
+    
+    expect(getUserMock).toHaveBeenCalled();
+    expect(window.alert).toHaveBeenCalled();
+
+    getUserMock.mockRestore();
 })
