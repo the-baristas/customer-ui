@@ -26,3 +26,16 @@ export const createBooking = async ({
 };
 
 export const updateBooking = async ({}) => {};
+
+export const getBookingsByUsername = async (username, index, size) => {
+    const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/bookings/username/`+ username +`?index=${index}&size=${size}`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+    });
+    const data = await response.json();
+    if (data.error) {
+        throw new Error(data.error);
+    }
+    return data;
+}

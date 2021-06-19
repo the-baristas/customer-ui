@@ -1,0 +1,9 @@
+.booking-list-title{
+    text-align: center;
+    padding: 10px;
+}
+
+.pagination{
+    padding: 35px;
+    border: 1px solid rgb(160, 160, 160);;
+  }

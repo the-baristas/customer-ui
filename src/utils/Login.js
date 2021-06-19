@@ -21,3 +21,7 @@ export const saveToken = (token) => {
 export const removeToken = () => {
     localStorage.removeItem(keyName);
 }
+
+export const getToken = () => {
+    return localStorage.getItem(keyName);
+}

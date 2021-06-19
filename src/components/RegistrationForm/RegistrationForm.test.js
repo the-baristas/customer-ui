@@ -1,9 +1,10 @@
 import React from 'react';
-import {render, fireEvent, screen, within, waitFor, waitForElementToBeRemoved} from "@testing-library/react";
+import {render, fireEvent, screen, waitForElementToBeRemoved} from "@testing-library/react";
 import userEvent from "@testing-library/user-event"
 import RegistrationForm from "./RegistrationForm";
 import {rest} from "msw";
 import {setupServer} from "msw/node";
+import { MemoryRouter } from 'react-router-dom';
 
 
 
@@ -11,7 +12,7 @@ const serverOk = setupServer(rest.post(process.env.REACT_APP_USER_SERVICE_URL+'/
     return resp(ctx.status(200), ctx.json( { payload: 'Would normally return user data'} ));
     }))
 const serverBadRequest = setupServer(rest.post(process.env.REACT_APP_USER_SERVICE_URL+'/users', (req, resp, ctx) => {
-    return resp(ctx.status(409), ctx.json( { message: 'nope' }));
+    return resp(ctx.status(409), ctx.json( { error: 'nope' }));
     }))
 window.alert = jest.fn();
 
@@ -33,12 +34,12 @@ it("check register button makes fetch requests; error response with message", as
 
     serverBadRequest.close()
     serverBadRequest.resetHandlers()
+    window.alert.mockClear();
 })
 
-xit("check register button makes fetch requests; 200 request success", async () => {
-    window.alert.mockClear();
-    serverOk.listen();
-    const {getByTestId} = render(<RegistrationForm></RegistrationForm>);
+it("check register button makes fetch requests; 200 request success", async () => {
+    serverOk.listen(); 
+    const {getByTestId} = render(<MemoryRouter><RegistrationForm></RegistrationForm></MemoryRouter>);
     const form = getByTestId("formRegistration");
     const error = getByTestId("divError");
 
@@ -48,7 +49,7 @@ xit("check register button makes fetch requests; 200 request success", async () 
         screen.getByTestId("formRegistration")
     )
     fireEvent.submit(form);
-    //await waitForElementToBeRemoved( () => screen.getByTestId('processing') );
+    await waitForElementToBeRemoved( () => screen.getByTestId('processing') );
     expect(error.innerHTML).toEqual('');
 
     serverOk.close();

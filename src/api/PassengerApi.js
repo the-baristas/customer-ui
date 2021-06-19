@@ -50,3 +50,16 @@ export const createPassenger = async ({
     }
     return data;
 };
+
+export const searchPassengers = async (searchTerm, index, size) => {
+    const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers/search?`+`term=${searchTerm}&index=${index}&size=${size}`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+    });
+    const data = await response.json();
+    if (data.error) {
+        throw new Error(data.error);
+    }
+    return data;
+}
