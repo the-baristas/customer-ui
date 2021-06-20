@@ -316,7 +316,7 @@ const Home = () => {
             {userStatus.userLoggedIn && <h1>Welcome {userStatus.username}</h1>}
             <Switch>
                 <Route exact path={path}>
-                    <Image src={mainImage} fluid />
+                    <Image src={mainImage} fluid aria-label="main image" />
                     <FlightSearch
                         onFlightSearch={handleFlightSearch}
                         sortBy={sortBy}

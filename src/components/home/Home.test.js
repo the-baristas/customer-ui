@@ -1,17 +1,23 @@
-import { render, screen } from "@testing-library/react";
 import React from "react";
-import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import store from "../../redux/store";
+import { render, screen } from "../../test-utils";
 import Home from "./Home";
 
-it("test", async () => {
+it("renders", async () => {
     render(
-        <Provider store={store}>
-            <MemoryRouter>
-                <Home />
-            </MemoryRouter>
-        </Provider>
+        <MemoryRouter>
+            <Home />
+        </MemoryRouter>,
+        {
+            initialState: {
+                userStatus: { userLoggedIn: true, username: "Username" }
+            }
+        }
     );
     screen.debug();
+
+    expect(
+        screen.getByRole("heading", { name: "Welcome Username" })
+    ).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "main image" })).toBeInTheDocument();
 });

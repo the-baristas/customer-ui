@@ -4,15 +4,15 @@ import { Provider } from "react-redux";
 import { createStore } from "redux";
 import rootReducer from "./redux/RootReducer";
 
-const render = function render(
+const reduxRender = (
     ui,
     {
         initialState,
         store = createStore(rootReducer, initialState),
         ...renderOptions
     } = {}
-) {
-    const Wrapper = function ({ children }) {
+) => {
+    const Wrapper = ({ children }) => {
         return <Provider store={store}>{children}</Provider>;
     };
     return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
@@ -21,4 +21,4 @@ const render = function render(
 // re-export everything
 export * from "@testing-library/react";
 // override render method
-export { render };
+export { reduxRender as render };
