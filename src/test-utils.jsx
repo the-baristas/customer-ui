@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import { createStore } from "redux";
 import rootReducer from "./redux/RootReducer";
 
-const reduxRender = (
+const renderWithRedux = (
     ui,
     {
         initialState,
@@ -21,4 +21,4 @@ const reduxRender = (
 // re-export everything
 export * from "@testing-library/react";
 // override render method
-export { reduxRender as render };
+export { renderWithRedux as render };

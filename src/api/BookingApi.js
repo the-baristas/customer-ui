@@ -51,8 +51,9 @@ export const updateBooking = async ({
             throw new Error(
                 `Response was not successful. Status code: ${response.status}`
             );
+        } else {
+            data = await response.json();
         }
-        data = await response.json();
     } catch (e) {
         throw new Error(
             "There has been a problem with updating the booking:",

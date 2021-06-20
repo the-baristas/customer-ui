@@ -3,7 +3,7 @@ import { MemoryRouter } from "react-router-dom";
 import { render, screen } from "../../test-utils";
 import Home from "./Home";
 
-it("renders", async () => {
+it("renders welcome text if logged in and renders main image", async () => {
     render(
         <MemoryRouter>
             <Home />
