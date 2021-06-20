@@ -83,20 +83,18 @@ const PassengerInfoForm = (props) => {
                             type="text"
                             value={givenName}
                             onChange={handleGivenNameChange}
-                            placeholder="First Name"
                             required
                         ></Form.Control>
                         <Form.Control.Feedback type="invalid">
                             Please provide a valid first name.
                         </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} sm={6}>
+                    <Form.Group as={Col} sm={6} controlId="lastNameForm">
                         <Form.Label>Last Name*</Form.Label>
                         <Form.Control
                             type="text"
                             value={familyName}
                             onChange={handleFamilyNameChange}
-                            placeholder="Last Name"
                             required
                         ></Form.Control>
                         <Form.Control.Feedback type="invalid">
@@ -105,7 +103,7 @@ const PassengerInfoForm = (props) => {
                     </Form.Group>
                 </Form.Row>
                 <Form.Row>
-                    <Form.Group as={Col} sm={6}>
+                    <Form.Group as={Col} sm={6} controlId="dateOfBirthForm">
                         <Form.Label>Date of Birth*</Form.Label>
                         <Form.Control
                             type="date"
@@ -117,7 +115,7 @@ const PassengerInfoForm = (props) => {
                             Please provide a valid date of birth.
                         </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} sm={6}>
+                    <Form.Group as={Col} sm={6} controlId="genderForm">
                         <Form.Label>Gender*</Form.Label>
                         <Form.Control
                             as="select"
@@ -136,7 +134,7 @@ const PassengerInfoForm = (props) => {
                     </Form.Group>
                 </Form.Row>
                 <Form.Row>
-                    <Form.Group as={Col} sm={12}>
+                    <Form.Group as={Col} sm={12} controlId="streetAddressForm">
                         <Form.Label>Street Address*</Form.Label>
                         <Form.Control
                             type="text"
@@ -150,8 +148,10 @@ const PassengerInfoForm = (props) => {
                     </Form.Group>
                 </Form.Row>
                 <Form.Row>
-                    <Form.Group as={Col} sm={5}>
-                        <Form.Label>City*</Form.Label>
+                    <Form.Group as={Col} sm={5} controlId="cityForm">
+                        <Form.Label>
+                            City<span className="asterisk">*</span>
+                        </Form.Label>
                         <Form.Control
                             type="text"
                             value={city}
@@ -162,7 +162,7 @@ const PassengerInfoForm = (props) => {
                             Please provide a city.
                         </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} sm={2}>
+                    <Form.Group as={Col} sm={2} controlId="stateForm">
                         <Form.Label>State*</Form.Label>
                         <Form.Control
                             type="text"
@@ -176,7 +176,7 @@ const PassengerInfoForm = (props) => {
                             Please provide a state.
                         </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group as={Col} sm={5}>
+                    <Form.Group as={Col} sm={5} controlId="zipCodeForm">
                         <Form.Label>ZIP Code*</Form.Label>
                         <Form.Control
                             type="text"

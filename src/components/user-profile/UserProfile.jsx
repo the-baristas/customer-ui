@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getUserByUsername } from '../../services/usersService/UsersService';
-import "./UserProfile.css"
+import "./UserProfile.css";
 
 const UserProfile = () => {
 
@@ -12,7 +12,7 @@ const UserProfile = () => {
 
     useEffect(() => {
         console.log('--------------------------11111111111111---------------------')
-        console.log(getUserByUsername(userStatus.username));
+        console.log(userStatus.username);
         getUserByUsername(userStatus.username)
             .then((res) => {
                 if (!res.ok) {

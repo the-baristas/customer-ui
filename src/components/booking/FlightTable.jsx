@@ -21,10 +21,10 @@ const FlightTable = (props) => {
     }
     const pricePerPassenger = Math.round(props.pricePerPassenger * 100) / 100;
     const taxesPerPassenger = Math.round(props.taxesPerPassenger * 100) / 100;
-    const totalPerPassenger = props.totalPerPassenger;
+    const totalPerPassenger = pricePerPassenger + taxesPerPassenger;
     // TODO: Allow creation of more than 1 passenger at a time.
     const passengerCount = props.passengerCount;
-    const totalPrice = props.totalPrice;
+    const totalPrice = totalPerPassenger * passengerCount;
 
     const departureTime = moment(props.selectedFlight.departureTime).format(
         "MM/DD/YYYY hh:mm"
@@ -50,7 +50,12 @@ const FlightTable = (props) => {
             <Row>
                 <Col xs={12} sm={5} className="border-bottom border-dark p-3">
                     <Row>
-                        <Col xs={6} sm={6} className="text-center p-2">
+                        <Col
+                            xs={6}
+                            sm={6}
+                            id="origin-airport-code"
+                            className="text-center p-2"
+                        >
                             {props.selectedFlight.route.originAirport.iataId}
                         </Col>
                         <Col xs={6} sm={6} className="text-center p-2">
@@ -105,7 +110,12 @@ const FlightTable = (props) => {
                         <Col xs={6} sm={7}>
                             Total per Passenger
                         </Col>
-                        <Col xs={5} sm={5} className="text-right">
+                        <Col
+                            xs={5}
+                            sm={5}
+                            className="text-right"
+                            aria-label="total per passenger"
+                        >
                             ${totalPerPassenger.toFixed(2)}
                         </Col>
                     </Row>

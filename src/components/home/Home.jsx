@@ -39,12 +39,6 @@ const Home = () => {
         layoverCount: 0,
         username: ""
     });
-    const [createdBooking, setCreatedBooking] = useState({
-        id: 0,
-        confirmationCode: "",
-        layoverCount: 0,
-        username: ""
-    });
     const [passengerInfo, setPassengerInfo] = useState({
         id: 0,
         givenName: "",
@@ -57,7 +51,7 @@ const Home = () => {
         zipCode: ""
     });
     const [seatClass, setSeatClass] = useState("");
-    const [pricePerPassenger, setPricePerPassenger] = useState(0);
+    const [pricePerPassengerState, setPricePerPassengerState] = useState(0);
     const [taxesPerPassenger, setTaxesPerPassenger] = useState(0);
     const [passengerCount, setPassengerCount] = useState(1);
     const [totalPerPassenger, setTotalPerPassenger] = useState(0);
@@ -125,11 +119,10 @@ const Home = () => {
                 break;
         }
         const taxesPerPassenger = pricePerPassenger * 0.07;
-        const totalPerPassenger = pricePerPassenger + taxesPerPassenger;
 
-        setPricePerPassenger(pricePerPassenger);
+        setPricePerPassengerState(pricePerPassenger);
         setTaxesPerPassenger(taxesPerPassenger);
-        setTotalPerPassenger(totalPerPassenger);
+        setTotalPerPassenger(pricePerPassenger + taxesPerPassenger);
         // TODO: Allow creation of more than 1 passenger at a time.
         setTotalPrice(totalPerPassenger * passengerCount);
     };
@@ -229,14 +222,12 @@ const Home = () => {
                     layoverCount: bookingToCreate.layoverCount,
                     username: userStatus.username
                 });
-                setCreatedBooking(newBooking);
-                // TODO: Remove.
-                console.log(newBooking);
             } catch (e) {
                 console.error(e);
                 // TODO: Cancel stripe payment.
                 return;
             }
+
             let payment;
             try {
                 payment = await createPayment(clientSecret, newBooking.id);
@@ -246,7 +237,7 @@ const Home = () => {
                 // TODO: Cancel stripe payment.
                 return;
             }
-            console.log(payment);
+
             const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
             let newPassengerInfo;
             try {
@@ -278,6 +269,7 @@ const Home = () => {
                 // TODO: Cancel stripe payment.
                 return;
             }
+
             try {
                 await updateBooking({
                     id: newBooking.id,
@@ -303,11 +295,9 @@ const Home = () => {
         <FlightTable
             selectedFlight={selectedFlight}
             seatClass={seatClass}
-            pricePerPassenger={pricePerPassenger}
+            pricePerPassenger={pricePerPassengerState}
             taxesPerPassenger={taxesPerPassenger}
-            totalPerPassenger={totalPerPassenger}
             passengerCount={passengerCount}
-            totalPrice={totalPrice}
         />
     );
     const promise = loadStripe(
