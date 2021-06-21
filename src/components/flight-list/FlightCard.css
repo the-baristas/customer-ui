@@ -15,7 +15,7 @@
 }
 
 .flight-card{
-    width: 40%;
+    width: 50%;
     margin: 0px;
     text-align: center;
     align-items: center;
@@ -24,7 +24,16 @@
     position: relative;
 }
 
+@media only screen and (max-width: 768px) {
+
+    .flight-card {
+        width: 80%;
+    }
+
+}
+
 .book-button{
     background-color: #c46329 !important;
     border-color: #c46329 !important;
+    width: 80%;
 }

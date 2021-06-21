@@ -1,11 +1,11 @@
+import moment from 'moment';
 import React from 'react';
 import { Card } from 'react-bootstrap';
-import moment from 'moment';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
-import './FlightCard.css';
 import SeatClass from "../booking/SeatClass";
+import './FlightCard.css';
 
 const FlightCard = (props) => {
     const handleClick = (e, seatClass) => {
@@ -28,6 +28,7 @@ const FlightCard = (props) => {
             </ListGroup>
             </Card.Body>
             </Card>
+
         </div>
     );
 }

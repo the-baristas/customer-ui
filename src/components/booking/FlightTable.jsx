@@ -19,9 +19,10 @@ const FlightTable = (props) => {
             // TODO: Go to error page.
             break;
     }
-    const pricePerPassenger = Math.round(props.pricePerPassenger * 100) / 100;
-    const taxesPerPassenger = Math.round(props.taxesPerPassenger * 100) / 100;
-    const totalPerPassenger = pricePerPassenger + taxesPerPassenger;
+    // TODO: remove
+    // const pricePerPassenger = Math.round(props.pricePerPassenger * 100) / 100;
+    // const taxesPerPassenger = Math.round(props.taxesPerPassenger * 100) / 100;
+    const totalPerPassenger = props.pricePerPassenger + props.taxesPerPassenger;
     // TODO: Allow creation of more than 1 passenger at a time.
     const passengerCount = props.passengerCount;
     const totalPrice = totalPerPassenger * passengerCount;
@@ -95,7 +96,7 @@ const FlightTable = (props) => {
                             Price per Passenger
                         </Col>
                         <Col xs={5} sm={5} className="text-right">
-                            ${pricePerPassenger.toFixed(2)}
+                            ${props.pricePerPassenger.toFixed(2)}
                         </Col>
                     </Row>
                     <Row className="p-2">
@@ -103,7 +104,7 @@ const FlightTable = (props) => {
                             Taxes per Passenger
                         </Col>
                         <Col xs={5} sm={5} className="text-right">
-                            ${taxesPerPassenger.toFixed(2)}
+                            ${props.taxesPerPassenger.toFixed(2)}
                         </Col>
                     </Row>
                     <Row className="p-2">

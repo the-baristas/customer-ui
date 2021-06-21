@@ -2,3 +2,42 @@
     align-items: center;
     justify-content: center;
   }
+
+  .sort-by-container{
+    margin-left: 10%;
+    float: left;
+  }
+
+  .filter-container{
+    margin-right: 10%;
+    width: 50%;
+    float: right;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pagination-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pagination-container a:link {
+    color: #c46329;
+  }
+
+  span.page-link {
+    background-color: #c46329 !important;
+    border-color: #c46329 !important;
+  }
+
+
+
+
+  #filter-label{
+    color: #c46329 !important;
+    font-size: .8em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }

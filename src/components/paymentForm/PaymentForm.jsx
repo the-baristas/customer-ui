@@ -30,7 +30,10 @@ const PaymentForm = (props) => {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ amount: props.totalPrice, currency })
+                    body: JSON.stringify({
+                        amount: props.totalDollars * 100,
+                        currency
+                    })
                 }
             )
             .then((res) => {
@@ -48,7 +51,7 @@ const PaymentForm = (props) => {
                 );
                 history.push("/");
             });
-    }, []);
+    });
 
     const cardStyle = {
         style: {
