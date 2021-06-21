@@ -132,7 +132,6 @@ const Home = () => {
         setTotalPerPassenger(totalPerPassenger);
         // TODO: Allow creation of more than 1 passenger at a time.
         setTotalPrice(totalPerPassenger * passengerCount);
-        console.log(totalPerPassenger)
     };
 
     const handlePassengerInfoSubmit = (passengerInfo) => {

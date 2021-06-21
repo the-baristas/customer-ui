@@ -51,7 +51,7 @@ const PaymentForm = (props) => {
                 );
                 history.push("/");
             });
-    });
+    }, [history, props.totalDollars]);
 
     const cardStyle = {
         style: {
