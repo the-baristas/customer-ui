@@ -51,9 +51,8 @@ export const updateBooking = async ({
             throw new Error(
                 `Response was not successful. Status code: ${response.status}`
             );
-        } else {
-            data = await response.json();
         }
+        data = await response.json();
     } catch (e) {
         throw new Error(
             "There has been a problem with updating the booking:",
@@ -77,4 +76,20 @@ export const deleteBooking = async (id) => {
     } catch (e) {
         console.error("There has been a problem with deleting the booking:", e);
     }
+};
+
+export const getBookingsByUsername = async (username, index, size) => {
+    const url =
+        `${process.env.REACT_APP_BOOKING_SERVICE_URL}/bookings/username/` +
+        username +
+        `?index=${index}&size=${size}`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+    });
+    const data = await response.json();
+    if (data.error) {
+        throw new Error(data.error);
+    }
+    return data;
 };
