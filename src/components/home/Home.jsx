@@ -108,7 +108,7 @@ const Home = () => {
         let theFilter = filter;
 
         fetch(
-            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${event.target.value}`,
+            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${event.target.value}`,
             {
                 method: "POST",
                 headers: {
@@ -129,6 +129,7 @@ const Home = () => {
             .then((data) => {
                 console.log(data);
                 setFlights(data.content);
+                setFlightPage(data);
             })
             .catch((error) => {
                 console.log(error);
@@ -146,8 +147,9 @@ const Home = () => {
         let theMins = '00';
         let theFilter = event.target.value;
 
+
         fetch(
-            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}`,
+            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${sortBy}`,
             {
                 method: "POST",
                 headers: {
@@ -168,6 +170,7 @@ const Home = () => {
             .then((data) => {
                 console.log(data);
                 setFlights(data.content);
+                setFlightPage(data);
             })
             .catch((error) => {
                 console.log(error);
@@ -198,6 +201,7 @@ const Home = () => {
             let theHours = '00';
             let theMins = '00';
             let theFilter = "all";
+
 
             fetch(
                 `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
@@ -237,9 +241,10 @@ const Home = () => {
         let theHours = '00';
         let theMins = '00';
         let theFilter = filter;
+        setFlightPage(newPage);
 
         fetch(
-            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=economyPrice`,
+            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
             {
                 method: "POST",
                 headers: {
@@ -249,7 +254,7 @@ const Home = () => {
                 body: JSON.stringify({
                     month: theMonth,
                     date: theDate,
-                    year: theYear,
+                    year: theYear, 
                     hours: theHours,
                     mins: theMins,
                     filter: theFilter
@@ -319,7 +324,7 @@ const Home = () => {
             {userStatus.userLoggedIn && <h1>Welcome {userStatus.username}</h1>}
             <Switch>
                 <Route exact path={path}>
-                    <Image src={mainImage} fluid />
+                    <Image src={mainImage} className="img-bg" />
                     <FlightSearch
                         onFlightSearch={handleFlightSearch}
                         sortBy={sortBy}

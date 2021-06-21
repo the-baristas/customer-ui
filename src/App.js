@@ -14,6 +14,7 @@ import RegistrationForm from "./components/RegistrationForm/RegistrationForm";
 import store from "./redux/store";
 
 function App() {
+
     return (
         <Provider store={store}>
             <Router>

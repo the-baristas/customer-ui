@@ -54,3 +54,23 @@ code {
   border: 1px solid black;
   display: block;
 } */ 
+
+.img-bg{
+  width: 100%;
+  height: 90vh;
+  object-fit: cover;
+}
+
+@media only screen and (max-width: 840px) {
+  
+  .img-bg{
+    width: 160%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  
+  .img-bg{
+    width: 180%;
+  }
+}
