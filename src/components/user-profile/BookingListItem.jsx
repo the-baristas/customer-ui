@@ -20,8 +20,8 @@ const BookingListItem = (props) => {
     }
 
     const passengers = booking.passengers.map((passenger) => (
-        <p key={passenger.id} style={{color:'gray'}}>-{passenger.givenName} {passenger.familyName}
-            &nbsp;({passenger.seatClass} class)</p>
+        <div key={passenger.id} style={{color:'gray'}}>-{passenger.givenName} {passenger.familyName}
+            &nbsp;({passenger.seatClass} class)</div>
     ));
 
     if(booking.flights.length === 0){
@@ -37,8 +37,8 @@ const BookingListItem = (props) => {
             <h5> Total Price: ${booking.totalPrice}</h5>
             
             <Grid data-testid="flightTimes" container spacing={3}>
-                <Grid item xs={6}><h5>Depart:&nbsp;</h5><p>{booking.flights[0].departureTime.replace('T', ' ')}</p></Grid>
-                <Grid item xs={6}><h5>Arrival:&nbsp;</h5><p>{booking.flights[0].arrivalTime.replace('T', ' ')}</p></Grid>
+                <Grid item xs={6}><h5>Depart:&nbsp;</h5>{booking.flights[0].departureTime.replace('T', ' ')}</Grid>
+                <Grid item xs={6}><h5>Arrival:&nbsp;</h5>{booking.flights[0].arrivalTime.replace('T', ' ')}</Grid>
             </Grid>
             
             <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
@@ -50,9 +50,9 @@ const BookingListItem = (props) => {
                 <Typography className='heading'>All Passengers</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Typography data-testid="passengersList">
+                    <div data-testid="passengersList">
                         {passengers}
-                    </Typography>
+                    </div>
                 </AccordionDetails>
             </Accordion>
         </Paper>

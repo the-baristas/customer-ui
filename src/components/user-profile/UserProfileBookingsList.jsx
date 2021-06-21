@@ -63,6 +63,7 @@ const UserProfileBookingsList = () => {
                     <Pagination count={currentPage.totalPages} page={page} onChange={handlePageChange} />
                 </div>
             </div>}
+        {infoRetrievalSuccessful && bookingList.length===0 && <h4>You have not booked any flights.</h4>}
     </div> );
 }
  
