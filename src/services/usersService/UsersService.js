@@ -9,6 +9,15 @@ export const registerUser = async (user) =>
     })
 }
 
+export const updateUser = async (userId, user) =>
+{
+    return fetch(process.env.REACT_APP_USER_SERVICE_URL + '/users/' + userId, {
+        method: 'PUT',
+        headers: { "Content-Type": "application/json","Authorization": getToken()},
+        body: JSON.stringify(user)    
+    })
+}
+
 export const getUserByUsername = async (username) =>
 {
     return fetch(process.env.REACT_APP_USER_SERVICE_URL + '/users/username/' + username, {
