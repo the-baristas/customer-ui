@@ -3,6 +3,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Image } from "react-bootstrap";
+import { trackPromise } from "react-promise-tracker";
 import { useSelector } from "react-redux";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -242,8 +243,52 @@ const Home = () => {
             let theMins = "00";
             let theFilter = "all";
 
+            trackPromise(
+                fetch(
+                    `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization:
+                                localStorage.getItem("utopiaCustomerKey")
+                        },
+                        body: JSON.stringify({
+                            month: theMonth,
+                            date: theDate,
+                            year: theYear,
+                            hours: theHours,
+                            mins: theMins,
+                            filter: theFilter
+                        })
+                    }
+                )
+                    .then((resp) => resp.json())
+                    .then((data) => {
+                        setFlights(data.content);
+                        setFlightPage(data);
+                        history.push("/booking/search-results");
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        alert("No flights found, try again!");
+                    })
+            );
+        }
+    }
+
+    function handlePageChange(newPage) {
+        let theMonth = date.getMonth() + 1;
+        let theDate = date.getDate();
+        let theYear = date.getFullYear();
+        let theHours = "00";
+        let theMins = "00";
+        let theFilter = filter;
+        setFlightPage(newPage);
+
+        trackPromise(
             fetch(
-                `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
+                `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
                 {
                     method: "POST",
                     headers: {
@@ -264,52 +309,13 @@ const Home = () => {
                 .then((data) => {
                     setFlights(data.content);
                     setFlightPage(data);
-                    history.push("/booking/search-results");
+                    console.log(data);
                 })
                 .catch((error) => {
                     console.log(error);
                     alert("No flights found, try again!");
-                });
-        }
-    }
-
-    function handlePageChange(newPage) {
-        let theMonth = date.getMonth() + 1;
-        let theDate = date.getDate();
-        let theYear = date.getFullYear();
-        let theHours = "00";
-        let theMins = "00";
-        let theFilter = filter;
-        setFlightPage(newPage);
-
-        fetch(
-            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: localStorage.getItem("utopiaCustomerKey")
-                },
-                body: JSON.stringify({
-                    month: theMonth,
-                    date: theDate,
-                    year: theYear,
-                    hours: theHours,
-                    mins: theMins,
-                    filter: theFilter
                 })
-            }
-        )
-            .then((resp) => resp.json())
-            .then((data) => {
-                setFlights(data.content);
-                setFlightPage(data);
-                console.log(data);
-            })
-            .catch((error) => {
-                console.log(error);
-                alert("No flights found, try again!");
-            });
+        );
     }
 
     const handlePaymentCreation = (clientSecret) => {

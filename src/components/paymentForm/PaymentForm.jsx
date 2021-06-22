@@ -1,8 +1,6 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { createPayment } from "../../services/paymentService/PaymentService";
 import "./PaymentForm.css";
 
 const PaymentForm = (props) => {
@@ -11,11 +9,10 @@ const PaymentForm = (props) => {
     const [processing, setProcessing] = useState("");
     const [disabled, setDisabled] = useState(true);
     const [clientSecret, setClientSecret] = useState("");
+
     const stripe = useStripe();
     const elements = useElements();
-
     const history = useHistory();
-    const userLoggedIn = useSelector((state) => state.userStatus.userLoggedIn);
 
     const currency = "usd";
 
