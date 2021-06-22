@@ -52,7 +52,6 @@ const FlightList = (props) => {
                 </Container>
 
                 <div className='pagination'>
-                    <Typography data-testid='page'>Page: {currentPage + 1}</Typography>
                     <Pagination count={props.flightPage.totalPages} page={currentPage + 1} onChange={handleClick} />
                 </div>
 
@@ -60,7 +59,6 @@ const FlightList = (props) => {
                 <br />
 
                 <div className='pagination'>
-                    <Typography data-testid='page'>Page: {currentPage + 1}</Typography>
                     <Pagination count={props.flightPage.totalPages} page={currentPage + 1} onChange={handleClick} />
                 </div>
 
