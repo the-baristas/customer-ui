@@ -1,7 +1,5 @@
+import { render } from "@testing-library/react";
 import React from 'react';
-import {render, fireEvent, screen, within, waitFor, waitForElementToBeRemoved} from "@testing-library/react";
-import { Provider } from "react-redux";
-import store from "../../redux/store";
 import BookingListItem from "./BookingListItem";
 
 const booking = {

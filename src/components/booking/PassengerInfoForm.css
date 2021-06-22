@@ -1,5 +1,7 @@
 .passenger-info-form {
-    padding: 1.5em;
-    border-radius: 1em;
-    /* width: 80%; */
+    width: 100%;
+}
+
+span.asterisk {
+    color: red;
 }

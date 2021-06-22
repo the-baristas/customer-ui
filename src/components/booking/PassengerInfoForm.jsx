@@ -1,32 +1,39 @@
+import PropTypes from "prop-types";
 import React, { useState } from "react";
+import { Col } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import PropTypes from "prop-types";
 import "./PassengerInfoForm.css";
 
 const PassengerInfoForm = (props) => {
-    const [givenName, setGivenName] = useState();
-    const [familyName, setFamilyName] = useState();
-    const [dateOfBirth, setDateOfBirth] = useState();
+    const [validated, setValidated] = useState(false);
+    const [givenName, setGivenName] = useState("");
+    const [familyName, setFamilyName] = useState("");
+    const [dateOfBirth, setDateOfBirth] = useState("");
     const [gender, setGender] = useState("");
-    const [streetAddress, setStreetAddress] = useState();
-    const [city, setCity] = useState();
-    const [state, setState] = useState();
-    const [zipCode, setZipCode] = useState();
-    const genderSelectElement = React.useRef(null);
+    const [streetAddress, setStreetAddress] = useState("");
+    const [city, setCity] = useState("");
+    const [state, setState] = useState("");
+    const [zipCode, setZipCode] = useState("");
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        props.onPassengerInfoSubmit({
-            givenName,
-            familyName,
-            dateOfBirth,
-            gender,
-            streetAddress,
-            city,
-            state,
-            zipCode
-        });
+        const form = e.currentTarget;
+        if (form.checkValidity() === true) {
+            props.onPassengerInfoSubmit({
+                givenName,
+                familyName,
+                dateOfBirth,
+                gender,
+                streetAddress,
+                city,
+                state,
+                zipCode
+            });
+        } else {
+            e.preventDefault();
+            e.stopPropagation();
+            setValidated(true);
+        }
     };
 
     const handleGivenNameChange = (event) => {
@@ -54,7 +61,7 @@ const PassengerInfoForm = (props) => {
     };
 
     const handleStateChange = (event) => {
-        setState(event.target.value);
+        setState(event.target.value.toUpperCase());
     };
 
     const handleZipCodeChange = (event) => {
@@ -62,51 +69,140 @@ const PassengerInfoForm = (props) => {
     };
 
     return (
-        <Form className="passenger-info-form" onSubmit={handleSubmit}>
-            <Form.Group>
-                <Form.Label>First Name</Form.Label>
-                <Form.Control onChange={handleGivenNameChange}></Form.Control>
-
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control onChange={handleFamilyNameChange}></Form.Control>
-
-                <Form.Label>Date of Birth</Form.Label>
-                <Form.Control
-                    type="date"
-                    onChange={handleDateOfBirthChange}
-                ></Form.Control>
-
-                <Form.Label>Gender</Form.Label>
-                <Form.Control as="select" onChange={handleGenderChange}>
-                    <option value="">Select One</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                </Form.Control>
-
-                <Form.Label>Street Address</Form.Label>
-                <Form.Control
-                    onChange={handleStreetAddressChange}
-                ></Form.Control>
-
-                <Form.Label>City</Form.Label>
-                <Form.Control onChange={handleCityChange}></Form.Control>
-
-                <Form.Label>State</Form.Label>
-                <Form.Control onChange={handleStateChange}></Form.Control>
-
-                <Form.Label>ZIP Code</Form.Label>
-                <Form.Control onChange={handleZipCodeChange}></Form.Control>
+        <div>
+            <Form
+                noValidate
+                validated={validated}
+                onSubmit={handleSubmit}
+                className="passenger-info-form"
+            >
+                <Form.Row>
+                    <Form.Group as={Col} sm={6} controlId="firstNameForm">
+                        <Form.Label>First Name*</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={givenName}
+                            onChange={handleGivenNameChange}
+                            required
+                        ></Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                            Please provide a valid first name.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group as={Col} sm={6} controlId="lastNameForm">
+                        <Form.Label>Last Name*</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={familyName}
+                            onChange={handleFamilyNameChange}
+                            required
+                        ></Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                            Please provide a valid last name.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                    <Form.Group as={Col} sm={6} controlId="dateOfBirthForm">
+                        <Form.Label>Date of Birth*</Form.Label>
+                        <Form.Control
+                            type="date"
+                            value={dateOfBirth}
+                            onChange={handleDateOfBirthChange}
+                            required
+                        ></Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                            Please provide a valid date of birth.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group as={Col} sm={6} controlId="genderForm">
+                        <Form.Label>Gender*</Form.Label>
+                        <Form.Control
+                            as="select"
+                            value={gender}
+                            onChange={handleGenderChange}
+                            required
+                        >
+                            <option value="">Select One</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                            Please provide a gender.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                    <Form.Group as={Col} sm={12} controlId="streetAddressForm">
+                        <Form.Label>Street Address*</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={streetAddress}
+                            onChange={handleStreetAddressChange}
+                            required
+                        ></Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                            Please provide a street address.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                    <Form.Group as={Col} sm={5} controlId="cityForm">
+                        <Form.Label>
+                            City<span className="asterisk">*</span>
+                        </Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={city}
+                            onChange={handleCityChange}
+                            required
+                        ></Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                            Please provide a city.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group as={Col} sm={2} controlId="stateForm">
+                        <Form.Label>State*</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={state}
+                            onChange={handleStateChange}
+                            pattern="(A[LKSZR])|(C[AOT])|(D[EC])|(F[ML])|(G[AU])|(HI)|(I[DLNA])|(K[SY])|(LA)|(M[EHDAINSOT])|(N[EVHJMYCD])|(MP)|(O[HKR])|(P[WAR])|(RI)|(S[CD])|(T[NX])|(UT)|(V[TIA])|(W[AVIY])"
+                            maxLength="2"
+                            required
+                        ></Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                            Please provide a state.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group as={Col} sm={5} controlId="zipCodeForm">
+                        <Form.Label>ZIP Code*</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={zipCode}
+                            onChange={handleZipCodeChange}
+                            pattern="^[0-9]{5}(?:-[0-9]{4})?$"
+                            maxLength="5"
+                            required
+                        ></Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                            Please provide a ZIP code.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                </Form.Row>
                 <Button variant="primary" type="submit">
                     Continue
                 </Button>
-            </Form.Group>
-        </Form>
+            </Form>
+        </div>
     );
 };
 
 PassengerInfoForm.propTypes = {
     givenName: PropTypes.string,
-    familyName: PropTypes.string
+    familyName: PropTypes.string,
+    validated: PropTypes.bool
 };
 
 export default PassengerInfoForm;

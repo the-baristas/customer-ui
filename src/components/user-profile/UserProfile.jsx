@@ -35,6 +35,7 @@ const UserProfile = () => {
         getUserProfileInfo();
     }, [])
 
+
     const getUserProfileInfo = () => {
         getUserByUsername(userStatus.username)
         .then((res) => {
