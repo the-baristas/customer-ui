@@ -4,8 +4,11 @@ import React from "react";
 import { Provider } from "react-redux";
 import store from "../../redux/store";
 import * as usersService from "../../services/usersService/UsersService";
-import { getUserByUsername } from "../../services/usersService/UsersService";
 import UserProfile from "./UserProfile";
+
+let user = { userId: 1, givenName: "First", familyName: "Last",
+            username: "username", email: "email@email.com", 
+            phone: "8051112222", role: "ROLE_CUSTOMER", active: true }
 
 describe("UserProfile", () => {
     it("test profile loads", async () => {
@@ -127,7 +130,7 @@ describe("UserProfile", () => {
         updateUserMock.mockClear();
     });
 
-    it("test update button makes fetch request; error response with generic message", async () => {
+    it("test update button makes fetch request; error responds with generic message", async () => {
         window.alert = jest.fn();
         const getUserMock = jest.spyOn(usersService, "getUserByUsername");
         getUserMock.mockResolvedValue({
