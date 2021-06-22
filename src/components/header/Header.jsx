@@ -20,11 +20,6 @@ const Header = () => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto">
-                        <Nav.Link id="nav-links" href="/bookings">Manage Trips</Nav.Link>
-                        <Nav.Link id="nav-links" href="/check-in">Check-In</Nav.Link>
-                        <Nav.Link id="nav-links" href="/flight-status">Flight Status</Nav.Link>
-                        <Nav.Link id="nav-links" href="/travel-info">Travel Information</Nav.Link>
-                        <Nav.Link id="nav-links" href="/deals">Deals</Nav.Link>
                         </Nav>
                         { !userLoggedIn && <FontAwesomeIcon icon={faUser} /> } { !userLoggedIn && <Nav.Link data-testid="loginButton" id="nav-links" href="/login">Login</Nav.Link> } 
                         {!userLoggedIn &&<Nav.Link id="nav-links" href="/register">Register</Nav.Link> }
