@@ -174,7 +174,7 @@ const Home = () => {
                 setFlightPage(data);
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
                 alert("No flights found, try again!");
             });
     }
@@ -209,12 +209,11 @@ const Home = () => {
         )
             .then((resp) => resp.json())
             .then((data) => {
-                console.log(data);
                 setFlights(data.content);
                 setFlightPage(data);
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
                 alert("No flights found, try again!");
             });
     }
@@ -270,7 +269,7 @@ const Home = () => {
                         history.push("/booking/search-results");
                     })
                     .catch((error) => {
-                        console.log(error);
+                        console.error(error);
                         alert("No flights found, try again!");
                     })
             );
@@ -309,10 +308,9 @@ const Home = () => {
                 .then((data) => {
                     setFlights(data.content);
                     setFlightPage(data);
-                    console.log(data);
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.error(error);
                     alert("No flights found, try again!");
                 })
         );
@@ -420,7 +418,11 @@ const Home = () => {
             {userStatus.userLoggedIn && <h1>Welcome {userStatus.username}</h1>}
             <Switch>
                 <Route exact path={path}>
-                    <Image src={mainImage} className="img-bg" />
+                    <Image
+                        src={mainImage}
+                        className="img-bg"
+                        aria-label="main image"
+                    />
                     <FlightSearch
                         onFlightSearch={handleFlightSearch}
                         sortBy={sortBy}

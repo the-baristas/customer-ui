@@ -67,7 +67,6 @@ const UserProfile = () => {
         let responseOk = true;
         updateUser(user.userId, updatedUser)
         .then(response => {
-            console.log(response)
             responseOk = response.ok;
             if(responseOk){
                 setUpdateIsPending(false);
@@ -109,13 +108,11 @@ const UserProfile = () => {
 
     const handleEdit = () => {
         setUpdateFormDisabled(false);
-        console.log("edit")
     }
 
     const handleCancel = () => {
         setUpdateFormDisabled(true);
         setInitialFormValues(user);
-        console.log("cancel")
     }
 
 

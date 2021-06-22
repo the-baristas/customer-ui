@@ -76,13 +76,23 @@ export const searchPassengers = async (searchTerm, index, size) => {
     const url =
         `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers/search?` +
         `term=${searchTerm}&index=${index}&size=${size}`;
-    const response = await fetch(url, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-    });
-    const data = await response.json();
-    if (data.error) {
-        throw new Error(data.error);
+    let data;
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        if (response.ok === false) {
+            throw new Error(
+                `Response was unsuccessful. Status code: ${response.status}`
+            );
+        }
+        data = await response.json();
+    } catch (e) {
+        console.error(
+            "There has been a problem with searching for passengers:",
+            e
+        );
     }
     return data;
 };
