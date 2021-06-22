@@ -1,0 +1,39 @@
+.user-profile-component{
+    width: 65%;
+    margin: 0 auto;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-profile-title{
+    width: 100%;
+    background-color:rgb(241, 241, 241);
+    margin: 0 auto;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    display: flex;
+}
+
+.user-profile-form{
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+}
+
+.user-profile-item{
+    padding: 10px;
+
+}
+
+label{
+    align-items: left;
+    justify-content: left;
+    text-align: left;
+}

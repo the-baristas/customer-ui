@@ -1,12 +1,13 @@
+import moment from 'moment';
 import React from 'react';
 import { Card } from 'react-bootstrap';
-import moment from 'moment';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import SeatClass from "../booking/SeatClass";
 import './FlightCard.css';
 import Pagination from 'react-bootstrap/Pagination';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';

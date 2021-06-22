@@ -1,8 +1,6 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { createPayment } from "../../services/paymentService/PaymentService";
 import "./PaymentForm.css";
 
 const PaymentForm = (props) => {
@@ -11,11 +9,10 @@ const PaymentForm = (props) => {
     const [processing, setProcessing] = useState("");
     const [disabled, setDisabled] = useState(true);
     const [clientSecret, setClientSecret] = useState("");
+
     const stripe = useStripe();
     const elements = useElements();
-
     const history = useHistory();
-    const userLoggedIn = useSelector((state) => state.userStatus.userLoggedIn);
 
     const currency = "usd";
 
@@ -30,7 +27,10 @@ const PaymentForm = (props) => {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ amount: props.totalPrice, currency })
+                    body: JSON.stringify({
+                        amount: props.totalDollars * 100,
+                        currency
+                    })
                 }
             )
             .then((res) => {
@@ -48,7 +48,7 @@ const PaymentForm = (props) => {
                 );
                 history.push("/");
             });
-    }, []);
+    }, [history, props.totalDollars]);
 
     const cardStyle = {
         style: {
@@ -87,26 +87,12 @@ const PaymentForm = (props) => {
             setError(`Payment failed ${payload.error.message}`);
             setProcessing(false);
         } else {
-            createPayment(clientSecret, props.bookingId)
-                .then((res) => {
-                    if (!res.ok) {
-                        throw Error(res.status);
-                    } else {
-                        alert("Thank you for your purchase.");
-                        setError(null);
-                        setProcessing(false);
-                        setSucceeded(true);
+            alert("Thank you for your purchase.");
+            setError(null);
+            setProcessing(false);
+            setSucceeded(true);
 
-                        props.onPaymentCreation();
-                    }
-                })
-                .catch((error) => {
-                    setError(
-                        "There was a problem while processing your payment. Please try again later."
-                    );
-                    setProcessing(false);
-                    return;
-                });
+            props.onPaymentCreation(clientSecret);
         }
     };
 

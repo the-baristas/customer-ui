@@ -3,13 +3,23 @@ import { loadStripe } from "@stripe/stripe-js";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Image } from "react-bootstrap";
+import { trackPromise } from "react-promise-tracker";
 import { useSelector } from "react-redux";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { createBooking } from "../../api/BookingApi";
-import { createPassenger } from "../../api/PassengerApi";
+import {
+    createBooking,
+    deleteBooking,
+    updateBooking
+} from "../../api/BookingApi";
+import { createPassenger, deletePassenger } from "../../api/PassengerApi";
+import {
+    createPayment,
+    deletePayment
+} from "../../services/paymentService/PaymentService";
 import FlightTable from "../booking/FlightTable";
 import PassengerInfoForm from "../booking/PassengerInfoForm";
+import SeatClass from "../booking/SeatClass";
 import FlightCard from "../flight-list/FlightCard";
 import FlightList from "../flight-list/FlightList";
 import FlightSearch from "../flight-search/FlightSearch";
@@ -28,12 +38,13 @@ const Home = () => {
 
     // States
 
-    const [booking, setBooking] = useState({
+    const [bookingToCreate, setBookingToCreate] = useState({
         confirmationCode: "",
         layoverCount: 0,
         username: ""
     });
     const [passengerInfo, setPassengerInfo] = useState({
+        id: 0,
         givenName: "",
         familyName: "",
         dateOfBirth: "",
@@ -44,6 +55,10 @@ const Home = () => {
         zipCode: ""
     });
     const [seatClass, setSeatClass] = useState("");
+    const [pricePerPassengerState, setPricePerPassengerState] = useState(0);
+    const [taxesPerPassenger, setTaxesPerPassenger] = useState(0);
+    const [passengerCount, setPassengerCount] = useState(1);
+    const [totalPerPassenger, setTotalPerPassenger] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [flights, setFlights] = useState([]);
     const [flightPage, setFlightPage] = useState({});
@@ -76,20 +91,48 @@ const Home = () => {
     const handleFlightSelection = (selectedFlight, seatClass) => {
         setSelectedFlight(selectedFlight);
         setSeatClass(seatClass);
-        // TODO: Calculate total price.
-        setTotalPrice(50);
+        calculateTotalPrice(selectedFlight, seatClass);
         (async () => {
-            const confirmationCode = uuidv4();
+            const confirmationCode = uuidv4().toUpperCase();
             const layoverCount = 0;
-            setBooking(
-                await createBooking({
-                    confirmationCode,
-                    layoverCount,
-                    username: userStatus.username
-                })
-            );
+            setBookingToCreate({
+                confirmationCode,
+                layoverCount,
+                username: userStatus.username
+            });
             history.push(`${path}/passenger-info`);
         })();
+    };
+
+    /**
+     * Calculates price per passenger, taxes per passenger, total per passenger,
+     * and total price, and sets them as state.
+     */
+    const calculateTotalPrice = (selectedFlight, seatClass) => {
+        let pricePerPassenger;
+        switch (seatClass) {
+            case SeatClass.ECONOMY:
+                pricePerPassenger = selectedFlight.economyPrice;
+                break;
+            case SeatClass.BUSINESS:
+                pricePerPassenger = selectedFlight.businessPrice;
+                break;
+            case SeatClass.FIRST:
+                pricePerPassenger = selectedFlight.firstPrice;
+                break;
+            default:
+                // TODO: Go to error page.
+                break;
+        }
+        pricePerPassenger = Math.round(pricePerPassenger * 100) / 100;
+        setPricePerPassengerState(pricePerPassenger);
+        const taxesPerPassenger =
+            Math.round(pricePerPassenger * 0.07 * 100) / 100;
+        setTaxesPerPassenger(taxesPerPassenger);
+        const totalPerPassenger = pricePerPassenger + taxesPerPassenger;
+        setTotalPerPassenger(totalPerPassenger);
+        // TODO: Allow creation of more than 1 passenger at a time.
+        setTotalPrice(totalPerPassenger * passengerCount);
     };
 
     const handlePassengerInfoSubmit = (passengerInfo) => {
@@ -103,12 +146,12 @@ const Home = () => {
         let theMonth = date.getMonth() + 1;
         let theDate = date.getDate();
         let theYear = date.getFullYear();
-        let theHours = '00';
-        let theMins = '00';
+        let theHours = "00";
+        let theMins = "00";
         let theFilter = filter;
 
         fetch(
-            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${event.target.value}`,
+            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}`,
             {
                 method: "POST",
                 headers: {
@@ -127,12 +170,11 @@ const Home = () => {
         )
             .then((resp) => resp.json())
             .then((data) => {
-                console.log(data);
                 setFlights(data.content);
                 setFlightPage(data);
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
                 alert("No flights found, try again!");
             });
     }
@@ -143,10 +185,9 @@ const Home = () => {
         let theMonth = date.getMonth() + 1;
         let theDate = date.getDate();
         let theYear = date.getFullYear();
-        let theHours = '00';
-        let theMins = '00';
+        let theHours = "00";
+        let theMins = "00";
         let theFilter = event.target.value;
-
 
         fetch(
             `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${sortBy}`,
@@ -168,12 +209,11 @@ const Home = () => {
         )
             .then((resp) => resp.json())
             .then((data) => {
-                console.log(data);
                 setFlights(data.content);
                 setFlightPage(data);
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
                 alert("No flights found, try again!");
             });
     }
@@ -198,13 +238,56 @@ const Home = () => {
             let theMonth = date.getMonth() + 1;
             let theDate = date.getDate();
             let theYear = date.getFullYear();
-            let theHours = '00';
-            let theMins = '00';
+            let theHours = "00";
+            let theMins = "00";
             let theFilter = "all";
 
+            trackPromise(
+                fetch(
+                    `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization:
+                                localStorage.getItem("utopiaCustomerKey")
+                        },
+                        body: JSON.stringify({
+                            month: theMonth,
+                            date: theDate,
+                            year: theYear,
+                            hours: theHours,
+                            mins: theMins,
+                            filter: theFilter
+                        })
+                    }
+                )
+                    .then((resp) => resp.json())
+                    .then((data) => {
+                        setFlights(data.content);
+                        setFlightPage(data);
+                        history.push("/booking/search-results");
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        alert("No flights found, try again!");
+                    })
+            );
+        }
+    }
 
+    function handlePageChange(newPage) {
+        let theMonth = date.getMonth() + 1;
+        let theDate = date.getDate();
+        let theYear = date.getFullYear();
+        let theHours = "00";
+        let theMins = "00";
+        let theFilter = filter;
+        setFlightPage(newPage);
+
+        trackPromise(
             fetch(
-                `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
+                `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
                 {
                     method: "POST",
                     headers: {
@@ -225,60 +308,44 @@ const Home = () => {
                 .then((data) => {
                     setFlights(data.content);
                     setFlightPage(data);
-                    history.push("/booking/search-results");
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.error(error);
                     alert("No flights found, try again!");
-                });
-        }
-    }
-
-    function handlePageChange(newPage) {
-        let theMonth = date.getMonth() + 1;
-        let theDate = date.getDate();
-        let theYear = date.getFullYear();
-        let theHours = '00';
-        let theMins = '00';
-        let theFilter = filter;
-        setFlightPage(newPage);
-
-        fetch(
-            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: localStorage.getItem("utopiaCustomerKey")
-                },
-                body: JSON.stringify({
-                    month: theMonth,
-                    date: theDate,
-                    year: theYear, 
-                    hours: theHours,
-                    mins: theMins,
-                    filter: theFilter
                 })
-            }
-        )
-            .then((resp) => resp.json())
-            .then((data) => {
-                setFlights(data.content);
-                setFlightPage(data);
-                console.log(data);
-            })
-            .catch((error) => {
-                console.log(error);
-                alert("No flights found, try again!");
-            });
+        );
     }
 
-    const handlePaymentCreation = () => {
-        const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
+    const handlePaymentCreation = (clientSecret) => {
         (async () => {
-            setPassengerInfo(
-                await createPassenger({
-                    bookingConfirmationCode: booking.confirmationCode,
+            let newBooking;
+            try {
+                newBooking = await createBooking({
+                    confirmationCode: bookingToCreate.confirmationCode,
+                    layoverCount: bookingToCreate.layoverCount,
+                    username: userStatus.username
+                });
+            } catch (e) {
+                console.error(e);
+                // TODO: Cancel stripe payment.
+                return;
+            }
+
+            let payment;
+            try {
+                payment = await createPayment(clientSecret, newBooking.id);
+            } catch (e) {
+                console.error(e);
+                await deleteBooking(newBooking.id);
+                // TODO: Cancel stripe payment.
+                return;
+            }
+
+            const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
+            let newPassengerInfo;
+            try {
+                newPassengerInfo = await createPassenger({
+                    bookingConfirmationCode: newBooking.confirmationCode,
                     originAirportCode:
                         selectedFlight.route.originAirport.iataId,
                     destinationAirportCode:
@@ -292,21 +359,48 @@ const Home = () => {
                     gender: passengerInfo.gender,
                     address,
                     seatClass: seatClass,
-                    // TODO: Allow user to chhose seat.
+                    // TODO: Allow user to choose seat.
                     seatNumber: 1,
                     // TODO: Create a seat class to check-in group map.
                     checkInGroup: 1
-                })
-            );
+                });
+                setPassengerInfo(newPassengerInfo);
+            } catch (e) {
+                // TODO: Delete payment.
+                await deleteBooking(newBooking.id);
+                // TODO: Cancel stripe payment.
+                return;
+            }
+
+            try {
+                await updateBooking({
+                    id: newBooking.id,
+                    confirmationCode: newBooking.confirmationCode,
+                    layoverCount: newBooking.layoverCount,
+                    totalPrice,
+                    username: newBooking.username
+                });
+                // TODO: Redirect to booking confirmation page.
+                history.push(`${path}`);
+            } catch (e) {
+                await deletePassenger(newPassengerInfo.id);
+                await deletePayment(payment.stripeId);
+                await deleteBooking(newBooking.id);
+                // TODO: Cancel stripe payment.
+            }
         })();
-        //TODO: Should redirect somewhere besides root
-        history.push(`${path}`);
     };
 
     // Elements
 
     const flightTable = (
-        <FlightTable selectedFlight={selectedFlight} seatClass={seatClass} />
+        <FlightTable
+            selectedFlight={selectedFlight}
+            seatClass={seatClass}
+            pricePerPassenger={pricePerPassengerState}
+            taxesPerPassenger={taxesPerPassenger}
+            passengerCount={passengerCount}
+        />
     );
     const promise = loadStripe(
         process.env.REACT_APP_STRIPE_TEST_PUBLISHABLE_KEY
@@ -324,7 +418,11 @@ const Home = () => {
             {userStatus.userLoggedIn && <h1>Welcome {userStatus.username}</h1>}
             <Switch>
                 <Route exact path={path}>
-                    <Image src={mainImage} className="img-bg" />
+                    <Image
+                        src={mainImage}
+                        className="img-bg"
+                        aria-label="main image"
+                    />
                     <FlightSearch
                         onFlightSearch={handleFlightSearch}
                         sortBy={sortBy}
@@ -337,7 +435,6 @@ const Home = () => {
                 </Route>
                 <Route path={`${path}/search-results`}>
                     <FlightList
-                        flights={flights}
                         flightCards={flightCards}
                         flightPage={flightPage}
                         handlePageChange={handlePageChange}
@@ -356,8 +453,7 @@ const Home = () => {
                     {flightTable}
                     <Elements stripe={promise}>
                         <PaymentForm
-                            bookingId={booking.id}
-                            totalPrice={totalPrice}
+                            totalDollars={totalPrice}
                             onPaymentCreation={handlePaymentCreation}
                         />
                     </Elements>

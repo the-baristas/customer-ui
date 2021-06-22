@@ -1,0 +1,8 @@
+.spinner {
+    position: absolute;
+    display: grid;
+    grid-template-rows: 50vh;
+    grid-template-columns: 100vw;
+    top: 20%;
+    left: 50%;
+}
