@@ -1,23 +1,29 @@
-.search-container {
-    background: rgba(255, 255, 255, 0.2);
-    height: 200px;
+body{
+    background-color: #fbf0ea;
     width: 100%;
-    top: 20%;
-    margin: 0 auto;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: visible;
-    z-index: 1;
-    position: absolute;
 }
 
-.flight-search {
-    background: white;
-    width: 45%;
-    padding: 20px;
-    overflow: visible;
+.search-container.container {
+    top: 20%;
+    z-index: 1;
+    position: absolute;
+    display: grid;
+    grid-template-rows: 50vh;
+    grid-template-columns: 100vw;
+}
+
+/* FIXME */
+/* *,
+*::before,
+*::after {
+  box-sizing: content-box; 
+} */
+
+.search-form{
+    background-color: white;
+    width: 50%;
+    justify-self: center;
+    align-self: center;
 }
 
 .prepend-txt {
@@ -27,13 +33,39 @@
     text-transform: uppercase;
 }
 
+.font-awesome{
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
 .date-picker {
-    height: 36px;
     border-style: solid;
     border-radius: 0px 4px 4px 0px;
     border-width: 1px 1px 1px 1px;
     border-color: lightgray;
-    width: 100%;
+    flex: 1 1 auto !important;
+    position: relative;
+    min-width: 0;
+}
+
+.react-date-picker-wrapper{
+    box-sizing: content-box;
+}
+
+.react-datepicker__input-container{
+    width: 250%;
+}
+
+input{
+    margin-bottom: 0px !important;
+}
+
+@media only screen and (max-width: 920px) {
+    
+    .react-datepicker__input-container{
+        width: 100%;
+    }
+
 }
 
 #search-submit {

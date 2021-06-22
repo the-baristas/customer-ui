@@ -40,26 +40,59 @@ export const createPassenger = async ({
         });
         if (response.ok === false) {
             throw new Error(
-                `Response was not successful. Status code: ${response.statusText}`
+                `Response was not successful. Status code: ${response.status}`
             );
         }
         data = await response.json();
     } catch (e) {
-        console.error("There has been a problem with your fetch operation:", e);
-        data = {};
+        throw new Error(
+            "There has been a problem with creating the passenger:",
+            e
+        );
     }
     return data;
 };
 
+export const deletePassenger = async (id) => {
+    const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers/${id}`;
+    try {
+        const response = await fetch(url, {
+            method: "DELETE"
+        });
+        if (response.ok === false) {
+            throw new Error(
+                `Response was not successful. Status code: ${response.status}`
+            );
+        }
+    } catch (e) {
+        console.error(
+            "There has been a problem with deleting the passenger:",
+            e
+        );
+    }
+};
+
 export const searchPassengers = async (searchTerm, index, size) => {
-    const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers/search?`+`term=${searchTerm}&index=${index}&size=${size}`;
-    const response = await fetch(url, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-    });
-    const data = await response.json();
-    if (data.error) {
-        throw new Error(data.error);
+    const url =
+        `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers/search?` +
+        `term=${searchTerm}&index=${index}&size=${size}`;
+    let data;
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        if (response.ok === false) {
+            throw new Error(
+                `Response was unsuccessful. Status code: ${response.status}`
+            );
+        }
+        data = await response.json();
+    } catch (e) {
+        console.error(
+            "There has been a problem with searching for passengers:",
+            e
+        );
     }
     return data;
-}
+};
