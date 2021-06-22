@@ -12,11 +12,12 @@ body{
     grid-template-columns: 100vw;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: content-box; 
+.input-group{
+    margin: 2px;
+    width: 100% !important;
+    flex-wrap: nowrap;
 }
+
 
 .search-form{
     background-color: white;
@@ -32,6 +33,10 @@ body{
     text-transform: uppercase;
 }
 
+.input-group-prepend{
+    height: calc(1.5em + 0.75rem + 2px);
+}
+
 .font-awesome{
     font-size: 0.8em;
     font-weight: 600;
@@ -42,29 +47,12 @@ body{
     border-radius: 0px 4px 4px 0px;
     border-width: 1px 1px 1px 1px;
     border-color: lightgray;
-    flex: 1 1 auto !important;
-    position: relative;
-    min-width: 0;
+    height: calc(1.5em + 0.75rem + 2px);
 }
 
-.react-date-picker-wrapper{
-    box-sizing: content-box;
-}
-
-.react-datepicker__input-container{
-    width: 250%;
-}
-
-input{
-    margin-bottom: 0px !important;
-}
-
-@media only screen and (max-width: 920px) {
-    
-    .react-datepicker__input-container{
-        width: 100%;
-    }
-
+.react-datepicker-wrapper{
+    width: 100%;
+    margin: 0 0 0 0;
 }
 
 #search-submit {

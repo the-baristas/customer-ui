@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./FlightList.css";
 import Pagination from 'react-bootstrap/Pagination';
 import Container from 'react-bootstrap/Container';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 
 const FlightList = (props) => {
 
@@ -58,6 +60,7 @@ const FlightList = (props) => {
                 </select>
                 </Container>
 
+                { /* pagination */}
                 {props.flightPage.totalPages > 5 &&
                 <Container className="pagination-container">
                 <Pagination>
@@ -144,9 +147,10 @@ const FlightList = (props) => {
                 </Container>
                 } 
 
-
+                { /* flights */}
                 {props.flightCards}
                 <br />
+
                 {props.flightPage.totalPages > 5 &&
                 <Container className="pagination-container">
                 <Pagination>
