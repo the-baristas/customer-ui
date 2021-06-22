@@ -7,17 +7,6 @@ import * as usersService from "../../services/usersService/UsersService";
 import { getUserByUsername } from "../../services/usersService/UsersService";
 import UserProfile from "./UserProfile";
 
-let user = {
-    userId: 1,
-    givenName: "First",
-    familyName: "Last",
-    username: "username",
-    email: "email@email.com",
-    phone: "8051112222",
-    role: "ROLE_CUSTOMER",
-    active: true
-};
-
 describe("UserProfile", () => {
     it("test profile loads", async () => {
         const getUserMock = jest.spyOn(usersService, "getUserByUsername");
@@ -138,7 +127,7 @@ describe("UserProfile", () => {
         updateUserMock.mockClear();
     });
 
-    it("test update button makes fetch request; error response with message", async () => {
+    it("test update button makes fetch request; error response with generic message", async () => {
         window.alert = jest.fn();
         const getUserMock = jest.spyOn(usersService, "getUserByUsername");
         getUserMock.mockResolvedValue({
@@ -183,15 +172,9 @@ describe("UserProfile", () => {
         updateUserMock.mockClear();
     });
 
-    it("test update button makes fetch request; error response with message", async () => {
-        const getUserMock = jest.spyOn(usersService, "getUserByUsername");
-        getUserMock.mockResolvedValue({
-            ok: true,
-            status: 200,
-            json: () => {
-                return Promise.resolve(user);
-            }
-        });
+    it("test update button makes fetch request; error response with message from fetch response", async () => {
+        const getUserMock = jest.spyOn(usersService, 'getUserByUsername');
+        getUserMock.mockResolvedValue({ok: true, status: 200, json: () => {return Promise.resolve(user)}})
 
         const updateUserMock = jest.spyOn(usersService, "updateUser");
         updateUserMock.mockResolvedValue({
@@ -224,22 +207,6 @@ describe("UserProfile", () => {
 
         getUserMock.mockClear();
         updateUserMock.mockClear();
-    });
-});
+    })
+})
 
-jest.mock("../../services/usersService/UsersService");
-describe("mocking module", () => {
-    it("renders", async () => {
-        getUserByUsername.mockResolvedValue({
-            ok: true,
-            json: () => Promise.resolve(user)
-        });
-        render(
-            <Provider store={store}>
-                <UserProfile></UserProfile>
-            </Provider>
-        );
-
-        expect(getUserByUsername).toHaveBeenCalledTimes(1);
-    });
-});

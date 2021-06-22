@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import "./FlightList.css";
-import Pagination from 'react-bootstrap/Pagination';
 import Container from 'react-bootstrap/Container';
+import Typography from '@material-ui/core/Typography';
+import Pagination from '@material-ui/lab/Pagination';
 
 const FlightList = (props) => {
 
     // helper function
     function handleClick(event, newPage) {
-        props.handlePageChange(newPage);
+        setCurrentPage(newPage-1);
+        props.handlePageChange(newPage-1);
     }
 
 
@@ -18,17 +20,6 @@ const FlightList = (props) => {
     let active = props.flightPage.number;
 
     let items = [];
-
-        for (let number = 0; number <= props.flightPage.totalPages; number++) {
-        items.push(
-            <Pagination.Item
-                        onClick={(e) => handleClick(e, number)}
-                        key={number} 
-                        active={number === active}>
-            {number + 1}
-            </Pagination.Item>,
-        );
-        }
 
     return (
             <div className="search-results">
@@ -58,181 +49,13 @@ const FlightList = (props) => {
                 </select>
                 </Container>
 
-                {props.flightPage.totalPages > 5 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                {items[currentPage + 1]}
-                <Pagination.Ellipsis />
-                {items[props.flightPage.totalPages - 2]}
-                {items[props.flightPage.totalPages -1 ]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                }
-
-                {props.flightPage.totalPages === 5 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                {items[currentPage + 1]}
-                {items[currentPage + 2]}
-                {items[currentPage + 3]}
-                {items[currentPage + 4]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                }       
-
-                {props.flightPage.totalPages === 4 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                {items[currentPage + 1]}
-                {items[currentPage + 2]}
-                {items[currentPage + 3]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                }  
-
-                {props.flightPage.totalPages === 3 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                {items[currentPage + 1]}
-                {items[currentPage + 2]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                } 
-
-                {props.flightPage.totalPages === 2 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                {items[currentPage + 1]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                } 
-
-                {props.flightPage.totalPages === 1 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                } 
-
-
                 {props.flightCards}
                 <br />
-                {props.flightPage.totalPages > 5 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                {items[currentPage + 1]}
-                <Pagination.Ellipsis />
-                {items[props.flightPage.totalPages - 2]}
-                {items[props.flightPage.totalPages -1 ]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                }
 
-                {props.flightPage.totalPages === 5 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                {items[currentPage + 1]}
-                {items[currentPage + 2]}
-                {items[currentPage + 3]}
-                {items[currentPage + 4]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                }       
-
-                {props.flightPage.totalPages === 4 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                {items[currentPage + 1]}
-                {items[currentPage + 2]}
-                {items[currentPage + 3]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                }  
-
-                {props.flightPage.totalPages === 3 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                {items[currentPage + 1]}
-                {items[currentPage + 2]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                } 
-
-                {props.flightPage.totalPages === 2 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                {items[currentPage + 1]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                } 
-
-                {props.flightPage.totalPages === 1 &&
-                <Container className="pagination-container">
-                <Pagination>
-                <Pagination.First onClick={(e) => handleClick(e, 0)} />
-                <Pagination.Prev onClick={(e) => handleClick(e, active-1)} />
-                {items[currentPage]}
-                <Pagination.Next onClick={(e) => handleClick(e, active+1)} />
-                <Pagination.Last onClick={(e) => handleClick(e, props.flightPage.totalPages-1)} />
-                </Pagination>
-                </Container>
-                } 
-
+                <div className='pagination'>
+                    <Typography data-testid='page'>Page: {currentPage + 1}</Typography>
+                    <Pagination count={props.flightPage.totalPages} page={currentPage + 1} onChange={handleClick} />
+                </div>
 
             </div>
         );

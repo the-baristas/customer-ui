@@ -33,7 +33,8 @@ const UserProfile = () => {
 
     useEffect(() => {
         getUserProfileInfo();
-    }, []);
+    }, [])
+
 
     const getUserProfileInfo = () => {
         getUserByUsername(userStatus.username)
