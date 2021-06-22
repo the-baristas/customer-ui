@@ -21,7 +21,7 @@ const Header = () => {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto">
                         </Nav>
-                        { !userLoggedIn && <FontAwesomeIcon icon={faUser} /> } { !userLoggedIn && <Nav.Link data-testid="loginButton" id="nav-links" href="/login">Login</Nav.Link> } 
+                        { !userLoggedIn && <Nav.Link data-testid="loginButton" id="nav-links" href="/login">Login</Nav.Link> } 
                         {!userLoggedIn &&<Nav.Link id="nav-links" href="/register">Register</Nav.Link> }
                         
             {userLoggedIn &&<Nav.Link id="nav-links" href="/profile">My Account</Nav.Link> }
