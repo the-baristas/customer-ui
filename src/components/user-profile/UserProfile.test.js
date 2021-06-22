@@ -6,74 +6,152 @@ import * as usersService from "../../services/usersService/UsersService";
 import { getUserByUsername } from "../../services/usersService/UsersService";
 import UserProfile from "./UserProfile";
 
-let user = {
-    userId: 1,
-    givenName: "First",
-    familyName: "Last",
-    username: "username",
-    email: "email@email.com",
-    phone: "8051112222",
-    role: "ROLE_CUSTOMER",
-    active: true
-};
+describe("UserProfile", () => {
+    it("test profile loads", async () => {
+        const getUserMock = jest.spyOn(usersService, 'getUserByUsername');
+        getUserMock.mockResolvedValue({ok: true, status: 200, json: () => {return Promise.resolve(user)}})
+    
+        const {getByTestId} = render(<Provider store={store}><UserProfile></UserProfile></Provider>);
+        await waitForElementToBeRemoved( () => getByTestId('loadingProfile') );
+        expect(getUserMock).toHaveBeenCalled();
+        
+        expect(getByTestId("inputGivenName").value).toBe('First');
+        expect(getByTestId("inputFamilyName").value).toBe('Last');
+        expect(getByTestId("inputUsername").value).toBe('username');
+        expect(getByTestId("inputEmail").value).toBe('email@email.com');
+        expect(getByTestId("inputPhone").value).toBe('8051112222');
+    
+        getUserMock.mockRestore();
+    })
 
-it("check profile loads", async () => {
-    const getUserMock = jest.spyOn(usersService, "getUserByUsername");
-    getUserMock.mockResolvedValue({
-        ok: true,
-        status: 200,
-        json: () => {
-            return Promise.resolve(user);
-        }
-    });
+    it("test invalid email and phone number makes error divs display", async () => {
+        const getUserMock = jest.spyOn(usersService, 'getUserByUsername');
+        getUserMock.mockResolvedValue({ok: true, status: 200, json: () => {return Promise.resolve(user)}})
+    
+        const {getByTestId} = render(<Provider store={store}><UserProfile></UserProfile></Provider>);
+        await waitForElementToBeRemoved( () => getByTestId('loadingProfile') );
+        expect(getUserMock).toHaveBeenCalled();
 
-    const { getByTestId } = render(
-        <Provider store={store}>
-            <UserProfile></UserProfile>
-        </Provider>
-    );
-    await waitForElementToBeRemoved(() => getByTestId("loadingProfile"));
-    expect(getUserMock).toHaveBeenCalled();
+        const inputEmail = getByTestId("inputEmail");
+        const inputPhone = getByTestId("inputPhone");
+    
+        fireEvent.change(inputEmail, {target: {value: 'invalidemail'}})
+        fireEvent.change(inputPhone, {target: {value: 'no'}})
+    
+        const errorEmail = getByTestId('divEmailInvalid');
+        const errorPhone = getByTestId('divPhoneInvalid');
+    
+        expect(errorEmail.innerHTML).toContain('valid email');
+        expect(errorPhone.innerHTML).toContain('valid phone');
+        expect(errorEmail.innerHTML).toContain('valid email');
+    })
+    
+    it("test user info failing shows error message", async () => {
+        window.alert = jest.fn();
+        
+        const getUserMock = jest.spyOn(usersService, 'getUserByUsername');
+        getUserMock.mockResolvedValue({ok: false, status: 404})
+    
+        const {getByTestId} = render(<Provider store={store}><UserProfile></UserProfile></Provider>);
+        await waitForElementToBeRemoved( () => getByTestId('loadingProfile') );
+        
+        expect(getUserMock).toHaveBeenCalled();
+        expect(window.alert).toHaveBeenCalled();
+    
+        getUserMock.mockRestore();
+    })
 
-    expect(getByTestId("givenName").innerHTML).toContain(user.givenName);
+    it("test update button makes fetch request; no error", async () => {
+        window.alert = jest.fn();
 
-    expect(getByTestId("phoneNumber").innerHTML).toContain("(805) 111-2222");
+        const getUserMock = jest.spyOn(usersService, 'getUserByUsername');
+        getUserMock.mockResolvedValue({ok: true, status: 200, json: () => {return Promise.resolve(user)}})
 
-    getUserMock.mockRestore();
-});
+        const updateUserMock = jest.spyOn(usersService, 'updateUser');
+        updateUserMock.mockResolvedValue({ok: true, status: 200})
+    
+        const {getByTestId} = render(<Provider store={store}><UserProfile></UserProfile></Provider>);
+        await waitForElementToBeRemoved( () => getByTestId('loadingProfile') );
 
-it("check user info failing shows error message", async () => {
-    window.alert = jest.fn();
+        const error = getByTestId("divError");
+        expect(error.innerHTML).toEqual('');
 
-    const getUserMock = jest.spyOn(usersService, "getUserByUsername");
-    getUserMock.mockResolvedValue({ ok: false, status: 404 });
+        const editButton = getByTestId("editButton");
+        userEvent.click(editButton);
 
-    const { getByTestId } = render(
-        <Provider store={store}>
-            <UserProfile></UserProfile>
-        </Provider>
-    );
-    await waitForElementToBeRemoved(() => getByTestId("loadingProfile"));
+        const form = getByTestId("formRegistration");
+    
+        userEvent.click(
+            getByTestId("formRegistration")
+        )
+        fireEvent.submit(form);
+        await waitForElementToBeRemoved( () => getByTestId('loadingUpdate') );
+        
+        expect(error.innerHTML).toEqual("");
+        expect(window.alert).toHaveBeenCalled();
 
-    expect(getUserMock).toHaveBeenCalled();
-    expect(window.alert).toHaveBeenCalled();
+        getUserMock.mockClear();
+        updateUserMock.mockClear();
+    })
 
-    getUserMock.mockRestore();
-});
+    it("test update button makes fetch request; error response with generic message", async () => {
+        window.alert = jest.fn();
+        const getUserMock = jest.spyOn(usersService, 'getUserByUsername');
+        getUserMock.mockResolvedValue({ok: true, status: 200, json: () => {return Promise.resolve(user)}})
 
-jest.mock("../../services/usersService/UsersService");
-describe("mocking module", () => {
-    it("renders", async () => {
-        getUserByUsername.mockResolvedValue({
-            ok: true,
-            json: () => Promise.resolve(user)
-        });
-        render(
-            <Provider store={store}>
-                <UserProfile></UserProfile>
-            </Provider>
-        );
+        const updateUserMock = jest.spyOn(usersService, 'updateUser');
+        updateUserMock.mockResolvedValue({ok: false, status: 500, json: () => {return Promise.resolve({})}})
+    
+        const {getByTestId} = render(<Provider store={store}><UserProfile></UserProfile></Provider>);
+        await waitForElementToBeRemoved( () => getByTestId('loadingProfile') );
 
-        expect(getUserByUsername).toHaveBeenCalledTimes(1);
-    });
-});
+        const error = getByTestId("divError");
+        expect(error.innerHTML).toEqual('');
+
+        const editButton = getByTestId("editButton");
+        userEvent.click(editButton);
+
+        const form = getByTestId("formRegistration");
+    
+        userEvent.click(
+            getByTestId("formRegistration")
+        )
+        fireEvent.submit(form);
+        await waitForElementToBeRemoved( () => getByTestId('loadingUpdate') );
+        expect(error.innerHTML).toContain("a problem");
+
+        window.alert.mockClear();
+        getUserMock.mockClear();
+        updateUserMock.mockClear();
+    })
+
+    it("test update button makes fetch request; error response with message from fetch response", async () => {
+        const getUserMock = jest.spyOn(usersService, 'getUserByUsername');
+        getUserMock.mockResolvedValue({ok: true, status: 200, json: () => {return Promise.resolve(user)}})
+
+        const updateUserMock = jest.spyOn(usersService, 'updateUser');
+        updateUserMock.mockResolvedValue({ok: false, status: 409, json: () => {return Promise.resolve({message: "Error message"})}})
+    
+        const {getByTestId} = render(<Provider store={store}><UserProfile></UserProfile></Provider>);
+        await waitForElementToBeRemoved( () => getByTestId('loadingProfile') );
+
+        const error = getByTestId("divError");
+        expect(error.innerHTML).toEqual('');
+
+        const editButton = getByTestId("editButton");
+        userEvent.click(editButton);
+
+        const form = getByTestId("formRegistration");
+    
+        userEvent.click(
+            getByTestId("formRegistration")
+        )
+        fireEvent.submit(form);
+        await waitForElementToBeRemoved( () => getByTestId('loadingUpdate') );
+        expect(error.innerHTML).toEqual("Error message");
+
+        getUserMock.mockClear();
+        updateUserMock.mockClear();
+    })
+})
+
