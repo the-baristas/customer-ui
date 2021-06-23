@@ -1,3 +1,4 @@
+import moment from "moment";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Col } from "react-bootstrap";
@@ -109,6 +110,7 @@ const PassengerInfoForm = (props) => {
                             type="date"
                             value={dateOfBirth}
                             onChange={handleDateOfBirthChange}
+                            max={moment(new Date()).format("YYYY-MM-DD")}
                             required
                         ></Form.Control>
                         <Form.Control.Feedback type="invalid">

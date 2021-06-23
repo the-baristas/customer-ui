@@ -70,7 +70,7 @@ const FlightCard = (props) => {
             Economy
             </Row>
             <Row className="book-rc">
-            <Button className="book-button" onClick={(e) => handleClick(e, "economy")}>${props.flight.economyPrice}</Button>
+            <Button className="book-button" onClick={(e) => handleClick(e, SeatClass.ECONOMY)}>${props.flight.economyPrice}</Button>
             </Row>
             </Col>
 
@@ -79,7 +79,7 @@ const FlightCard = (props) => {
             Business
             </Row>
             <Row className="book-rc">
-            <Button className="book-button" onClick={(e) => handleClick(e, "business")}>${props.flight.businessPrice}</Button>
+            <Button className="book-button" onClick={(e) => handleClick(e, SeatClass.BUSINESS)}>${props.flight.businessPrice}</Button>
             </Row>
             </Col>
 
@@ -88,7 +88,7 @@ const FlightCard = (props) => {
             First
             </Row>
             <Row className="book-rc">
-            <Button className="book-button" onClick={(e) => handleClick(e, "first")}>${props.flight.firstPrice}</Button>
+            <Button className="book-button" onClick={(e) => handleClick(e, SeatClass.FIRST)}>${props.flight.firstPrice}</Button>
             </Row>
             </Col>
 </Row>

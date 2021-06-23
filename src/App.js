@@ -10,7 +10,7 @@ import "./App.css";
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
 import LoginForm from "./components/loginForm/LoginForm";
-import RegistrationForm from "./components/RegistrationForm/RegistrationForm";
+import RegistrationForm from "./components/registrationForm/RegistrationForm";
 import UserProfile from "./components/user-profile/UserProfile";
 import store from "./redux/store";
 
