@@ -38,6 +38,25 @@ describe("UserProfile", () => {
         getUserMock.mockRestore();
     });
 
+    it("test user profile load fails shows alert error message", async () => {
+        window.alert = jest.fn();
+
+        const getUserMock = jest.spyOn(usersService, "getUserByUsername");
+        getUserMock.mockResolvedValue({ ok: false, status: 404 });
+
+        const { getByTestId } = render(
+            <Provider store={store}>
+                <UserProfile></UserProfile>
+            </Provider>
+        );
+        await waitForElementToBeRemoved(() => getByTestId("loadingProfile"));
+
+        expect(getUserMock).toHaveBeenCalled();
+        expect(window.alert).toHaveBeenCalled();
+
+        getUserMock.mockRestore();
+    });
+
     it("test invalid email and phone number makes error divs display", async () => {
         const getUserMock = jest.spyOn(usersService, "getUserByUsername");
         getUserMock.mockResolvedValue({
@@ -67,26 +86,6 @@ describe("UserProfile", () => {
 
         expect(errorEmail.innerHTML).toContain("valid email");
         expect(errorPhone.innerHTML).toContain("valid phone");
-        expect(errorEmail.innerHTML).toContain("valid email");
-    });
-
-    it("test user info failing shows error message", async () => {
-        window.alert = jest.fn();
-
-        const getUserMock = jest.spyOn(usersService, "getUserByUsername");
-        getUserMock.mockResolvedValue({ ok: false, status: 404 });
-
-        const { getByTestId } = render(
-            <Provider store={store}>
-                <UserProfile></UserProfile>
-            </Provider>
-        );
-        await waitForElementToBeRemoved(() => getByTestId("loadingProfile"));
-
-        expect(getUserMock).toHaveBeenCalled();
-        expect(window.alert).toHaveBeenCalled();
-
-        getUserMock.mockRestore();
     });
 
     it("test update button makes fetch request; no error", async () => {
