@@ -33,12 +33,4 @@ describe('test suite', () => {
         expect(root.querySelector('#logo').textContent).toBe("UTOPIA");
       });
 
-      it('renders nav links', () => {
-        const root = document.createElement("div");
-    
-        ReactDOM.render(<Header />, root);
-    
-        expect(root.querySelector('#nav-links').textContent).toBe("Manage Trips");
-      });
-
   });

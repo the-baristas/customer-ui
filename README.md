@@ -48,6 +48,13 @@ npm install --save @fortawesome/react-fontawesome
 
 ---
 
+## Writing fetch requests to the APIs with CSRF
+
+In order to make requests to the microservices, requests that modify data (PUT, POST, DELETE) will need an additional header: "X-XSRF-TOKEN". You can get a token by calling getCsrfToken() from utils/Login.js.
+Many requests will also need the current signed-in user's JWT token, which can be gotten by calling getToken() from utils/Login.js 
+
+---
+
 ## Features Added
 
 5/19/2021 (Anthony Sirimarco): Added registration page which makes back end call and creates create a user in the database.
