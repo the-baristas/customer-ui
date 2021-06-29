@@ -190,7 +190,7 @@ const Home = () => {
         let theFilter = event.target.value;
 
         fetch(
-            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${sortBy}`,
+            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${sortBy}`,
             {
                 method: "POST",
                 headers: {
@@ -264,6 +264,7 @@ const Home = () => {
                 )
                     .then((resp) => resp.json())
                     .then((data) => {
+                        
                         setFlights(data.content);
                         setFlightPage(data);
                         history.push("/booking/search-results");
@@ -287,7 +288,7 @@ const Home = () => {
 
         trackPromise(
             fetch(
-                `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
+                `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
                 {
                     method: "POST",
                     headers: {
