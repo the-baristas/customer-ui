@@ -2,32 +2,97 @@ import moment from 'moment';
 import React from 'react';
 import { Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Container from 'react-bootstrap/Container';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import SeatClass from "../booking/SeatClass";
 import './FlightCard.css';
+import Pagination from 'react-bootstrap/Pagination';
+import { faPlane } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const FlightCard = (props) => {
     const handleClick = (e, seatClass) => {
         props.onFlightSelection(props.flight, seatClass);
     };
 
+    const duration = moment.duration(
+        moment(props.flight.arrivalTime).diff(
+            props.flight.departureTime
+        )
+    );
+    const durationHours = Math.floor(duration.asHours());
+    const durationMinutes = duration.minutes();
+
     return(
         <div className="flight-card-component">
-            <Card className="flight-card">
-            <p id="logo">UTOPIA</p>
-            <Card.Body>
-            <Card.Title>{ props.flight.route.originAirport.city } ({ props.flight.route.originAirport.iataId }) - { props.flight.route.destinationAirport.city } ({ props.flight.route.destinationAirport.iataId }) 
-            </Card.Title>
-            <Card.Subtitle className="mb-2 text-muted">Departing: { moment(props.flight.departureTime).format('MMMM Do, YYYY @ h:mm a') }</Card.Subtitle>
-            <br />
-            <ListGroup id="price-list" horizontal={'lg'}>
-            <ListGroupItem><b>Economy</b><br /> ${ props.flight.economyPrice } <br /><Button className="book-button" onClick={(e) => handleClick(e, SeatClass.ECONOMY)}>Book Flight</Button></ListGroupItem>
-            <ListGroupItem><b>Business</b><br /> ${ props.flight.businessPrice } <br /><Button className="book-button" onClick={(e) => handleClick(e, SeatClass.BUSINESS)}>Book Flight</Button></ListGroupItem>
-            <ListGroupItem><b>First</b><br /> ${ props.flight.firstPrice } <br /><Button className="book-button" onClick={(e) => handleClick(e, SeatClass.FIRST)}>Book Flight</Button></ListGroupItem>
-            </ListGroup>
-            </Card.Body>
-            </Card>
+
+
+<Row className="flight-card">
+            <Col xs={12} lg={2}>
+            <Row className="origin-airport">
+            { props.flight.route.originAirport.city } ({ props.flight.route.originAirport.iataId })
+            </Row>
+            <Row className="departure-time">
+            { moment(props.flight.departureTime).format('h:mm a') }
+            </Row>
+            <Row className="departure-date">
+            { moment(props.flight.departureTime).format('MMMM Do, YYYY') }
+            </Row>
+            </Col>
+
+            <Col xs={12} lg={2}>
+            <Row className="duration">
+            {durationHours} hr {durationMinutes} min 
+            </Row>
+            <Row className="duration-icon">
+            <FontAwesomeIcon icon={faPlane} />
+            </Row>
+            </Col>
+
+            <Col xs={12} lg={2}>
+            <Row className="dest-airport">
+            { props.flight.route.destinationAirport.city }
+            </Row>
+            <Row className="arrival-time">
+            { moment(props.flight.arrivalTime).format('h:mm a') }
+            </Row>
+            <Row className="arrival-date">
+            { moment(props.flight.arrivalTime).format('MMMM Do, YYYY') }
+            </Row>
+            </Col>
+
+
+            <Col xs={12} lg={2}>
+            <Row className="b-e">
+            Economy
+            </Row>
+            <Row className="book-rc">
+            <Button className="book-button" onClick={(e) => handleClick(e, SeatClass.ECONOMY)}>${props.flight.economyPrice}</Button>
+            </Row>
+            </Col>
+
+            <Col xs={12} lg={2}>
+            <Row className="b-b">
+            Business
+            </Row>
+            <Row className="book-rc">
+            <Button className="book-button" onClick={(e) => handleClick(e, SeatClass.BUSINESS)}>${props.flight.businessPrice}</Button>
+            </Row>
+            </Col>
+
+            <Col xs={12} lg={2}>
+            <Row className="b-f">
+            First
+            </Row>
+            <Row className="book-rc">
+            <Button className="book-button" onClick={(e) => handleClick(e, SeatClass.FIRST)}>${props.flight.firstPrice}</Button>
+            </Row>
+            </Col>
+</Row>
+            
 
         </div>
     );

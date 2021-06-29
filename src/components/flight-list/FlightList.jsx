@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./FlightList.css";
 import Container from 'react-bootstrap/Container';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
 
@@ -49,11 +51,14 @@ const FlightList = (props) => {
                 </select>
                 </Container>
 
+                <div className='pagination'>
+                    <Pagination count={props.flightPage.totalPages} page={currentPage + 1} onChange={handleClick} />
+                </div>
+
                 {props.flightCards}
                 <br />
 
                 <div className='pagination'>
-                    <Typography data-testid='page'>Page: {currentPage + 1}</Typography>
                     <Pagination count={props.flightPage.totalPages} page={currentPage + 1} onChange={handleClick} />
                 </div>
 
