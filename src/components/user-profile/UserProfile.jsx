@@ -5,9 +5,7 @@ import {checkEmailIsValid, checkPhoneIsValid} from '../../utils/Validators';
 import "./UserProfile.css"
 import UserProfileBookingsList from './UserProfileBookingsList';
 import Paper from '@material-ui/core/Paper';
-import { Form, Container } from 'react-bootstrap';
-import EditIcon from '@material-ui/icons/Edit';
-import Button from '@material-ui/core/Button';
+import { Form } from 'react-bootstrap';
 import EditButton from './EditButton';
 
 
@@ -114,6 +112,7 @@ const UserProfile = () => {
     const handleCancel = () => {
         setUpdateFormDisabled(true);
         setInitialFormValues(user);
+        setError("");
     }
 
 
@@ -126,14 +125,6 @@ const UserProfile = () => {
     const validatePhone = (input) => {
         setPhone(input);
         setPhoneIsValid(checkPhoneIsValid(input));
-    }
-
-    const formatPhoneNumber = (phoneNumber) => {
-
-        let formattedPhone = '';
-        formattedPhone += "(" + phoneNumber.substring(0, 3) + ") ";
-        formattedPhone += phoneNumber.substring(3, 6) + "-" + phoneNumber.substring(6, phoneNumber.length);
-        return formattedPhone;
     }
 
         //Used to disable the register button if the email or phone regular expressions don't pass or if the other fields are blank

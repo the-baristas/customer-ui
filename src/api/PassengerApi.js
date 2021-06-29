@@ -1,3 +1,5 @@
+import { getCsrfToken, getToken } from "../utils/Login";
+
 export const createPassenger = async ({
     bookingConfirmationCode,
     originAirportCode,
@@ -20,7 +22,7 @@ export const createPassenger = async ({
     try {
         response = await fetch(url, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "Authorization": getToken(), "X-XSRF-TOKEN": await getCsrfToken() },
             body: JSON.stringify({
                 bookingConfirmationCode,
                 originAirportCode,
@@ -36,7 +38,8 @@ export const createPassenger = async ({
                 seatClass,
                 seatNumber,
                 checkInGroup
-            })
+            }),
+            credentials: 'include'  
         });
         if (response.ok === false) {
             throw new Error(
@@ -57,7 +60,9 @@ export const deletePassenger = async (id) => {
     const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers/${id}`;
     try {
         const response = await fetch(url, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: { "Authorization": getToken(), "X-XSRF-TOKEN": await getCsrfToken() },
+            credentials: 'include'  
         });
         if (response.ok === false) {
             throw new Error(
