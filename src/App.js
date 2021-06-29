@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from 'react';
 import { Provider } from "react-redux";
 import {
     BrowserRouter as Router,
@@ -13,8 +13,14 @@ import LoginForm from "./components/loginForm/LoginForm";
 import RegistrationForm from "./components/registrationForm/RegistrationForm";
 import UserProfile from "./components/user-profile/UserProfile";
 import store from "./redux/store";
+import { generateCsrfToken } from './utils/Login';
+
 
 function App() {
+    
+    useEffect(() => {
+        generateCsrfToken();
+    }, [])
 
     return (
         <Provider store={store}>

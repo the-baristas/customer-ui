@@ -1,3 +1,5 @@
+import { getCsrfToken, getToken } from "../utils/Login";
+
 export const createBooking = async ({
     confirmationCode,
     layoverCount = 0,
@@ -9,8 +11,9 @@ export const createBooking = async ({
     try {
         response = await fetch(url, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ confirmationCode, layoverCount, username })
+            headers: { "Content-Type": "application/json", "Authorization": getToken(), "X-XSRF-TOKEN": await getCsrfToken() },
+            body: JSON.stringify({ confirmationCode, layoverCount, username }),
+            credentials: 'include'
         });
         if (response.ok === false) {
             throw new Error(
@@ -38,14 +41,15 @@ export const updateBooking = async ({
     try {
         response = await fetch(url, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "Authorization": getToken(), "X-XSRF-TOKEN": await getCsrfToken() },
             body: JSON.stringify({
                 id,
                 confirmationCode,
                 layoverCount,
                 totalPrice,
                 username
-            })
+            }),
+            credentials: 'include'
         });
         if (response.ok === false) {
             throw new Error(
@@ -66,7 +70,9 @@ export const deleteBooking = async (id) => {
     const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/bookings/${id}`;
     try {
         const response = await fetch(url, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: { "Authorization": getToken(), "X-XSRF-TOKEN": await getCsrfToken() },
+            credentials: 'include'
         });
         if (response.ok === false) {
             throw new Error(
@@ -85,7 +91,7 @@ export const getBookingsByUsername = async (username, index, size) => {
         `?index=${index}&size=${size}`;
     const response = await fetch(url, {
         method: "GET",
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json", "Authorization": getToken() }
     });
     const data = await response.json();
     if (data.error) {

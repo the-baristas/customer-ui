@@ -1,4 +1,6 @@
 import jwt_decode from "jwt-decode";
+import { userLogin } from "../services/loginService/LoginService";
+import { userServiceHealthCheck } from "../services/usersService/UsersService";
 
 const keyName = 'utopiaCustomerKey';
 
@@ -24,4 +26,25 @@ export const removeToken = () => {
 
 export const getToken = () => {
     return localStorage.getItem(keyName);
+}
+
+export const generateCsrfToken = async () => {
+    return userServiceHealthCheck()
+    .then((response) => {
+            if(!response.ok){
+                throw Error();
+            }   
+    })
+    .catch((error) => {
+        alert("Something went wrong on our end. Please try again later.")
+    })
+}
+
+export const getCsrfToken = async () => {
+    try{
+            return document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN=')).split('=')[1];
+    }
+    catch{
+        alert("Something went wrong. Please try reloading the page.")
+    }
 }
