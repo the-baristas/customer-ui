@@ -16,7 +16,7 @@ import { createPassenger, deletePassenger } from "../../api/PassengerApi";
 import {
     createPayment,
     deletePayment
-} from "../../services/paymentService/PaymentService";
+} from "../../api/PaymentService";
 import FlightTable from "../booking/FlightTable";
 import PassengerInfoForm from "../booking/PassengerInfoForm";
 import SeatClass from "../booking/SeatClass";
