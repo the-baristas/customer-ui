@@ -433,6 +433,7 @@ const Home = () => {
                         handleOriginChange={handleOriginChange}
                         handleDestChange={handleDestChange}
                         date={date}
+                        onDateChange={onDateChange}
                         dateRange={dateRange}
                         startDate={startDate}
                         endDate={endDate}

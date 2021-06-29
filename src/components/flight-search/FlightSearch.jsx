@@ -57,7 +57,7 @@ const FlightSearch = (props) => {
                     <InputGroup.Prepend>
                     <InputGroup.Text className="prepend-txt"><FontAwesomeIcon className="font-awesome" icon={faCalendarDay} /></InputGroup.Text>
                     </InputGroup.Prepend>
-                    <DatePicker className="date-picker" selected={props.date} onChange={props.onDateChange} withPortal />
+                    <DatePicker className="date-picker" selected={props.date} onChange={props.onDateChange} />
                     </InputGroup>
                     </Col>
                     <Col lg={true}>
