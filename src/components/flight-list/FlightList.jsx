@@ -18,11 +18,6 @@ const FlightList = (props) => {
     // state
     const [currentPage, setCurrentPage] = useState(props.flightPage.number);
 
-
-    let active = props.flightPage.number;
-
-    let items = [];
-
     return (
             <div className="search-results">
                 <br />

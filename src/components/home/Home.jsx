@@ -77,6 +77,8 @@ const Home = () => {
         route: null
     });
     const [date, setDate] = useState(new Date());
+    const [dateRange, setDateRange] = useState([new Date(), null]);
+    const [startDate, endDate] = dateRange;
     const [origin, setOrigin] = useState("");
     const [dest, setDest] = useState("");
     const [sortBy, setSortBy] = useState("departureTime");
@@ -431,7 +433,10 @@ const Home = () => {
                         handleOriginChange={handleOriginChange}
                         handleDestChange={handleDestChange}
                         date={date}
-                        onDateChange={onDateChange}
+                        dateRange={dateRange}
+                        startDate={startDate}
+                        endDate={endDate}
+                        setDateRange={setDateRange}
                     ></FlightSearch>
                 </Route>
                 <Route path={`${path}/search-results`}>
