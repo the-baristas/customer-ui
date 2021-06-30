@@ -1,4 +1,4 @@
-import { getToken } from "../../utils/Login";
+import { getToken } from "../utils/Login";
 
 export async function createPayment(clientSecret, bookingId) {
     let response;

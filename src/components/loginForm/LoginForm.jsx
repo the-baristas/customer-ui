@@ -6,7 +6,7 @@ import { login } from '../../redux/userStatus/UserStatusActions';
 import { saveToken } from '../../utils/Login';
 
 import { useHistory } from 'react-router-dom';
-import { userLogin } from '../../services/loginService/LoginService';
+import { userLogin } from '../../api/LoginService';
 
 const LoginForm = (props) => {
 

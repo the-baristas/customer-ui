@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import React from "react";
 import { Provider } from "react-redux";
 import store from "../../redux/store";
-import * as usersService from "../../services/usersService/UsersService";
+import * as usersService from "../../api/UsersService";
 import UserProfile from "./UserProfile";
 
 let user = { userId: 1, givenName: "First", familyName: "Last",

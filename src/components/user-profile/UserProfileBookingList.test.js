@@ -1,9 +1,9 @@
+import { render, waitForElementToBeRemoved } from "@testing-library/react";
 import React from 'react';
-import {render, fireEvent, screen, within, waitFor, waitForElementToBeRemoved} from "@testing-library/react";
 import { Provider } from "react-redux";
+import * as bookingApi from '../../api/BookingApi';
 import store from "../../redux/store";
 import UserProfileBookingsList from './UserProfileBookingsList';
-import * as bookingApi from '../../api/BookingApi';
 
 const booking = {
     flights: [

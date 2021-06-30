@@ -1,4 +1,4 @@
-import { getCsrfToken } from "../../utils/Login";
+import { getCsrfToken } from "../utils/Login";
 
 export async function userLogin(username, password)
 {

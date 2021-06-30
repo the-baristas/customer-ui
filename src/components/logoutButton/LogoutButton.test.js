@@ -1,11 +1,11 @@
+import { fireEvent, render } from "@testing-library/react";
 import React from 'react';
-import {render, fireEvent, screen, within, waitFor, waitForElementToBeRemoved} from "@testing-library/react";
-import { Provider } from "react-redux";
 import * as reactRedux from 'react-redux';
-import store from "../../redux/store";
-import LogoutButton from "./LogoutButton";
-import * as loginUtils from '../../utils/Login';
+import { Provider } from "react-redux";
 import { MemoryRouter } from 'react-router-dom';
+import store from "../../redux/store";
+import * as loginUtils from '../../utils/Login';
+import LogoutButton from "./LogoutButton";
 
 describe("Logout button", () => {
     const useSelectorMock = jest.spyOn(reactRedux, 'useSelector');

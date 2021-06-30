@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getUserByUsername, updateUser } from '../../services/usersService/UsersService';
+import { getUserByUsername, updateUser } from '../../api/UsersService';
 import {checkEmailIsValid, checkPhoneIsValid} from '../../utils/Validators';
 import "./UserProfile.css"
 import UserProfileBookingsList from './UserProfileBookingsList';
