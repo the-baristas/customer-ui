@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import Header from "./components/header/Header";
-import Home from "./components/home/Home";
+import Booking from "./components/booking/Booking";
 import LoginForm from "./components/loginForm/LoginForm";
 import RegistrationForm from "./components/registrationForm/RegistrationForm";
 import UserProfile from "./components/user-profile/UserProfile";
@@ -32,7 +32,7 @@ function App() {
                     </Route>
 
                     <Route path='/booking'> 
-                        <Home />
+                        <Booking />
                     </Route>
 
                     <Route path="/register">

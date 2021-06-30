@@ -1,4 +1,4 @@
-import { getCsrfToken, getToken } from "../../utils/Login"
+import { getCsrfToken, getToken } from "../utils/Login"
 
 export const registerUser = async (user) =>
 {

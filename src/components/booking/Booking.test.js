@@ -1,12 +1,12 @@
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { render, screen } from "../../test-utils";
-import Home from "./Home";
+import Booking from "./Booking";
 
 it("renders welcome text if logged in and renders main image", async () => {
     render(
         <MemoryRouter>
-            <Home />
+            <Booking />
         </MemoryRouter>,
         {
             initialState: {

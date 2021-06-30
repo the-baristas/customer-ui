@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Container } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import { registerUser } from '../../api/usersService/UsersService';
+import { registerUser } from '../../api/UsersService';
 import {checkEmailIsValid, checkPhoneIsValid, checkPasswordIsValid} from '../../utils/Validators';
 
 
