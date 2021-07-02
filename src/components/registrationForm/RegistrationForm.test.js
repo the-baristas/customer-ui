@@ -5,20 +5,17 @@ import RegistrationForm from "./RegistrationForm";
 import {rest} from "msw";
 import {setupServer} from "msw/node";
 import { MemoryRouter } from 'react-router-dom';
+import * as usersService from '../../api/UsersService';
 
 
 
-const serverOk = setupServer(rest.post(process.env.REACT_APP_USER_SERVICE_URL+'/users', (req, resp, ctx) => {
-    return resp(ctx.status(200), ctx.json( { payload: 'Would normally return user data'} ));
-    }))
-const serverBadRequest = setupServer(rest.post(process.env.REACT_APP_USER_SERVICE_URL+'/users', (req, resp, ctx) => {
-    return resp(ctx.status(409), ctx.json( { error: 'nope' }));
-    }))
-window.alert = jest.fn();
 
 
 it("check register button makes fetch requests; error response with message", async () => {
-    serverBadRequest.listen()
+
+    const registerUserMock = jest.spyOn(usersService, 'registerUser');
+    registerUserMock.mockResolvedValue({ok: false, status: 403, json: () => {return Promise.resolve({message: "an error message"})}})
+
     const {getByTestId} = render(<RegistrationForm></RegistrationForm>);
     const form = getByTestId("formRegistration");
     const error = getByTestId("divError");
@@ -30,15 +27,15 @@ it("check register button makes fetch requests; error response with message", as
     )
     fireEvent.submit(form);
     await waitForElementToBeRemoved( () => screen.getByTestId('processing') );
-    expect(error.innerHTML).toContain("a problem");
+    expect(error.innerHTML).toContain("an error message");
 
-    serverBadRequest.close()
-    serverBadRequest.resetHandlers()
-    window.alert.mockClear();
+    registerUserMock.mockRestore();
 })
 
-it("check register button makes fetch requests; 200 request success", async () => {
-    serverOk.listen(); 
+it("check register button makes fetch requests; 201 request success", async () => {
+    const registerUserMock = jest.spyOn(usersService, 'registerUser');
+    registerUserMock.mockResolvedValue({ok: true, status: 201, json: () => {return Promise.resolve("good")}})
+
     const {getByTestId} = render(<MemoryRouter><RegistrationForm></RegistrationForm></MemoryRouter>);
     const form = getByTestId("formRegistration");
     const error = getByTestId("divError");
@@ -52,8 +49,7 @@ it("check register button makes fetch requests; 200 request success", async () =
     await waitForElementToBeRemoved( () => screen.getByTestId('processing') );
     expect(error.innerHTML).toEqual('');
 
-    serverOk.close();
-    serverOk.resetHandlers()
+    registerUserMock.mockRestore();
 })
 
 it("check register button render", () => {
