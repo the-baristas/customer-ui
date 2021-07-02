@@ -31,7 +31,7 @@ it("Login with valid credentials redirects to home", async () => {
 
 it("invalid login credentials makes error message appear", async () => {
     const loginMock = jest.spyOn(loginService, 'userLogin');
-    loginMock.mockResolvedValue({ok: false, status: 403})
+    loginMock.mockResolvedValue({ok: false, status: 401})
 
     const { getByTestId } = render(<MemoryRouter><Provider store={store}><LoginForm></LoginForm></Provider></MemoryRouter>);
     const form = getByTestId("formLogin");
