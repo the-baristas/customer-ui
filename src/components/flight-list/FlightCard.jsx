@@ -18,6 +18,7 @@ const FlightCard = (props) => {
         props.onFlightSelection(props.flight, seatClass);
     };
 
+
     const duration = moment.duration(
         moment(props.flight.arrivalTime).diff(
             props.flight.departureTime
@@ -27,10 +28,10 @@ const FlightCard = (props) => {
     const durationMinutes = duration.minutes();
 
     return(
-        <div className="flight-card-component">
+        <div className="flight-card-component" id={"fc" + props.flight.id}>
 
 
-<Row className="flight-card">
+    <Row className="flight-card">
             <Col xs={12} lg={2}>
             <Row className="origin-airport">
             { props.flight.route.originAirport.city } ({ props.flight.route.originAirport.iataId })
@@ -91,6 +92,7 @@ const FlightCard = (props) => {
             <Button className="book-button" onClick={(e) => handleClick(e, SeatClass.FIRST)}>${props.flight.firstPrice}</Button>
             </Row>
             </Col>
+           
 </Row>
             
 

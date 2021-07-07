@@ -57,7 +57,11 @@ const FlightSearch = (props) => {
                     <InputGroup.Prepend>
                     <InputGroup.Text className="prepend-txt"><FontAwesomeIcon className="font-awesome" icon={faCalendarDay} /></InputGroup.Text>
                     </InputGroup.Prepend>
-                    <DatePicker className="date-picker" selected={props.date} onChange={props.onDateChange} />
+                    <DatePicker className="date-picker" 
+                                selected={props.date} 
+                                onChange={props.onDateChange} 
+                                minDate={new Date()} 
+                                shouldCloseOnSelect={false} />
                     </InputGroup>
                     </Col>
                     <Col lg={true}>
@@ -73,7 +77,7 @@ const FlightSearch = (props) => {
 
                 {bookingType === "Round Trip" &&
                 
-                <Form className="search-form" onSubmit={props.handleSubmit} >
+                <Form className="search-form" onSubmit={props.handleRTSubmit} >
                 <form id="booking-type" onChange={handleBookingType}>
                 <Row>
                 <Col lg={true}>
@@ -118,13 +122,15 @@ const FlightSearch = (props) => {
                                 closeOnScroll={true}
                                 startDate={props.startDate} 
                                 endDate={props.endDate} 
+                                minDate={new Date()}
+                                shouldCloseOnSelect={false}
                                 onChange={(update) => { props.setDateRange(update) }} 
                                 />
                     </InputGroup>
                     </Col>
                     <Col lg={true}>
                     <InputGroup>
-                    <Button id="search-submit" type="submit" disabled>
+                    <Button id="search-submit" type="submit">
                     Search Flights
                     </Button>
                     </InputGroup>
