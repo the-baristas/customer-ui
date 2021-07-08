@@ -1,6 +1,7 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
+import { getCsrfToken, getCsrfToken2, getToken } from "../../utils/Login";
 import "./PaymentForm.css";
 
 const PaymentForm = (props) => {
@@ -18,19 +19,19 @@ const PaymentForm = (props) => {
 
     useEffect(() => {
         // Create PaymentIntent as soon as the page loads
+
         window
             .fetch(
                 process.env.REACT_APP_BOOKING_SERVICE_URL +
                     "/payments/payment-intent",
                 {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json","Authorization": getToken(), "X-XSRF-TOKEN": getCsrfToken2() },
                     body: JSON.stringify({
                         amount: props.totalDollars * 100,
                         currency
-                    })
+                    }),
+                    credentials: 'include' 
                 }
             )
             .then((res) => {
@@ -43,10 +44,10 @@ const PaymentForm = (props) => {
                 setClientSecret(data.clientSecret);
             })
             .catch((error) => {
+                console.log(error);
                 alert(
                     "We are unable to process payments at this time. Please try again later."
                 );
-                console.log(error);
                 history.push("/");
             });
     }, [history, props.totalDollars]);

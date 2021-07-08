@@ -48,3 +48,12 @@ export const getCsrfToken = async () => {
         alert("Something went wrong. Please try reloading the page.")
     }
 }
+
+export const getCsrfToken2 = () => {
+    try{
+            return document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN=')).split('=')[1];
+    }
+    catch{
+        alert("Something went wrong. Please try reloading the page.")
+    }
+}
