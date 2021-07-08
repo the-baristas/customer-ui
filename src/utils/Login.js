@@ -1,6 +1,5 @@
 import jwt_decode from "jwt-decode";
-import { userLogin } from "../services/loginService/LoginService";
-import { userServiceHealthCheck } from "../services/usersService/UsersService";
+import { userServiceHealthCheck } from "../api/UsersService";
 
 const keyName = 'utopiaCustomerKey';
 

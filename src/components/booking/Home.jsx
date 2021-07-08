@@ -16,7 +16,7 @@ import { createPassenger, deletePassenger } from "../../api/PassengerApi";
 import {
     createPayment,
     deletePayment
-} from "../../services/paymentService/PaymentService";
+} from "../../api/PaymentService";
 import FlightTable from "./FlightTable";
 import PassengerInfoForm from "./PassengerInfoForm";
 import SeatClass from "./SeatClass";
@@ -55,30 +55,13 @@ const Booking = () => {
         zipCode: ""
     });
     const [seatClass, setSeatClass] = useState("");
-    const [checkInGroup, setCheckInGroup] = useState(3);
-    const [departureClass, setDepartureClass] = useState("");
-    const [depCheckInGroup, setDepCheckInGroup] = useState(3);
-    const [retCheckInGroup, setRetCheckInGroup] = useState(3);
-    const [returnClass, setReturnClass] = useState("");
-    const [isRoundTrip, setIsRoundTrip] = useState(false);
-    const [departureSelectionMade, setDepartureSelectionMade] = useState(false);
-    const [returnSelectionMade, setReturnSelectionMade] = useState(false);
     const [pricePerPassengerState, setPricePerPassengerState] = useState(0);
-    const [departurePricePPState, setDeparturePricePPState] = useState(0);
-    const [returnPricePPState, setReturnPricePPState] = useState(0);
-    const [RTPricePerPassengerState, setRTPricePerPassengerState] = useState(0);
     const [taxesPerPassenger, setTaxesPerPassenger] = useState(0);
-    const [departureTaxesPP, setDepartureTaxesPP] = useState(0);
-    const [returnTaxesPP, setReturnTaxesPP] = useState(0);
     const [passengerCount, setPassengerCount] = useState(1);
     const [totalPerPassenger, setTotalPerPassenger] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [flights, setFlights] = useState([]);
-    const [departureFlights, setDepartureFlights] = useState([]);
-    const [returnFlights, setReturnFlights] = useState([]);
     const [flightPage, setFlightPage] = useState({});
-    const [departureFlightPage, setDepartureFlightPage] = useState({});
-    const [returnFlightPage, setReturnFlightPage] = useState({});
     const [selectedFlight, setSelectedFlight] = useState({
         id: 0,
         airplane: null,
@@ -93,37 +76,7 @@ const Booking = () => {
         isActive: false,
         route: null
     });
-    const [departureFlight, setDepartureFlight] = useState({
-        id: 0,
-        airplane: null,
-        departureTime: "",
-        arrivalTime: "",
-        firstReserved: 0,
-        firstPrice: 0,
-        businessReserved: 0,
-        businessPrice: 0,
-        economyReserved: 0,
-        economyPrice: 0,
-        isActive: false,
-        route: null
-    });
-    const [returnFlight, setReturnFlight] = useState({
-        id: 0,
-        airplane: null,
-        departureTime: "",
-        arrivalTime: "",
-        firstReserved: 0,
-        firstPrice: 0,
-        businessReserved: 0,
-        businessPrice: 0,
-        economyReserved: 0,
-        economyPrice: 0,
-        isActive: false,
-        route: null
-    });
     const [date, setDate] = useState(new Date());
-    const [dateRange, setDateRange] = useState([new Date(), Date.now() + 6.048e+8]);
-    const [startDate, endDate] = dateRange;
     const [origin, setOrigin] = useState("");
     const [dest, setDest] = useState("");
     const [sortBy, setSortBy] = useState("departureTime");
@@ -151,55 +104,6 @@ const Booking = () => {
         })();
     };
 
-    const handleDepartureSelection = (selectedFlight, seatClass) => {
-        setDepartureFlight(selectedFlight);
-        setDepartureClass(seatClass);
-        let selectedFlightCard = document.getElementById("fc"+selectedFlight.id);
-        let flightCards = document.getElementById("depFlightCards");
-        let departureSort = document.getElementById("departure-sort");
-        let departureFilter = document.getElementById("departure-filter");
-        departureSort.style.display = "none";
-        departureFilter.style.display = "none";
-        flightCards.style.display = "none";
-        setDepartureSelectionMade(true);
-
-    };
-
-    const handleReturnSelection = (selectedFlight, seatClass) => {
-        setReturnFlight(selectedFlight);
-        setReturnClass(seatClass);
-        let selectedFlightCard = document.getElementById("fc"+selectedFlight.id);
-        let flightCards = document.getElementById("retFlightCards");
-        let returnSort = document.getElementById("return-sort");
-        let returnFilter = document.getElementById("return-filter");
-        returnSort.style.display = "none";
-        returnFilter.style.display = "none";
-        flightCards.style.display = "none";
-        setReturnSelectionMade(true);
-    };
-
-    const handleRTSelection = () => {
-            
-        calculateRTPrice(departureFlight, departureClass, returnFlight, returnClass);
-        (async () => {
-            const confirmationCode = uuidv4().toUpperCase();
-            const layoverCount = 0;
-            setBookingToCreate({
-                confirmationCode,
-                layoverCount,
-                username: userStatus.username
-            });
-        
-            console.log(departureFlight);
-            console.log(departureClass);
-            console.log(returnFlight);
-            console.log(returnClass);
-            console.log(totalPrice);
-            console.log("All values set!");
-            history.push(`${path}/passenger-info`);
-        })();
-    }
-
     /**
      * Calculates price per passenger, taxes per passenger, total per passenger,
      * and total price, and sets them as state.
@@ -226,65 +130,6 @@ const Booking = () => {
             Math.round(pricePerPassenger * 0.07 * 100) / 100;
         setTaxesPerPassenger(taxesPerPassenger);
         const totalPerPassenger = pricePerPassenger + taxesPerPassenger;
-        setTotalPerPassenger(totalPerPassenger);
-        // TODO: Allow creation of more than 1 passenger at a time.
-        setTotalPrice(totalPerPassenger * passengerCount);
-    };
-
-    const calculateRTPrice = (departureFlight, departureClass, returnFlight, returnClass) => {
-        let departurePricePP;
-        let returnPricePP;
-        let pricePP;
-
-        switch (departureClass) {
-            case SeatClass.ECONOMY:
-                departurePricePP = departureFlight.economyPrice;
-                break;
-            case SeatClass.BUSINESS:
-                departurePricePP = departureFlight.businessPrice;
-                break;
-            case SeatClass.FIRST:
-                departurePricePP = departureFlight.firstPrice;
-                break;
-            default:
-                // TODO: Go to error page.
-                break;
-        }
-
-        switch (returnClass) {
-            case SeatClass.ECONOMY:
-                returnPricePP = returnFlight.economyPrice;
-                break;
-            case SeatClass.BUSINESS:
-                returnPricePP = returnFlight.businessPrice;
-                break;
-            case SeatClass.FIRST:
-                returnPricePP = returnFlight.firstPrice;
-                break;
-            default:
-                // TODO: Go to error page.
-                break;
-        }
-
-        departurePricePP = Math.round(departurePricePP * 100) / 100;
-        returnPricePP = Math.round(returnPricePP * 100) / 100;
-        pricePP = departurePricePP + returnPricePP;
-
-        setDeparturePricePPState(departurePricePP);
-        setReturnPricePPState(returnPricePP);
-        setRTPricePerPassengerState(pricePP);
-
-        const departureTaxesPerPassenger =
-            Math.round(pricePP * 0.07 * 100) / 100;
-        setDepartureTaxesPP(departureTaxesPerPassenger);
-
-        const returnTaxesPerPassenger =
-            Math.round(pricePP * 0.07 * 100) / 100;
-        setReturnTaxesPP(returnTaxesPerPassenger);
-
-        const totalTaxesPP = departureTaxesPerPassenger + returnTaxesPerPassenger;
-
-        const totalPerPassenger = pricePP + totalTaxesPP;
         setTotalPerPassenger(totalPerPassenger);
         // TODO: Allow creation of more than 1 passenger at a time.
         setTotalPrice(totalPerPassenger * passengerCount);
@@ -345,7 +190,7 @@ const Booking = () => {
         let theFilter = event.target.value;
 
         fetch(
-            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${sortBy}`,
+            `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${sortBy}`,
             {
                 method: "POST",
                 headers: {
@@ -387,7 +232,6 @@ const Booking = () => {
 
     function handleSubmit(event) {
         event.preventDefault();
-        setIsRoundTrip(false);
         if (origin === "" || dest === "" || date === "") {
             alert("Please make sure all search fields are completed.");
         } else {
@@ -420,7 +264,6 @@ const Booking = () => {
                 )
                     .then((resp) => resp.json())
                     .then((data) => {
-                        
                         setFlights(data.content);
                         setFlightPage(data);
                         history.push("/booking/search-results");
@@ -430,97 +273,6 @@ const Booking = () => {
                         alert("No flights found, try again!");
                     })
             );
-        }
-    }
-
-
-    function handleRTSubmit(event) {
-        event.preventDefault();
-        setIsRoundTrip(true);
-        if (origin === "" || dest === "" || startDate === "" || endDate === "") {
-            alert("Please make sure all search fields are completed.");
-        } else {
-
-            let departureMonth = startDate.getMonth() + 1;
-            let departureDate = startDate.getDate();
-            let departureYear = startDate.getFullYear();
-            let departureHours = "00";
-            let departureMins = "00";
-            let departureFilter = "all";
-
-            trackPromise(
-                fetch(
-                    `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=economyPrice`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization:
-                                localStorage.getItem("utopiaCustomerKey")
-                        },
-                        body: JSON.stringify({
-                            month: departureMonth,
-                            date: departureDate,
-                            year: departureYear,
-                            hours: departureHours,
-                            mins: departureMins,
-                            filter: departureFilter
-                        })
-                    }
-                )
-                    .then((resp) => resp.json())
-                    .then((data) => {
-                        
-                        setDepartureFlights(data.content);
-                        setDepartureFlightPage(data);
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                        alert("No departure flights found for this query, try again!");
-                    })
-            );
-
-            let returnMonth = endDate.getMonth() + 1;
-            let returnDate = endDate.getDate();
-            let returnYear = endDate.getFullYear();
-            let returnHours = "00";
-            let returnMins = "00";
-            let returnFilter = "all";
-
-            trackPromise(
-                fetch(
-                    `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${dest}&destinationId=${origin}&pageNo=0&pageSize=10&sortBy=economyPrice`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization:
-                                localStorage.getItem("utopiaCustomerKey")
-                        },
-                        body: JSON.stringify({
-                            month: returnMonth,
-                            date: returnDate,
-                            year: returnYear,
-                            hours: returnHours,
-                            mins: returnMins,
-                            filter: returnFilter
-                        })
-                    }
-                )
-                    .then((resp) => resp.json())
-                    .then((data) => {
-                        
-                        setReturnFlights(data.content);
-                        setReturnFlightPage(data);
-                        history.push("/booking/search-results");
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                        alert("No return flights found for this query, try again or consider purchasing a one way ticket!");
-                    })
-            );
-
-
         }
     }
 
@@ -535,7 +287,7 @@ const Booking = () => {
 
         trackPromise(
             fetch(
-                `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
+                `http://localhost:8090/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
                 {
                     method: "POST",
                     headers: {
@@ -591,23 +343,6 @@ const Booking = () => {
 
             const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
             let newPassengerInfo;
-
-            switch (SeatClass) {
-                case SeatClass.ECONOMY:
-                    setCheckInGroup(3);
-                    break;
-                case SeatClass.BUSINESS:
-                    setCheckInGroup(2);
-                    break;
-                case SeatClass.FIRST:
-                    setCheckInGroup(1);
-                    break;
-                default:
-                    // TODO: Go to error page.
-                    break;
-            }
-
-            if (isRoundTrip === false) {
             try {
                 newPassengerInfo = await createPassenger({
                     bookingConfirmationCode: newBooking.confirmationCode,
@@ -627,7 +362,7 @@ const Booking = () => {
                     // TODO: Allow user to choose seat.
                     seatNumber: 1,
                     // TODO: Create a seat class to check-in group map.
-                    checkInGroup: checkInGroup
+                    checkInGroup: 1
                 });
                 setPassengerInfo(newPassengerInfo);
             } catch (e) {
@@ -636,101 +371,6 @@ const Booking = () => {
                 // TODO: Cancel stripe payment.
                 return;
             }
-        } else {
-
-            switch (departureClass) {
-                case departureClass.ECONOMY:
-                    setDepCheckInGroup(3);
-                    break;
-                case departureClass.BUSINESS:
-                    setDepCheckInGroup(2);
-                    break;
-                case departureClass.FIRST:
-                    setDepCheckInGroup(1);
-                    break;
-                default:
-                    // TODO: Go to error page.
-                    break;
-            }
-
-            switch (returnClass) {
-                case returnClass.ECONOMY:
-                    setRetCheckInGroup(3);
-                    break;
-                case returnClass.BUSINESS:
-                    setRetCheckInGroup(2);
-                    break;
-                case returnClass.FIRST:
-                    setRetCheckInGroup(1);
-                    break;
-                default:
-                    // TODO: Go to error page.
-                    break;
-            }
-
-            try {
-                newPassengerInfo = await createPassenger({
-                    bookingConfirmationCode: newBooking.confirmationCode,
-                    originAirportCode:
-                        departureFlight.route.originAirport.iataId,
-                    destinationAirportCode:
-                        departureFlight.route.destinationAirport.iataId,
-                    airplaneModel: departureFlight.airplane.model,
-                    departureTime: departureFlight.departureTime,
-                    arrivalTime: departureFlight.arrivalTime,
-                    givenName: passengerInfo.givenName,
-                    familyName: passengerInfo.familyName,
-                    dateOfBirth: passengerInfo.dateOfBirth,
-                    gender: passengerInfo.gender,
-                    address,
-                    seatClass: departureClass,
-                    // TODO: Allow user to choose seat.
-                    seatNumber: 1,
-                    // TODO: Create a seat class to check-in group map.
-                    checkInGroup: depCheckInGroup
-                });
-                setPassengerInfo(newPassengerInfo);
-            } catch (e) {
-                // TODO: Delete payment.
-                await deleteBooking(newBooking.id);
-                // TODO: Cancel stripe payment.
-                return;
-            }
-
-            try {
-                newPassengerInfo = await createPassenger({
-                    bookingConfirmationCode: newBooking.confirmationCode,
-                    originAirportCode:
-                        returnFlight.route.originAirport.iataId,
-                    destinationAirportCode:
-                        returnFlight.route.destinationAirport.iataId,
-                    airplaneModel: returnFlight.airplane.model,
-                    departureTime: returnFlight.departureTime,
-                    arrivalTime: returnFlight.arrivalTime,
-                    givenName: passengerInfo.givenName,
-                    familyName: passengerInfo.familyName,
-                    dateOfBirth: passengerInfo.dateOfBirth,
-                    gender: passengerInfo.gender,
-                    address,
-                    seatClass: seatClass,
-                    // TODO: Allow user to choose seat.
-                    seatNumber: 1,
-                    // TODO: Create a seat class to check-in group map.
-                    checkInGroup: retCheckInGroup
-                });
-                setPassengerInfo(newPassengerInfo);
-            } catch (e) {
-                // TODO: Delete payment.
-                await deleteBooking(newBooking.id);
-                // TODO: Cancel stripe payment.
-                return;
-            }  
-            
-            const rtTotalPerPassenger = RTPricePerPassengerState + departureTaxesPP + returnTaxesPP;
-            const finalTotal = rtTotalPerPassenger * passengerCount;
-            setTotalPrice(finalTotal);
-
-        }
 
             try {
                 await updateBooking({
@@ -756,19 +396,9 @@ const Booking = () => {
     const flightTable = (
         <FlightTable
             selectedFlight={selectedFlight}
-            departureFlight={departureFlight}
-            returnFlight={returnFlight}
             seatClass={seatClass}
-            departureClass={departureClass}
-            returnClass={returnClass}
-            isRoundTrip={isRoundTrip}
             pricePerPassenger={pricePerPassengerState}
-            departurePricePP={departurePricePPState}
-            returnPricePP={returnPricePPState}
-            rtPricePerPassenger={RTPricePerPassengerState}
             taxesPerPassenger={taxesPerPassenger}
-            departureTaxesPP={departureTaxesPP}
-            returnTaxesPP={returnTaxesPP}
             passengerCount={passengerCount}
         />
     );
@@ -777,26 +407,9 @@ const Booking = () => {
     );
     const flightCards = flights.map((flight) => (
         <FlightCard
-            id={flight.id}
             key={flight.id}
             flight={flight}
             onFlightSelection={handleFlightSelection}
-        />
-    ));
-
-    const departureFlightCards = departureFlights.map((flight) => (
-        <FlightCard
-            key={flight.id}
-            flight={flight}
-            onFlightSelection={handleDepartureSelection}
-        />
-    ));
-
-    const returnFlightCards = returnFlights.map((flight) => (
-        <FlightCard
-            key={flight.id}
-            flight={flight}
-            onFlightSelection={handleReturnSelection}
         />
     ));
 
@@ -814,35 +427,20 @@ const Booking = () => {
                         onFlightSearch={handleFlightSearch}
                         sortBy={sortBy}
                         handleSubmit={handleSubmit}
-                        handleRTSubmit={handleRTSubmit}
                         handleOriginChange={handleOriginChange}
                         handleDestChange={handleDestChange}
                         date={date}
                         onDateChange={onDateChange}
-                        dateRange={dateRange}
-                        startDate={startDate}
-                        endDate={endDate}
-                        setDateRange={setDateRange}
                     ></FlightSearch>
                 </Route>
                 <Route path={`${path}/search-results`}>
                     <FlightList
                         flightCards={flightCards}
-                        departureFlightCards={departureFlightCards}
-                        returnFlightCards={returnFlightCards}
                         flightPage={flightPage}
-                        departureFlight={departureFlight}
-                        returnFlight={returnFlight}
-                        departureSelectionMade={departureSelectionMade}
-                        returnSelectionMade={returnSelectionMade}
-                        departureFlightPage={departureFlightPage}
-                        returnFlightPage={returnFlightPage}
                         handlePageChange={handlePageChange}
                         handleFilterChange={handleFilterChange}
                         onFlightSelection={handleFlightSelection}
-                        onRTFlightSelection={handleRTSelection}
                         onSortBy={handleSortByChange}
-                        isRoundTrip={isRoundTrip}
                     />
                 </Route>
                 <Route path={`${path}/passenger-info`}>

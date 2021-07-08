@@ -10,7 +10,7 @@ const FlightTable = (props) => {
     let f2ClassDisplayName;
 
     console.log(props.departureFlight);
-    console.log(props.arivalFlight);
+    console.log(props.arrivalFlight);
 
 
     switch (props.seatClass) {

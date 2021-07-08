@@ -6,7 +6,7 @@ import { login } from '../../redux/userStatus/UserStatusActions';
 import { saveToken } from '../../utils/Login';
 
 import { useHistory } from 'react-router-dom';
-import { userLogin } from '../../services/loginService/LoginService';
+import { userLogin } from '../../api/LoginService';
 
 const LoginForm = (props) => {
 
@@ -28,8 +28,11 @@ const LoginForm = (props) => {
         userLogin(username, password)
             .then(response => {
                 if (!response.ok) {
-                    if (response.status === 403) {
+                    if (response.status === 401) {
                         throw Error("Username and/or password are incorrect.");
+                    }
+                    else if(response.status === 403){
+                        throw Error("This account is locked. If you haven't yet, please verify your account.")
                     }
                     else {
                         throw Error("There was a problem while trying to communicate with our server. Please try again later.")

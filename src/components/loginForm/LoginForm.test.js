@@ -1,11 +1,11 @@
+import { fireEvent, render, screen, waitForElementToBeRemoved } from "@testing-library/react";
 import React from 'react';
-import { render, fireEvent, screen, waitForElementToBeRemoved } from "@testing-library/react";
-import LoginForm from "./LoginForm";
 import { Provider } from "react-redux";
-import store from "../../redux/store";
 import { MemoryRouter } from 'react-router-dom';
-import * as loginService from '../../services/loginService/LoginService';
+import store from "../../redux/store";
+import * as loginService from '../../api/LoginService';
 import * as loginUtils from '../../utils/Login';
+import LoginForm from './LoginForm';
 
 
 it("Login with valid credentials redirects to home", async () => {
@@ -31,7 +31,7 @@ it("Login with valid credentials redirects to home", async () => {
 
 it("invalid login credentials makes error message appear", async () => {
     const loginMock = jest.spyOn(loginService, 'userLogin');
-    loginMock.mockResolvedValue({ok: false, status: 403})
+    loginMock.mockResolvedValue({ok: false, status: 401})
 
     const { getByTestId } = render(<MemoryRouter><Provider store={store}><LoginForm></LoginForm></Provider></MemoryRouter>);
     const form = getByTestId("formLogin");

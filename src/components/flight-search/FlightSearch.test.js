@@ -1,11 +1,7 @@
-import {render, fireEvent, screen, within, waitFor, waitForElementToBeRemoved} from "@testing-library/react";
-import { Provider } from "react-redux";
-import { MemoryRouter } from "react-router";
-import store from "../../redux/store";
-import FlightSearch from "./FlightSearch";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as reactRedux from 'react-redux';
+import FlightSearch from "./FlightSearch";
 
 describe('test suite', () => {
     const useSelectorMock = jest.spyOn(reactRedux, 'useSelector');
