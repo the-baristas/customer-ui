@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Container } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
+import {Link} from 'react-router-dom';
 
 import { login } from '../../redux/userStatus/UserStatusActions';
 import { saveToken } from '../../utils/Login';
@@ -99,6 +100,7 @@ const LoginForm = (props) => {
 
                 {isPending && <h3 data-testid='processing' >Processing...</h3>}
             </Form>
+            <Link to='/forgotpassword'>Forgot your password?</Link>
             </Container>
         </div>
 
