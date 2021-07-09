@@ -1,4 +1,4 @@
-import { getCsrfToken, getToken } from "../utils/Login";
+import { getToken } from "../utils/Login";
 
 export const createBooking = async ({
     confirmationCode,
@@ -11,7 +11,7 @@ export const createBooking = async ({
     try {
         response = await fetch(url, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": getToken(), "X-XSRF-TOKEN": await getCsrfToken() },
+            headers: { "Content-Type": "application/json", "Authorization": getToken() },
             body: JSON.stringify({ confirmationCode, layoverCount, username }),
             credentials: 'include'
         });
@@ -41,7 +41,7 @@ export const updateBooking = async ({
     try {
         response = await fetch(url, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": getToken(), "X-XSRF-TOKEN": await getCsrfToken() },
+            headers: { "Content-Type": "application/json", "Authorization": getToken() },
             body: JSON.stringify({
                 id,
                 confirmationCode,
@@ -71,7 +71,7 @@ export const deleteBooking = async (id) => {
     try {
         const response = await fetch(url, {
             method: "DELETE",
-            headers: { "Authorization": getToken(), "X-XSRF-TOKEN": await getCsrfToken() },
+            headers: { "Authorization": getToken() },
             credentials: 'include'
         });
         if (response.ok === false) {

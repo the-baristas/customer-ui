@@ -13,16 +13,11 @@ import LoginForm from "./components/loginForm/LoginForm";
 import RegistrationForm from "./components/registrationForm/RegistrationForm";
 import UserProfile from "./components/user-profile/UserProfile";
 import store from "./redux/store";
-import { generateCsrfToken } from './utils/Login';
 import ResetPasswordForm from './components/reset-password/ResetPasswordForm';
 import ForgotPasswordForm from './components/reset-password/ForgotPasswordForm';
 
 
 function App() {
-
-    useEffect(() => {
-        generateCsrfToken();
-    }, [])
 
     return (
         <Provider store={store}>
