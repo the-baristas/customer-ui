@@ -8,13 +8,12 @@ export async function createPayment(clientSecret, bookingId) {
             process.env.REACT_APP_BOOKING_SERVICE_URL + "/payments",
             {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": getToken(), "X-XSRF-TOKEN": sessionStorage.getItem("xsrfToken") },
+                headers: { "Content-Type": "application/json", "Authorization": getToken() },
                 body: JSON.stringify({
                     stripeId: clientSecret,
                     bookingId: bookingId,
                     refunded: false
-                }),
-                credentials: 'include'  
+                }) 
             }
         );
         if (response.ok === false) {
@@ -39,8 +38,7 @@ export const deletePayment = async (stripeId) => {
             `${process.env.REACT_APP_BOOKING_SERVICE_URL}/payments/${stripeId}`,
             {
                 method: "DELETE",
-                headers: { "Content-Type": "application/json", "Authorization": getToken(), "X-XSRF-TOKEN": sessionStorage.getItem("xsrfToken") },
-                credentials: 'include'  
+                headers: { "Content-Type": "application/json", "Authorization": getToken() }
             }
         );
         if (response.ok === false) {

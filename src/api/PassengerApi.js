@@ -1,4 +1,4 @@
-import { getCsrfToken, getToken } from "../utils/Login";
+import { getToken } from "../utils/Login";
 
 export const createPassenger = async ({
     bookingConfirmationCode,
@@ -22,7 +22,7 @@ export const createPassenger = async ({
     try {
         response = await fetch(url, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": getToken(), "X-XSRF-TOKEN": await getCsrfToken() },
+            headers: { "Content-Type": "application/json", "Authorization": getToken() },
             body: JSON.stringify({
                 bookingConfirmationCode,
                 originAirportCode,
@@ -61,7 +61,7 @@ export const deletePassenger = async (id) => {
     try {
         const response = await fetch(url, {
             method: "DELETE",
-            headers: { "Authorization": getToken(), "X-XSRF-TOKEN": await getCsrfToken() },
+            headers: { "Authorization": getToken() },
             credentials: 'include'  
         });
         if (response.ok === false) {

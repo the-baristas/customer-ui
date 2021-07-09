@@ -37,11 +37,9 @@ const RegistrationForm = () => {
         registerUser(user)
         .then(response => {
             responseOk = response.ok;
-            console.log("then response")
             return response.json();
         })
         .then((data) => {
-            console.log("then data")
             if(!responseOk)
             {
                 if(data.message)
@@ -49,7 +47,6 @@ const RegistrationForm = () => {
                 else
                     throw Error("There was a problem while registering. Please try again later")
             }
-            console.log("then no throw")
             setIsPending(false);
             setError(null);
             alert("Thank you for registering. An email has been sent to " + email + ". Please follow the link in the email to verify your account.")

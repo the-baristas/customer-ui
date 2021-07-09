@@ -2,8 +2,6 @@ import React from 'react';
 import {render, fireEvent, screen, waitForElementToBeRemoved} from "@testing-library/react";
 import userEvent from "@testing-library/user-event"
 import RegistrationForm from "./RegistrationForm";
-import {rest} from "msw";
-import {setupServer} from "msw/node";
 import { MemoryRouter } from 'react-router-dom';
 import * as usersService from '../../api/UsersService';
 
