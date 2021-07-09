@@ -26,7 +26,7 @@ import FlightSearch from "../flight-search/FlightSearch";
 import PaymentForm from "../paymentForm/PaymentForm";
 import mainImage from "./customer-ui-01.jpg";
 
-const Booking = () => {
+const Home = () => {
     // Redux
 
     const userStatus = useSelector((state) => state.userStatus);
@@ -463,7 +463,7 @@ const Booking = () => {
     );
 };
 
-Booking.propTypes = {
+Home.propTypes = {
     selectedFlight: PropTypes.object,
     flights: PropTypes.node,
     seatClass: PropTypes.string,
@@ -476,4 +476,4 @@ Booking.propTypes = {
     dest: PropTypes.string
 };
 
-export default Booking;
+export default Home;
