@@ -64,14 +64,14 @@ it("error besides 403 makes error message appear", async () => {
 })
 
 it("Login button exists", () => {
-    const { getByTestId } = render(<Provider store={store}><LoginForm></LoginForm></Provider>);
+    const { getByTestId } = render(<MemoryRouter><Provider store={store}><LoginForm></LoginForm></Provider></MemoryRouter>);
     const button = getByTestId("loginButton");
     expect(button).toBeTruthy();
     expect(button.innerHTML).toContain("Login");
 })
 
 it("check register form input fields are all blank at start", () => {
-    const { getByTestId } = render(<Provider store={store}><LoginForm></LoginForm></Provider>);
+    const { getByTestId } = render(<MemoryRouter><Provider store={store}><LoginForm></LoginForm></Provider></MemoryRouter>);
     const inputUsername = getByTestId("inputUsername");
     const inputPassword = getByTestId("inputPassword");
 

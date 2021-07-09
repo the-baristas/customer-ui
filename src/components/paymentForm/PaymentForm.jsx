@@ -1,6 +1,7 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
+import { getToken } from "../../utils/Login";
 import "./PaymentForm.css";
 
 const PaymentForm = (props) => {
@@ -25,7 +26,7 @@ const PaymentForm = (props) => {
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json","Authorization": getToken()
                     },
                     body: JSON.stringify({
                         amount: props.totalDollars * 100,

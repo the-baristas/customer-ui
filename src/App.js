@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from "react-redux";
 import {
     BrowserRouter as Router,
@@ -13,14 +13,11 @@ import LoginForm from "./components/loginForm/LoginForm";
 import RegistrationForm from "./components/registrationForm/RegistrationForm";
 import UserProfile from "./components/user-profile/UserProfile";
 import store from "./redux/store";
-import { generateCsrfToken } from './utils/Login';
+import ResetPasswordForm from './components/reset-password/ResetPasswordForm';
+import ForgotPasswordForm from './components/reset-password/ForgotPasswordForm';
 
 
 function App() {
-    
-    useEffect(() => {
-        generateCsrfToken();
-    }, [])
 
     return (
         <Provider store={store}>
@@ -31,7 +28,7 @@ function App() {
                         <Redirect to="/booking" />
                     </Route>
 
-                    <Route path='/booking'> 
+                    <Route path='/booking'>
                         <Booking />
                     </Route>
 
@@ -44,7 +41,15 @@ function App() {
                     </Route>
 
                     <Route path='/profile'>
-                        <UserProfile/>
+                        <UserProfile />
+                    </Route>
+
+                    <Route path='/forgotpassword'>
+                       <ForgotPasswordForm/>
+                    </Route>
+
+                    <Route path='/resetpassword/:token'>
+                        <ResetPasswordForm />
                     </Route>
                 </Switch>
             </Router>
