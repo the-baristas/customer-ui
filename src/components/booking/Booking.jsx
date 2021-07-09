@@ -13,18 +13,15 @@ import {
     updateBooking
 } from "../../api/BookingApi";
 import { createPassenger, deletePassenger } from "../../api/PassengerApi";
-import {
-    createPayment,
-    deletePayment
-} from "../../api/PaymentService";
-import FlightTable from "./FlightTable";
-import PassengerInfoForm from "./PassengerInfoForm";
-import SeatClass from "./SeatClass";
+import { createPayment, deletePayment } from "../../api/PaymentService";
 import FlightCard from "../flight-list/FlightCard";
 import FlightList from "../flight-list/FlightList";
 import FlightSearch from "../flight-search/FlightSearch";
 import PaymentForm from "../paymentForm/PaymentForm";
 import mainImage from "./customer-ui-01.jpg";
+import FlightTable from "./FlightTable";
+import PassengerInfoForm from "./PassengerInfoForm";
+import SeatClass from "./SeatClass";
 
 const Booking = () => {
     // Redux
@@ -126,8 +123,9 @@ const Booking = () => {
         }
         pricePerPassenger = Math.round(pricePerPassenger * 100) / 100;
         setPricePerPassengerState(pricePerPassenger);
+        const usaTaxRate = 0.075;
         const taxesPerPassenger =
-            Math.round(pricePerPassenger * 0.07 * 100) / 100;
+            Math.round(pricePerPassenger * usaTaxRate * 100) / 100;
         setTaxesPerPassenger(taxesPerPassenger);
         const totalPerPassenger = pricePerPassenger + taxesPerPassenger;
         setTotalPerPassenger(totalPerPassenger);
