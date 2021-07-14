@@ -125,10 +125,12 @@ const Booking = () => {
     const [dest, setDest] = useState("");
     const [sortBy, setSortBy] = useState("departureTime");
     const [filter, setFilter] = useState("all");
-    const [upgradesPP, setUpgradesPP] = useState(0);
-    const [desUpgradesPP, setDesUpgradesPP] = useState(0);
-    const [retUpgradesPP, setRetUpgradesPP] = useState(0);
+    // sets the total price of upgrades
+    const [upgradesPricePP, setUpgradesPricePP] = useState(0);
+    const [desUpgradesPricePP, setDesUpgradesPricePP] = useState(0);
+    const [retUpgradesPricePP, setRetUpgradesPricePP] = useState(0);
 
+    // state variables check if a boarding group upgrade has already been applied
     const [hasBGUpgrade, setHasBgUpgrade] = useState(false);
     const [hasRetBGUpgrade, setHasRetBgUpgrade] = useState(false);
     const [hasDepBGUpgrade, setHasDepBgUpgrade] = useState(false);
@@ -137,21 +139,21 @@ const Booking = () => {
 
     const handleUpgrades = (upgradePrice) => {
         if (hasBGUpgrade !== true) {
-            setUpgradesPP(upgradePrice);
+            setUpgradesPricePP(upgradePrice);
             setHasBgUpgrade(true);
         }
     }
 
     const handleRetUpgrades = (upgradePrice) => {
         if (hasRetBGUpgrade !== true) {
-            setUpgradesPP(upgradePrice);
+            setUpgradesPricePP(upgradePrice);
             setHasRetBgUpgrade(true);
         }
     }
 
     const handleDepUpgrades = (upgradePrice) => {
         if (hasDepBGUpgrade !== true) {
-            setUpgradesPP(upgradePrice);
+            setUpgradesPricePP(upgradePrice);
             setHasDepBgUpgrade(true);
         }
     }
@@ -163,6 +165,22 @@ const Booking = () => {
     const handleFlightSelection = (selectedFlight, seatClass) => {
         setSelectedFlight(selectedFlight);
         setSeatClass(seatClass);
+        
+        switch (seatClass) {
+            case SeatClass.ECONOMY:
+                setCheckInGroup(3);
+                break;
+            case SeatClass.BUSINESS:
+                setCheckInGroup(2);
+                break;
+            case SeatClass.FIRST:
+                setCheckInGroup(1);
+                break;
+            default:
+                // TODO: Go to error page.
+                break;
+        }
+
         calculateTotalPrice(selectedFlight, seatClass);
         (async () => {
             const confirmationCode = uuidv4().toUpperCase();
@@ -338,24 +356,24 @@ const Booking = () => {
         }
 
         departurePricePP = Math.round(departurePricePP * 100) / 100;
-        let departureUpgradesPP = Math.round(desUpgradesPP * 100) / 100;
+        let departureUpgradesPricePP = Math.round(desUpgradesPricePP * 100) / 100;
         returnPricePP = Math.round(returnPricePP * 100) / 100;
-        let returnUpgradesPP = Math.round(retUpgradesPP * 100) / 100;
+        let returnUpgradesPricePP = Math.round(retUpgradesPricePP * 100) / 100;
 
-        pricePP = departurePricePP + departureUpgradesPP + returnPricePP + returnUpgradesPP;
+        pricePP = departurePricePP + departureUpgradesPricePP + returnPricePP + returnUpgradesPricePP;
 
         setDeparturePricePPState(departurePricePP);
-        setDesUpgradesPP(departureUpgradesPP);
+        setDesUpgradesPricePP(departureUpgradesPricePP);
         setReturnPricePPState(returnPricePP);
-        setRetUpgradesPP(returnUpgradesPP);
+        setRetUpgradesPricePP(returnUpgradesPricePP);
         setRTPricePerPassengerState(pricePP);
 
         const departureTaxesPerPassenger =
-            Math.round((departurePricePP + returnUpgradesPP) * 0.07 * 100) / 100;
+            Math.round((departurePricePP + returnUpgradesPricePP) * 0.07 * 100) / 100;
         setDepartureTaxesPP(departureTaxesPerPassenger);
 
         const returnTaxesPerPassenger =
-            Math.round((returnPricePP + returnUpgradesPP) * 0.07 * 100) / 100;
+            Math.round((returnPricePP + returnPricePP) * 0.07 * 100) / 100;
         setReturnTaxesPP(returnTaxesPerPassenger);
 
         const totalTaxesPP = departureTaxesPerPassenger + returnTaxesPerPassenger;
@@ -846,11 +864,14 @@ const Booking = () => {
             departureTaxesPP={departureTaxesPP}
             returnTaxesPP={returnTaxesPP}
             passengerCount={passengerCount}
+            setCheckInGroup={setCheckInGroup}
+            checkInGroup={checkInGroup}
+            upgradesPricePP={upgradesPricePP}
+            desUpgradesPricePP={desUpgradesPricePP}
+            retUpgradesPricePP={retUpgradesPricePP}
+            setUpgradesPricePP={setUpgradesPricePP}
             retCheckInGroup={retCheckInGroup}
             depCheckInGroup={depCheckInGroup}
-            upgradesPP={upgradesPP}
-            retUpgradesPP={retUpgradesPP}
-            desUpgradesPP={desUpgradesPP}
         />
     );
     const promise = loadStripe(
@@ -926,9 +947,9 @@ const Booking = () => {
                         setCheckInGroup={setCheckInGroup}
                         setDepCheckInGroup={setDepCheckInGroup}
                         setRetCheckInGroup={setRetCheckInGroup}
-                        setUpgradesPP={setUpgradesPP}
-                        setDesUpgradesPP={setDesUpgradesPP}
-                        setRetUpgradesPP={setRetUpgradesPP}
+                        setUpgradesPricePP={setUpgradesPricePP}
+                        setDesUpgradesPricePP={setDesUpgradesPricePP}
+                        setRetUpgradesPricePP={setRetUpgradesPricePP}
                         handlePageChange={handlePageChange}
                         handleFilterChange={handleFilterChange}
                         onFlightSelection={handleFlightSelection}

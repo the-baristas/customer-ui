@@ -41,21 +41,16 @@ const FlightList = (props) => {
     const retDurationHours = Math.floor(retDuration.asHours());
     const retDurationMinutes = retDuration.minutes();
 
-    const handleUpgrade = (amount, group) => {
-        props.setUpgradesPP(amount);
-        props.setCheckInGroup(group);
-    }
-
     const handleRetUpgrade = (amount, group) => {
 
-        props.setRetUpgradesPP(amount);
+        props.setRetUpgradesPricePP(amount);
         props.setRetCheckInGroup(group);
 
     }
 
     const handleDesUpgrade = (amount, group) => {
 
-        props.setDesUpgradesPP(amount);
+        props.setDesUpgradesPricePP(amount);
         props.setDepCheckInGroup(group);
 
     }
