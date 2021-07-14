@@ -47,6 +47,7 @@ const PaymentForm = (props) => {
                 alert(
                     "We are unable to process payments at this time. Please try again later."
                 );
+                console.log(error);
                 history.push("/");
             });
     }, [history, props.totalDollars]);
