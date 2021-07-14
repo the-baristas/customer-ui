@@ -11,7 +11,8 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 const Header = () => {
 
-    const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn)
+    const userStatus = useSelector((state) => state.userStatus);
+    const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn);
 
     return ( 
 
@@ -24,6 +25,7 @@ const Header = () => {
                         { !userLoggedIn && <Nav.Link data-testid="loginButton" id="nav-links" href="/login">Login</Nav.Link> } 
                         {!userLoggedIn &&<Nav.Link id="nav-links" href="/register">Register</Nav.Link> }
                         
+            {userLoggedIn && <Nav.Item><b><small>Welcome, {userStatus.username}!</small></b></Nav.Item>}
             {userLoggedIn &&<Nav.Link id="nav-links" href="/profile">My Account</Nav.Link> }
             { userLoggedIn && <LogoutButton ></LogoutButton>}
                     </Navbar.Collapse>

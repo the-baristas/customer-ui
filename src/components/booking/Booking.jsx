@@ -885,7 +885,6 @@ const Booking = () => {
 
     return (
         <div>
-            {userStatus.userLoggedIn && <h1>Welcome {userStatus.username}</h1>}
             <Switch>
                 <Route exact path={path}>
                     <Image
