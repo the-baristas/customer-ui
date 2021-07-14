@@ -4,7 +4,7 @@ body{
 }
 
 .search-container.container {
-    top: 20%;
+    top: 40%;
     z-index: 1;
     position: absolute;
     display: grid;

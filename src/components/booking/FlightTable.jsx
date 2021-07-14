@@ -111,6 +111,11 @@ const FlightTable = (props) => {
     const f2DurationHours = Math.floor(f2Duration.asHours());
     const f2DurationMinutes = f2Duration.minutes();
 
+    const handleUpgrade = (amount, group) => {
+        props.setUpgradesPP(amount);
+        props.setCheckInGroup(group);
+    }
+
     return (
         <Container fluid>
             {props.isRoundTrip === false && 
@@ -121,94 +126,76 @@ const FlightTable = (props) => {
                 </Col>
             </Row>
             <Row>
-                <Col xs={12} sm={5} className="border-bottom border-dark p-3">
-                    <Row>
-                        <Col
-                            xs={6}
-                            sm={6}
-                            id="origin-airport-code"
-                            className="text-center p-2"
-                        >
-                            {props.selectedFlight.route.originAirport.iataId}
-                        </Col>
-                        <Col xs={6} sm={6} className="text-center p-2">
-                            {
-                                props.selectedFlight.route.destinationAirport
-                                    .iataId
-                            }
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs sm={6} className="text-center">
-                            {departureTime}
-                        </Col>
-                        <Col xs sm={6} className="text-center">
-                            {arrivalTime}
-                        </Col>
+            <Container>
+             <Row className="return-selected">
+            <Col xs={12} lg={3}>
+                 <Row className="origin-airport">
+                { props.selectedFlight.route.originAirport.city } ({ props.selectedFlight.route.originAirport.iataId })
+                </Row>
+                <Row className="departure-time">
+                { moment(props.selectedFlight.departureTime).format('h:mm a') }
+                </Row>
+                <Row className="departure-date">
+                 { moment(props.selectedFlight.departureTime).format('MMMM Do, YYYY') }
+                </Row>
+                </Col>
+
+                <Col xs={12} lg={1}>
+                <Row className="duration">
+                {durationHours} hr {durationMinutes} min
+                </Row>
+                <Row className="duration-icon">
+                <FontAwesomeIcon icon={faPlane} />
+                </Row>
+                </Col>
+
+                <Col xs={12} lg={3}>
+             <Row className="dest-airport">
+                { props.selectedFlight.route.destinationAirport.city }
+                </Row>
+             <Row className="arrival-time">
+                { moment(props.selectedFlight.arrivalTime).format('h:mm a') }
+                </Row>
+             <Row className="arrival-date">
+                { moment(props.selectedFlight.arrivalTime).format('MMMM Do, YYYY') }
+                </Row>
+             </Col> 
+
+             <Col xs={12} lg={2}>
+                <Row className="dest-airport">
+                <p><b>Boarding Group: </b> { props.checkInGroup }<br />
+                         <b>Class:</b> {props.seatClass}
+                             </p>
+                </Row>
+                </Col>
+                <Col xs={12} lg={3}>
+                    <Row className="totals">
+                    Price Per Passenger: ${props.pricePerPassenger}<br />
+                    Upgrade(s) Per Passenger: ${props.upgradesPP}<br />
+                    Taxes Per Passenger: ${props.taxesPerPassenger.toFixed(2)}<br />
+                    Total Per Passenger: ${totalPerPassenger.toFixed(2)}<br />
+                    Passenger(s) x {passengerCount}<br /><br />
+                    
+                    Flight Total: ${totalPrice.toFixed(2)}
                     </Row>
                 </Col>
-                <Col xs={12} sm={3} className="border-bottom border-dark p-3">
-                    <Row>
-                        <Col xs={6} sm={6} className="text-center p-2">
-                            Duration
-                        </Col>
-                        <Col xs={6} sm={6} className="text-center p-2">
-                            {seatClassDisplayName}
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={6} sm={6} className="text-center">
-                            {durationHours} hr {durationMinutes} min
-                        </Col>
-                    </Row>
-                </Col>
-                <Col xs={12} sm={4} className="border-bottom border-dark p-3">
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Price per Passenger
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            ${props.pricePerPassenger.toFixed(2)}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Taxes per Passenger
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            ${props.taxesPerPassenger.toFixed(2)}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Total per Passenger
-                        </Col>
-                        <Col
-                            xs={5}
-                            sm={5}
-                            className="text-right"
-                            aria-label="total per passenger"
-                        >
-                            ${totalPerPassenger.toFixed(2)}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Passenger(s)
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            x {passengerCount}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Flight total
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            ${totalPrice.toFixed(2)}
-                        </Col>
-                    </Row>
-                </Col>
+             </Row>
+
+                <br />
+
+                { props.checkInGroup !== 1 &&
+             <Card className="upgrade-dep-bg">
+                <Card.Body>
+                <Card.Title>Upgrade Boarding Group?</Card.Title>
+                    <p>
+                        <small>Your boarding group is based on your seat class. Priority boarding is given to Group 1, which is followed by Group 2, and then Group 3. By upgrading your group, you can be amongst the first to stow your carry-on baggage and board the flight.</small>
+                    </p>
+                    <Card.Link onClick={() => handleUpgrade(15, 1)}>Upgrade To Group 1</Card.Link>
+                    { props.checkInGroup !== 2 && <Card.Link onClick={() => handleUpgrade(12, 2)}>Upgrade To Group 2</Card.Link> }
+                </Card.Body>
+               </Card> }
+
+            </Container>
             </Row>
             </>
             }

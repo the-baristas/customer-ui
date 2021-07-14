@@ -166,6 +166,22 @@ const Booking = () => {
     const handleFlightSelection = (selectedFlight, seatClass) => {
         setSelectedFlight(selectedFlight);
         setSeatClass(seatClass);
+        
+        switch (seatClass) {
+            case SeatClass.ECONOMY:
+                setCheckInGroup(3);
+                break;
+            case SeatClass.BUSINESS:
+                setCheckInGroup(2);
+                break;
+            case SeatClass.FIRST:
+                setCheckInGroup(1);
+                break;
+            default:
+                // TODO: Go to error page.
+                break;
+        }
+
         calculateTotalPrice(selectedFlight, seatClass);
         (async () => {
             const confirmationCode = uuidv4().toUpperCase();
@@ -848,11 +864,12 @@ const Booking = () => {
             departureTaxesPP={departureTaxesPP}
             returnTaxesPP={returnTaxesPP}
             passengerCount={passengerCount}
+            setCheckInGroup={setCheckInGroup}
+            checkInGroup={checkInGroup}
+            upgradesPP={upgradesPP}
+            setUpgradesPP={setUpgradesPP}
             retCheckInGroup={retCheckInGroup}
             depCheckInGroup={depCheckInGroup}
-            upgradesPP={upgradesPP}
-            retUpgradesPP={retUpgradesPP}
-            desUpgradesPP={desUpgradesPP}
         />
     );
     const promise = loadStripe(
