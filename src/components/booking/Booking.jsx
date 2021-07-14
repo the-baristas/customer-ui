@@ -127,7 +127,11 @@ const Booking = () => {
     const [origin, setOrigin] = useState("");
     const [dest, setDest] = useState("");
     const [sortBy, setSortBy] = useState("departureTime");
+    const [departureSortBy, setDepartureSortBy] = useState("departureTime");
+    const [returnSortBy, setReturnSortBy] = useState("departureTime");
     const [filter, setFilter] = useState("all");
+    const [departureFilter, setDepartureFilter] = useState("all");
+    const [returnFilter, setReturnFilter] = useState("all");
     // sets the total price of upgrades
     const [upgradesPricePP, setUpgradesPricePP] = useState(0);
     const [desUpgradesPricePP, setDesUpgradesPricePP] = useState(0);
@@ -402,7 +406,7 @@ const Booking = () => {
         let theFilter = filter;
 
         fetch(
-            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}`,
+            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${event.target.value}`,
             {
                 method: "POST",
                 headers: {
@@ -423,6 +427,84 @@ const Booking = () => {
             .then((data) => {
                 setFlights(data.content);
                 setFlightPage(data);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("No flights found, try again!");
+            });
+    }
+
+    function handleSortByChangeDepartures(event) {
+        setDepartureSortBy(event.target.value);
+
+        let theMonth = startDate.getMonth() + 1;
+        let theDate = startDate.getDate();
+        let theYear = startDate.getFullYear();
+        let theHours = "00";
+        let theMins = "00";
+        let theFilter = filter;
+
+        fetch(
+            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${event.target.value}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("utopiaCustomerKey")
+                },
+                body: JSON.stringify({
+                    month: theMonth,
+                    date: theDate,
+                    year: theYear,
+                    hours: theHours,
+                    mins: theMins,
+                    filter: theFilter
+                })
+            }
+        )
+            .then((resp) => resp.json())
+            .then((data) => {
+                setDepartureFlights(data.content);
+                setDepartureFlightPage(data);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("No flights found, try again!");
+            });
+    }
+
+    function handleSortByChangeReturns(event) {
+        setReturnSortBy(event.target.value);
+
+        let theMonth = endDate.getMonth() + 1;
+        let theDate = endDate.getDate();
+        let theYear = endDate.getFullYear();
+        let theHours = "00";
+        let theMins = "00";
+        let theFilter = filter;
+
+        fetch(
+            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${dest}&destinationId=${origin}&pageNo=0&pageSize=10&sortBy=${event.target.value}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("utopiaCustomerKey")
+                },
+                body: JSON.stringify({
+                    month: theMonth,
+                    date: theDate,
+                    year: theYear,
+                    hours: theHours,
+                    mins: theMins,
+                    filter: theFilter
+                })
+            }
+        )
+            .then((resp) => resp.json())
+            .then((data) => {
+                setReturnFlights(data.content);
+                setReturnFlightPage(data);
             })
             .catch((error) => {
                 console.error(error);
@@ -454,7 +536,7 @@ const Booking = () => {
                     year: theYear,
                     hours: theHours,
                     mins: theMins,
-                    filter: theFilter
+                    filter: event.target.value
                 })
             }
         )
@@ -462,6 +544,82 @@ const Booking = () => {
             .then((data) => {
                 setFlights(data.content);
                 setFlightPage(data);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("No flights found, try again!");
+            });
+    }
+
+    function handleFilterChangeDepartures(event) {
+        setDepartureFilter(event.target.value);
+
+        let theMonth = startDate.getMonth() + 1;
+        let theDate = startDate.getDate();
+        let theYear = startDate.getFullYear();
+        let theHours = "00";
+        let theMins = "00";
+
+        fetch(
+            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${sortBy}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("utopiaCustomerKey")
+                },
+                body: JSON.stringify({
+                    month: theMonth,
+                    date: theDate,
+                    year: theYear,
+                    hours: theHours,
+                    mins: theMins,
+                    filter: event.target.value
+                })
+            }
+        )
+            .then((resp) => resp.json())
+            .then((data) => {
+                setDepartureFlights(data.content);
+                setDepartureFlightPage(data);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("No flights found, try again!");
+            });
+    }
+
+    function handleFilterChangeReturns(event) {
+        setDepartureFilter(event.target.value);
+
+        let theMonth = endDate.getMonth() + 1;
+        let theDate = endDate.getDate();
+        let theYear = endDate.getFullYear();
+        let theHours = "00";
+        let theMins = "00";
+
+        fetch(
+            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${dest}&destinationId=${origin}&pageNo=${flightPage.number}&pageSize=10&sortBy=${sortBy}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("utopiaCustomerKey")
+                },
+                body: JSON.stringify({
+                    month: theMonth,
+                    date: theDate,
+                    year: theYear,
+                    hours: theHours,
+                    mins: theMins,
+                    filter: event.target.value
+                })
+            }
+        )
+            .then((resp) => resp.json())
+            .then((data) => {
+                setReturnFlights(data.content);
+                setReturnFlightPage(data);
             })
             .catch((error) => {
                 console.error(error);
@@ -627,7 +785,6 @@ const Booking = () => {
         let theHours = "00";
         let theMins = "00";
         let theFilter = filter;
-        setFlightPage(newPage);
 
         trackPromise(
             fetch(
@@ -652,6 +809,84 @@ const Booking = () => {
                 .then((data) => {
                     setFlights(data.content);
                     setFlightPage(data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert("No flights found, try again!");
+                })
+        );
+    }
+
+    function handlePageChangeReturns(newPage) {
+        let theMonth = startDate.getMonth() + 1;
+        let theDate = startDate.getDate();
+        let theYear = startDate.getFullYear();
+        let theHours = "00";
+        let theMins = "00";
+        let theFilter = filter;
+
+        trackPromise(
+            fetch(
+                `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: localStorage.getItem("utopiaCustomerKey")
+                    },
+                    body: JSON.stringify({
+                        month: theMonth,
+                        date: theDate,
+                        year: theYear,
+                        hours: theHours,
+                        mins: theMins,
+                        filter: theFilter
+                    })
+                }
+            )
+                .then((resp) => resp.json())
+                .then((data) => {
+                    setReturnFlights(data.content);
+                    setReturnFlightPage(data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert("No flights found, try again!");
+                })
+        );
+    }
+
+    function handlePageChangeDepartures(newPage) {
+        let theMonth = endDate.getMonth() + 1;
+        let theDate = endDate.getDate();
+        let theYear = endDate.getFullYear();
+        let theHours = "00";
+        let theMins = "00";
+        let theFilter = filter;
+
+        trackPromise(
+            fetch(
+                `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: localStorage.getItem("utopiaCustomerKey")
+                    },
+                    body: JSON.stringify({
+                        month: theMonth,
+                        date: theDate,
+                        year: theYear,
+                        hours: theHours,
+                        mins: theMins,
+                        filter: theFilter
+                    })
+                }
+            )
+                .then((resp) => resp.json())
+                .then((data) => {
+                    setDepartureFlights(data.content);
+                    setDepartureFlightPage(data);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -953,10 +1188,16 @@ const Booking = () => {
                         setDesUpgradesPricePP={setDesUpgradesPricePP}
                         setRetUpgradesPricePP={setRetUpgradesPricePP}
                         handlePageChange={handlePageChange}
+                        handlePageChangeDepartures={handlePageChangeDepartures}
+                        handlePageChangeReturns={handlePageChangeReturns}
                         handleFilterChange={handleFilterChange}
+                        handleFilterChangeDepartures={handleFilterChangeDepartures}
+                        handleFilterChangeReturns={handleFilterChangeReturns}
                         onFlightSelection={handleFlightSelection}
                         onRTFlightSelection={handleRTSelection}
                         onSortBy={handleSortByChange}
+                        onReturnsSortBy={handleSortByChangeReturns}
+                        onDeparturesSortBy={handleSortByChangeDepartures}
                         isRoundTrip={isRoundTrip}
                     />
                 </Route>

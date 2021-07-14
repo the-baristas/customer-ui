@@ -21,6 +21,16 @@ const FlightList = (props) => {
         props.handlePageChange(newPage-1);
     }
 
+    function handleReturnClick(event, newPage) {
+        setCurrentReturnsPage(newPage-1);
+        props.handlePageChangeReturns(newPage-1);
+    }
+
+    function handleDepartureClick(event, newPage) {
+        setCurrentDeparturesPage(newPage-1);
+        props.handlePageChangeDepartures(newPage-1);
+    }
+
     function handleRTFlightSelection(e) {
         props.onRTFlightSelection(e);
     }
@@ -57,6 +67,8 @@ const FlightList = (props) => {
 
     // state
     const [currentPage, setCurrentPage] = useState(props.flightPage.number);
+    const [currentReturnsPage, setCurrentReturnsPage] = useState(props.departureFlightPage.number);
+    const [currentDeparturesPage, setCurrentDeparturesPage] = useState(props.returnFlightPage.number);
 
     return (
 
@@ -109,7 +121,7 @@ const FlightList = (props) => {
                 <label htmlFor="sort-by"><b>Sort by:</b></label> 
                 {'  '}
 
-                <select name="sort-by" id="sort-by" onChange={props.onSortBy}>
+                <select name="sort-by" id="sort-by" onChange={props.onDeparturesSortBy}>
                 <option value="economyPrice">Price</option>
                 <option value="departureTime">Departure</option>
                 <option value="arrivalTime">Arrival</option>
@@ -120,7 +132,7 @@ const FlightList = (props) => {
                 <label htmlFor="filter"><b>Filter:</b></label> 
                 {'  '}
 
-                <select name="filter" id="filter" onChange={props.handleFilterChange}>
+                <select name="filter" id="filter" onChange={props.handleFilterChangeDepartures}>
                 <option value="all">All</option>
                 <option value="morning">Morning Flights Only</option>
                 <option value="afternoon">Afternoon Flights Only</option>
@@ -130,7 +142,7 @@ const FlightList = (props) => {
 
                 {props.departureFlightPage.totalPages > 1 && 
                 <div className='pagination'>
-                    <Pagination count={props.departureFlightPage.totalPages} page={currentPage + 1} onChange={handleClick} />
+                    <Pagination count={props.departureFlightPage.totalPages} page={currentPage + 1} onChange={handleDepartureClick} />
                 </div> }
 
                 <div id="depFlightCards">
@@ -140,7 +152,7 @@ const FlightList = (props) => {
 
                 {props.departureFlightPage.totalPages > 1 && 
                 <div className='pagination'>
-                    <Pagination count={props.departureFlightPage.totalPages} page={currentPage + 1} onChange={handleClick} />
+                    <Pagination count={props.departureFlightPage.totalPages} page={currentPage + 1} onChange={handleDepartureClick} />
                 </div> }
 
                 <br />
@@ -149,7 +161,7 @@ const FlightList = (props) => {
                 <label htmlFor="sort-by"><b>Sort by:</b></label> 
                 {'  '}
 
-                <select name="sort-by" id="sort-by" onChange={props.onSortBy}>
+                <select name="sort-by" id="sort-by" onChange={props.onReturnsSortBy}>
                 <option value="economyPrice">Price</option>
                 <option value="departureTime">Departure</option>
                 <option value="arrivalTime">Arrival</option>
@@ -160,7 +172,7 @@ const FlightList = (props) => {
                 <label htmlFor="filter"><b>Filter:</b></label> 
                 {'  '}
 
-                <select name="filter" id="filter" onChange={props.handleFilterChange}>
+                <select name="filter" id="filter" onChange={props.handleFilterChangeReturns}>
                 <option value="all">All</option>
                 <option value="morning">Morning Flights Only</option>
                 <option value="afternoon">Afternoon Flights Only</option>
@@ -170,7 +182,7 @@ const FlightList = (props) => {
 
                 { props.returnFlightPage.totalPages > 1 &&
                 <div className='pagination'>
-                    <Pagination count={props.returnFlightPage.totalPages} page={currentPage + 1} onChange={handleClick} />
+                    <Pagination count={props.returnFlightPage.totalPages} page={currentReturnsPage + 1} onChange={handleReturnClick} />
                 </div> }
 
                 <div id="retFlightCards">
@@ -180,19 +192,19 @@ const FlightList = (props) => {
 
                 { props.returnFlightPage.totalPages > 1 &&
                 <div className='pagination'>
-                    <Pagination count={props.returnFlightPage.totalPages} page={currentPage + 1} onChange={handleClick} />
+                    <Pagination count={props.returnFlightPage.totalPages} page={currentReturnsPage + 1} onChange={handleReturnClick} />
                 </div> }
 
                 { /** selected flights here */ }
                 
-                <br /><br />
 
-                { props.returnSelectionMade | props.departureSelectionMade && 
+
+                { (props.returnSelectionMade || props.departureSelectionMade) && 
                 
                 <Container>
                 <Row className="itinerary-title">Itinerary:</Row>
                 </Container>
-                }
+                } 
 
                 { props.departureSelectionMade && 
                 <Container>
@@ -252,8 +264,8 @@ const FlightList = (props) => {
                     <p>
                         <small>Your boarding group is based on your seat class. Priority boarding is given to Group 1, which is followed by Group 2, and then Group 3. By upgrading your group, you can be amongst the first to stow your carry-on baggage and board the flight.</small>
                     </p>
-                    <Card.Link onClick={() => handleDesUpgrade(15, 1)}>Upgrade To Group 1</Card.Link>
-                    { props.depCheckInGroup !== 2 && <Card.Link onClick={() => handleDesUpgrade(12, 2)}>Upgrade To Group 2</Card.Link> }
+                    <Card.Link className="point" onClick={() => handleDesUpgrade(15, 1)}>Upgrade To Group 1</Card.Link>
+                    { props.depCheckInGroup !== 2 && <Card.Link className="point" onClick={() => handleDesUpgrade(12, 2)}>Upgrade To Group 2</Card.Link> }
                 </Card.Body>
                </Card>
 }
@@ -261,7 +273,7 @@ const FlightList = (props) => {
              </Row>
              <br />
              </Container>
-             }
+    } 
 
              { props.returnSelectionMade &&
              <Container>
@@ -320,8 +332,8 @@ const FlightList = (props) => {
                     <p>
                         <small>Your boarding group is based on your seat class. Priority boarding is given to Group 1, which is followed by Group 2, and then Group 3. By upgrading your group, you can be amongst the first to stow your carry-on baggage and board the flight.</small>
                     </p>
-                    <Card.Link onClick={() => handleRetUpgrade(15, 1)}>Upgrade To Group 1</Card.Link>
-                    { props.retCheckInGroup !== 2 && <Card.Link onClick={() => handleRetUpgrade(12, 2)}>Upgrade To Group 2</Card.Link> }
+                    <Card.Link className="point" onClick={() => handleRetUpgrade(15, 1)}>Upgrade To Group 1</Card.Link>
+                    { props.retCheckInGroup !== 2 && <Card.Link className="point" onClick={() => handleRetUpgrade(12, 2)}>Upgrade To Group 2</Card.Link> }
                 </Card.Body>
                </Card>
 }
