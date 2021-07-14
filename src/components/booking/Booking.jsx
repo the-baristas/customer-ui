@@ -129,9 +129,9 @@ const Booking = () => {
     const [sortBy, setSortBy] = useState("departureTime");
     const [filter, setFilter] = useState("all");
     // sets the total price of upgrades
-    const [upgradesPP, setUpgradesPricePP] = useState(0);
-    const [desUpgradesPP, setDesUpgradesPricePP] = useState(0);
-    const [retUpgradesPP, setRetUpgradesPricePP] = useState(0);
+    const [upgradesPricePP, setUpgradesPricePP] = useState(0);
+    const [desUpgradesPricePP, setDesUpgradesPricePP] = useState(0);
+    const [retUpgradesPricePP, setRetUpgradesPricePP] = useState(0);
 
     // state variables check if a boarding group upgrade has already been applied
     const [hasBGUpgrade, setHasBgUpgrade] = useState(false);
@@ -358,24 +358,24 @@ const Booking = () => {
         }
 
         departurePricePP = Math.round(departurePricePP * 100) / 100;
-        let departureUpgradesPP = Math.round(desUpgradesPP * 100) / 100;
+        let departureUpgradesPricePP = Math.round(desUpgradesPricePP * 100) / 100;
         returnPricePP = Math.round(returnPricePP * 100) / 100;
-        let returnUpgradesPP = Math.round(retUpgradesPP * 100) / 100;
+        let returnUpgradesPricePP = Math.round(retUpgradesPricePP * 100) / 100;
 
-        pricePP = departurePricePP + departureUpgradesPP + returnPricePP + returnUpgradesPP;
+        pricePP = departurePricePP + departureUpgradesPricePP + returnPricePP + returnUpgradesPricePP;
 
         setDeparturePricePPState(departurePricePP);
-        setDesUpgradesPricePP(departureUpgradesPP);
+        setDesUpgradesPricePP(departureUpgradesPricePP);
         setReturnPricePPState(returnPricePP);
-        setRetUpgradesPricePP(returnUpgradesPP);
+        setRetUpgradesPricePP(returnUpgradesPricePP);
         setRTPricePerPassengerState(pricePP);
 
         const departureTaxesPerPassenger =
-            Math.round((departurePricePP + returnUpgradesPP) * 0.07 * 100) / 100;
+            Math.round((departurePricePP + returnUpgradesPricePP) * 0.07 * 100) / 100;
         setDepartureTaxesPP(departureTaxesPerPassenger);
 
         const returnTaxesPerPassenger =
-            Math.round((returnPricePP + returnUpgradesPP) * 0.07 * 100) / 100;
+            Math.round((returnPricePP + returnPricePP) * 0.07 * 100) / 100;
         setReturnTaxesPP(returnTaxesPerPassenger);
 
         const totalTaxesPP = departureTaxesPerPassenger + returnTaxesPerPassenger;
@@ -868,8 +868,10 @@ const Booking = () => {
             passengerCount={passengerCount}
             setCheckInGroup={setCheckInGroup}
             checkInGroup={checkInGroup}
-            upgradesPP={upgradesPP}
-            setUpgradesPP={setUpgradesPricePP}
+            upgradesPricePP={upgradesPricePP}
+            desUpgradesPricePP={desUpgradesPricePP}
+            retUpgradesPricePP={retUpgradesPricePP}
+            setUpgradesPricePP={setUpgradesPricePP}
             retCheckInGroup={retCheckInGroup}
             depCheckInGroup={depCheckInGroup}
         />
@@ -947,9 +949,9 @@ const Booking = () => {
                         setCheckInGroup={setCheckInGroup}
                         setDepCheckInGroup={setDepCheckInGroup}
                         setRetCheckInGroup={setRetCheckInGroup}
-                        setUpgradesPP={setUpgradesPricePP}
-                        setDesUpgradesPP={setDesUpgradesPricePP}
-                        setRetUpgradesPP={setRetUpgradesPricePP}
+                        setUpgradesPricePP={setUpgradesPricePP}
+                        setDesUpgradesPricePP={setDesUpgradesPricePP}
+                        setRetUpgradesPricePP={setRetUpgradesPricePP}
                         handlePageChange={handlePageChange}
                         handleFilterChange={handleFilterChange}
                         onFlightSelection={handleFlightSelection}

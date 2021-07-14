@@ -43,14 +43,14 @@ const FlightList = (props) => {
 
     const handleRetUpgrade = (amount, group) => {
 
-        props.setRetUpgradesPP(amount);
+        props.setRetUpgradesPricePP(amount);
         props.setRetCheckInGroup(group);
 
     }
 
     const handleDesUpgrade = (amount, group) => {
 
-        props.setDesUpgradesPP(amount);
+        props.setDesUpgradesPricePP(amount);
         props.setDepCheckInGroup(group);
 
     }

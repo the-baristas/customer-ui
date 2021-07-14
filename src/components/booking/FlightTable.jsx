@@ -59,8 +59,8 @@ const FlightTable = (props) => {
     }
 
     const totalPerPassenger = props.pricePerPassenger + props.taxesPerPassenger;
-    const departurePerPassengerTtl = props.departurePricePP + + props.desUpgradesPP + props.departureTaxesPP;
-    const returnPerPassengerTtl = props.returnPricePP + + props.retUpgradesPP + props.returnTaxesPP;
+    const departurePerPassengerTtl = props.departurePricePP + + props.desUpgradesPricePP + props.departureTaxesPP;
+    const returnPerPassengerTtl = props.returnPricePP + + props.retUpgradesPricePP + props.returnTaxesPP;
     const rtTotalPerPassenger = props.rtPricePerPassenger + props.departureTaxesPP + props.returnTaxesPP;
     // TODO: Allow creation of more than 1 passenger at a time.
     const passengerCount = props.passengerCount;
@@ -112,7 +112,7 @@ const FlightTable = (props) => {
     const f2DurationMinutes = f2Duration.minutes();
 
     const handleUpgrade = (amount, group) => {
-        props.setUpgradesPP(amount);
+        props.setUpgradesPricePP(amount);
         props.setCheckInGroup(group);
     }
 
@@ -171,7 +171,7 @@ const FlightTable = (props) => {
                 <Col xs={12} lg={3}>
                     <Row className="totals">
                     Price Per Passenger: ${props.pricePerPassenger}<br />
-                    Upgrade(s) Per Passenger: ${props.upgradesPP}<br />
+                    Upgrade(s) Per Passenger: ${props.upgradesPricePP}<br />
                     Taxes Per Passenger: ${props.taxesPerPassenger.toFixed(2)}<br />
                     Total Per Passenger: ${totalPerPassenger.toFixed(2)}<br />
                     Passenger(s) x {passengerCount}<br /><br />
@@ -253,7 +253,7 @@ const FlightTable = (props) => {
                 <Col xs={12} lg={3}>
                     <Row className="totals">
                     Price Per Passenger: ${props.departurePricePP}<br />
-                    Upgrade(s) Per Passenger: ${props.desUpgradesPP}<br />
+                    Upgrade(s) Per Passenger: ${props.desUpgradesPricePP}<br />
                     Taxes Per Passenger: ${props.departureTaxesPP.toFixed(2)}<br />
                     Total Per Passenger: ${departurePerPassengerTtl.toFixed(2)}<br />
                     Passenger(s) x {passengerCount}<br /><br />
@@ -317,7 +317,7 @@ const FlightTable = (props) => {
                 <Col xs={12} lg={3}>
                     <Row className="totals">
                     Price Per Passenger: ${props.returnPricePP}<br />
-                    Upgrade(s) Per Passenger: ${props.retUpgradesPP}<br />
+                    Upgrade(s) Per Passenger: ${props.retUpgradesPricePP}<br />
                     Taxes Per Passenger: ${props.returnTaxesPP.toFixed(2)}<br />
                     Total Per Passenger: ${returnPerPassengerTtl.toFixed(2)}<br />
                     Passenger(s) x {passengerCount}<br /><br />
