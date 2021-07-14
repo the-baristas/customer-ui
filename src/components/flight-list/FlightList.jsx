@@ -3,11 +3,14 @@ import "./FlightList.css";
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import Typography from '@material-ui/core/Typography';
+import Modal from 'react-bootstrap/Modal';
+import ModalHeader from 'react-bootstrap/ModalHeader';
 import Pagination from '@material-ui/lab/Pagination';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import "bootstrap/dist/css/bootstrap.css";
 import moment from 'moment';
 
 const FlightList = (props) => {
@@ -38,10 +41,30 @@ const FlightList = (props) => {
     const retDurationHours = Math.floor(retDuration.asHours());
     const retDurationMinutes = retDuration.minutes();
 
+    const handleUpgrade = (amount, group) => {
+        props.setUpgradesPP(amount);
+        props.setCheckInGroup(group);
+    }
+
+    const handleRetUpgrade = (amount, group) => {
+
+        props.setRetUpgradesPP(amount);
+        props.setRetCheckInGroup(group);
+
+    }
+
+    const handleDesUpgrade = (amount, group) => {
+
+        props.setDesUpgradesPP(amount);
+        props.setDepCheckInGroup(group);
+
+    }
+
     // state
     const [currentPage, setCurrentPage] = useState(props.flightPage.number);
 
     return (
+
             <div className="search-results">
                 <br />
 
@@ -194,7 +217,7 @@ const FlightList = (props) => {
                 </Row>
                 </Col>
 
-                <Col xs={12} lg={3}>
+                <Col xs={12} lg={1}>
                 <Row className="duration">
                 {depDurationHours} hr {depDurationMinutes} min 
                 </Row>
@@ -213,8 +236,35 @@ const FlightList = (props) => {
              <Row className="arrival-date">
                 { moment(props.departureFlight.arrivalTime).format('MMMM Do, YYYY') }
                 </Row>
+
+<br />
              </Col> 
+
+             <Col xs={12} lg={2}>
+                <Row className="arrival-date">
+                <p><b>Boarding Group: </b> {"   "} { props.depCheckInGroup } </p>
+                <p><small>
+                         <b>Class:</b> {props.departureClass} ◦ 
+                             <b> Price:</b> ${props.departurePricePP} 
+                             </small></p>
              </Row>
+                </Col>
+
+                { props.depCheckInGroup !== 1 &&
+             <Card className="upgrade-dep-bg">
+                <Card.Body>
+                <Card.Title>Upgrade Boarding Group?</Card.Title>
+                    <p>
+                        <small>Your boarding group is based on your seat class. Priority boarding is given to Group 1, which is followed by Group 2, and then Group 3. By upgrading your group, you can be amongst the first to stow your carry-on baggage and board the flight.</small>
+                    </p>
+                    <Card.Link onClick={() => handleDesUpgrade(15, 1)}>Upgrade To Group 1</Card.Link>
+                    { props.depCheckInGroup !== 2 && <Card.Link onClick={() => handleDesUpgrade(12, 2)}>Upgrade To Group 2</Card.Link> }
+                </Card.Body>
+               </Card>
+}
+
+             </Row>
+             <br />
              </Container>
              }
 
@@ -222,7 +272,7 @@ const FlightList = (props) => {
              <Container>
              <Row className="return-selected">
                 <Col xs={12} lg={3}>
-                        <center><b>Return Flight Selected:</b></center>
+                <center><b>Return Flight Selected:</b></center>
                     </Col>
             <Col xs={12} lg={3}>
                  <Row className="origin-airport">
@@ -236,7 +286,7 @@ const FlightList = (props) => {
                 </Row>
                 </Col>
 
-                <Col xs={12} lg={3}>
+                <Col xs={12} lg={1}>
                 <Row className="duration">
                 {retDurationHours} hr {retDurationMinutes} min 
                 </Row>
@@ -254,9 +304,35 @@ const FlightList = (props) => {
                 </Row>
              <Row className="arrival-date">
                 { moment(props.returnFlight.arrivalTime).format('MMMM Do, YYYY') }
-                </Row>
+                </Row><br />
              </Col> 
-             </Row> 
+
+             <Col xs={12} lg={2}>
+                <Row className="dest-airport">
+                <p><b>Boarding Group: </b> { props.retCheckInGroup }</p>
+                <p><small>
+                         <b>Class:</b> {props.returnClass} ◦ 
+                             <b> Price:</b> ${props.returnPricePP} 
+                             </small></p>
+                </Row>
+                </Col>
+
+
+                { props.retCheckInGroup !== 1 &&
+             <Card className="upgrade-dep-bg">
+                <Card.Body>
+                <Card.Title>Upgrade Boarding Group?</Card.Title>
+                    <p>
+                        <small>Your boarding group is based on your seat class. Priority boarding is given to Group 1, which is followed by Group 2, and then Group 3. By upgrading your group, you can be amongst the first to stow your carry-on baggage and board the flight.</small>
+                    </p>
+                    <Card.Link onClick={() => handleRetUpgrade(15, 1)}>Upgrade To Group 1</Card.Link>
+                    { props.retCheckInGroup !== 2 && <Card.Link onClick={() => handleRetUpgrade(12, 2)}>Upgrade To Group 2</Card.Link> }
+                </Card.Body>
+               </Card>
+}
+
+             </Row>
+
              </Container>
              }
                 <br /><br />
@@ -268,6 +344,7 @@ const FlightList = (props) => {
                 
                 </div>
                 }
+
             </div>
         );
 }

@@ -1,16 +1,16 @@
 import moment from "moment";
-import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Button } from "react-bootstrap";
 import SeatClass from "./SeatClass";
-import "./FlightTable.css"
+import Card from 'react-bootstrap/Card';
+import { faPlane } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import "./FlightTable.css";
+import React, { useState } from "react";
 
 const FlightTable = (props) => {
     let seatClassDisplayName;
     let f1ClassDisplayName;
     let f2ClassDisplayName;
-
-    console.log(props.departureFlight);
-    console.log(props.arrivalFlight);
 
 
     switch (props.seatClass) {
@@ -59,8 +59,8 @@ const FlightTable = (props) => {
     }
 
     const totalPerPassenger = props.pricePerPassenger + props.taxesPerPassenger;
-    const departurePerPassengerTtl = props.departurePricePP + props.departureTaxesPP;
-    const returnPerPassengerTtl = props.returnPricePP + props.returnTaxesPP;
+    const departurePerPassengerTtl = props.departurePricePP + + props.desUpgradesPP + props.departureTaxesPP;
+    const returnPerPassengerTtl = props.returnPricePP + + props.retUpgradesPP + props.returnTaxesPP;
     const rtTotalPerPassenger = props.rtPricePerPassenger + props.departureTaxesPP + props.returnTaxesPP;
     // TODO: Allow creation of more than 1 passenger at a time.
     const passengerCount = props.passengerCount;
@@ -221,192 +221,127 @@ const FlightTable = (props) => {
                     <h5>Departure Flight Details</h5>
                 </Col>
             </Row>
-            <Row>
-                <Col xs={12} sm={5} className="border-bottom border-dark p-3">
-                    <Row>
-                        <Col
-                            xs={6}
-                            sm={6}
-                            id="origin-airport-code"
-                            className="text-center p-2"
-                        >
-                            {props.departureFlight.route.originAirport.iataId}
-                        </Col>
-                        <Col xs={6} sm={6} className="text-center p-2">
-                            {
-                                props.departureFlight.route.destinationAirport
-                                    .iataId
-                            }
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs sm={6} className="text-center">
-                            {f1DepartureTime}
-                        </Col>
-                        <Col xs sm={6} className="text-center">
-                            {f1ArrivalTime}
-                        </Col>
+            <Container>
+             <Row className="return-selected">
+            <Col xs={12} lg={3}>
+                 <Row className="origin-airport">
+                { props.departureFlight.route.originAirport.city } ({ props.departureFlight.route.originAirport.iataId })
+                </Row>
+                <Row className="departure-time">
+                { moment(props.departureFlight.departureTime).format('h:mm a') }
+                </Row>
+                <Row className="departure-date">
+                 { moment(props.departureFlight.departureTime).format('MMMM Do, YYYY') }
+                </Row>
+                </Col>
+
+                <Col xs={12} lg={1}>
+                <Row className="duration">
+                {f2DurationHours} hr {f2DurationMinutes} min
+                </Row>
+                <Row className="duration-icon">
+                <FontAwesomeIcon icon={faPlane} />
+                </Row>
+                </Col>
+
+                <Col xs={12} lg={3}>
+             <Row className="dest-airport">
+                { props.departureFlight.route.destinationAirport.city }
+                </Row>
+             <Row className="arrival-time">
+                { moment(props.departureFlight.arrivalTime).format('h:mm a') }
+                </Row>
+             <Row className="arrival-date">
+                { moment(props.departureFlight.arrivalTime).format('MMMM Do, YYYY') }
+                </Row>
+             </Col> 
+
+             <Col xs={12} lg={2}>
+                <Row className="dest-airport">
+                <p><b>Boarding Group: </b> { props.depCheckInGroup }<br />
+                         <b>Class:</b> {props.departureClass}
+                             </p>
+                </Row>
+                </Col>
+                <Col xs={12} lg={3}>
+                    <Row className="totals">
+                    Price Per Passenger: ${props.departurePricePP}<br />
+                    Upgrade(s) Per Passenger: ${props.desUpgradesPP}<br />
+                    Taxes Per Passenger: ${props.departureTaxesPP.toFixed(2)}<br />
+                    Total Per Passenger: ${departurePerPassengerTtl.toFixed(2)}<br />
+                    Passenger(s) x {passengerCount}<br /><br />
+                    
+                    Flight Total: ${departureTotal.toFixed(2)}
                     </Row>
                 </Col>
-                <Col xs={12} sm={3} className="border-bottom border-dark p-3">
-                    <Row>
-                        <Col xs={6} sm={6} className="text-center p-2">
-                            Duration
-                        </Col>
-                        <Col xs={6} sm={6} className="text-center p-2">
-                            {f1ClassDisplayName}
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={6} sm={6} className="text-center">
-                            {f1DurationHours} hr {f1DurationMinutes} min
-                        </Col>
-                    </Row>
-                </Col>
-                <Col xs={12} sm={4} className="border-bottom border-dark p-3">
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Price per Passenger
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            ${props.departurePricePP.toFixed(2)}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Taxes per Passenger
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            ${props.departureTaxesPP.toFixed(2)}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Total per Passenger
-                        </Col>
-                        <Col
-                            xs={5}
-                            sm={5}
-                            className="text-right"
-                            aria-label="total per passenger"
-                        >
-                            ${departurePerPassengerTtl.toFixed(2)}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Passenger(s)
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            x {passengerCount}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Flight total
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            ${departureTotal.toFixed(2)}
-                        </Col>
-                    </Row>
-                </Col>
-            </Row>
+             </Row>
+             </Container>
             <br />
+
+            <br />
+
             <Row className="border border-dark">
                 <Col xs={12} sm={12} className="p-2">
                     <h5>Return Flight Details</h5>
                 </Col>
             </Row>
-            <Row>
-                <Col xs={12} sm={5} className="border-bottom border-dark p-3">
-                    <Row>
-                        <Col
-                            xs={6}
-                            sm={6}
-                            id="origin-airport-code"
-                            className="text-center p-2"
-                        >
-                            {props.returnFlight.route.originAirport.iataId}
-                        </Col>
-                        <Col xs={6} sm={6} className="text-center p-2">
-                            {
-                                props.returnFlight.route.destinationAirport
-                                    .iataId
-                            }
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs sm={6} className="text-center">
-                            {f2DepartureTime}
-                        </Col>
-                        <Col xs sm={6} className="text-center">
-                            {f2ArrivalTime}
-                        </Col>
+            <Container>
+             <Row className="return-selected">
+            <Col xs={12} lg={3}>
+                 <Row className="origin-airport">
+                { props.returnFlight.route.originAirport.city } ({ props.returnFlight.route.originAirport.iataId })
+                </Row>
+                <Row className="departure-time">
+                { moment(props.returnFlight.departureTime).format('h:mm a') }
+                </Row>
+                <Row className="departure-date">
+                 { moment(props.returnFlight.departureTime).format('MMMM Do, YYYY') }
+                </Row>
+                </Col>
+
+                <Col xs={12} lg={1}>
+                <Row className="duration">
+                {f1DurationHours} hr {f1DurationMinutes} min
+                </Row>
+                <Row className="duration-icon">
+                <FontAwesomeIcon icon={faPlane} />
+                </Row>
+                </Col>
+
+                <Col xs={12} lg={3}>
+             <Row className="dest-airport">
+                { props.returnFlight.route.destinationAirport.city }
+                </Row>
+             <Row className="arrival-time">
+                { moment(props.returnFlight.arrivalTime).format('h:mm a') }
+                </Row>
+             <Row className="arrival-date">
+                { moment(props.returnFlight.arrivalTime).format('MMMM Do, YYYY') }
+                </Row>
+             </Col> 
+
+             <Col xs={12} lg={2}>
+                <Row className="dest-airport">
+                <p><b>Boarding Group: </b> { props.retCheckInGroup }<br />
+                         <b>Class:</b> {props.returnClass}
+                             </p>
+                </Row>
+                </Col>
+                <Col xs={12} lg={3}>
+                    <Row className="totals">
+                    Price Per Passenger: ${props.returnPricePP}<br />
+                    Upgrade(s) Per Passenger: ${props.retUpgradesPP}<br />
+                    Taxes Per Passenger: ${props.returnTaxesPP.toFixed(2)}<br />
+                    Total Per Passenger: ${returnPerPassengerTtl.toFixed(2)}<br />
+                    Passenger(s) x {passengerCount}<br /><br />
+                    
+                    Flight Total: ${returnTotal.toFixed(2)}
                     </Row>
                 </Col>
-                <Col xs={12} sm={3} className="border-bottom border-dark p-3">
-                    <Row>
-                        <Col xs={6} sm={6} className="text-center p-2">
-                            Duration
-                        </Col>
-                        <Col xs={6} sm={6} className="text-center p-2">
-                            {f2ClassDisplayName}
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={6} sm={6} className="text-center">
-                            {f2DurationHours} hr {f2DurationMinutes} min
-                        </Col>
-                    </Row>
-                </Col>
-                <Col xs={12} sm={4} className="border-bottom border-dark p-3">
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Price per Passenger
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            ${props.returnPricePP.toFixed(2)}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Taxes per Passenger
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            ${props.returnTaxesPP.toFixed(2)}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Total per Passenger
-                        </Col>
-                        <Col
-                            xs={5}
-                            sm={5}
-                            className="text-right"
-                            aria-label="total per passenger"
-                        >
-                            ${returnPerPassengerTtl.toFixed(2)}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Passenger(s)
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            x {passengerCount}
-                        </Col>
-                    </Row>
-                    <Row className="p-2">
-                        <Col xs={6} sm={7}>
-                            Flight total
-                        </Col>
-                        <Col xs={5} sm={5} className="text-right">
-                            ${returnTotal.toFixed(2)}
-                        </Col>
-                    </Row>
-                </Col>
-            </Row>
+             </Row>
+             <br />
+
+             </Container>
             <br />
 
             <Row className="flights-total">

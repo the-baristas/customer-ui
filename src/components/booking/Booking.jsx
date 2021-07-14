@@ -128,8 +128,36 @@ const Booking = () => {
     const [dest, setDest] = useState("");
     const [sortBy, setSortBy] = useState("departureTime");
     const [filter, setFilter] = useState("all");
+    const [upgradesPP, setUpgradesPP] = useState(0);
+    const [desUpgradesPP, setDesUpgradesPP] = useState(0);
+    const [retUpgradesPP, setRetUpgradesPP] = useState(0);
 
-    // Callbacks
+    const [hasBGUpgrade, setHasBgUpgrade] = useState(false);
+    const [hasRetBGUpgrade, setHasRetBgUpgrade] = useState(false);
+    const [hasDepBGUpgrade, setHasDepBgUpgrade] = useState(false);
+
+    // callbacks
+
+    const handleUpgrades = (upgradePrice) => {
+        if (hasBGUpgrade !== true) {
+            setUpgradesPP(upgradePrice);
+            setHasBgUpgrade(true);
+        }
+    }
+
+    const handleRetUpgrades = (upgradePrice) => {
+        if (hasRetBGUpgrade !== true) {
+            setUpgradesPP(upgradePrice);
+            setHasRetBgUpgrade(true);
+        }
+    }
+
+    const handleDepUpgrades = (upgradePrice) => {
+        if (hasDepBGUpgrade !== true) {
+            setUpgradesPP(upgradePrice);
+            setHasDepBgUpgrade(true);
+        }
+    }
 
     const handleFlightSearch = (flights) => {
         setFlights(flights.content);
@@ -162,6 +190,30 @@ const Booking = () => {
         departureFilter.style.display = "none";
         flightCards.style.display = "none";
         setDepartureSelectionMade(true);
+        let depPricePP;
+        switch (seatClass) {
+            case SeatClass.ECONOMY:
+                setDepCheckInGroup(3);
+                depPricePP = selectedFlight.economyPrice;
+                depPricePP = Math.round(depPricePP * 100) / 100;
+                setDeparturePricePPState(depPricePP);
+                break;
+            case SeatClass.BUSINESS:
+                setDepCheckInGroup(2);
+                depPricePP = selectedFlight.businessPrice;
+                depPricePP = Math.round(depPricePP * 100) / 100;
+                setDeparturePricePPState(depPricePP);
+                break;
+            case SeatClass.FIRST:
+                setDepCheckInGroup(1);
+                depPricePP = selectedFlight.firstPrice;
+                depPricePP = Math.round(depPricePP * 100) / 100;
+                setDeparturePricePPState(depPricePP);
+                break;
+            default:
+                // TODO: Go to error page.
+                break;
+        }
 
     };
 
@@ -175,7 +227,33 @@ const Booking = () => {
         returnSort.style.display = "none";
         returnFilter.style.display = "none";
         flightCards.style.display = "none";
+        let returnPricePP;
+
+
         setReturnSelectionMade(true);
+        switch (seatClass) {
+            case SeatClass.ECONOMY:
+                setRetCheckInGroup(3);
+                returnPricePP = selectedFlight.economyPrice;
+                returnPricePP = Math.round(returnPricePP * 100) / 100;
+                setReturnPricePPState(returnPricePP);
+                break;
+            case SeatClass.BUSINESS:
+                setRetCheckInGroup(2);
+                returnPricePP = selectedFlight.businessPrice;
+                returnPricePP = Math.round(returnPricePP * 100) / 100;
+                setReturnPricePPState(returnPricePP);
+                break;
+            case SeatClass.FIRST:
+                setRetCheckInGroup(1);
+                returnPricePP = selectedFlight.firstPrice;
+                returnPricePP = Math.round(returnPricePP * 100) / 100;
+                setReturnPricePPState(returnPricePP);
+                break;
+            default:
+                // TODO: Go to error page.
+                break;
+        }
     };
 
     const handleRTSelection = () => {
@@ -189,13 +267,8 @@ const Booking = () => {
                 layoverCount,
                 username: userStatus.username
             });
-        
-            console.log(departureFlight);
-            console.log(departureClass);
-            console.log(returnFlight);
-            console.log(returnClass);
-            console.log(totalPrice);
-            console.log("All values set!");
+    
+
             history.push(`${path}/passenger-info`);
         })();
     }
@@ -267,19 +340,24 @@ const Booking = () => {
         }
 
         departurePricePP = Math.round(departurePricePP * 100) / 100;
+        let departureUpgradesPP = Math.round(desUpgradesPP * 100) / 100;
         returnPricePP = Math.round(returnPricePP * 100) / 100;
-        pricePP = departurePricePP + returnPricePP;
+        let returnUpgradesPP = Math.round(retUpgradesPP * 100) / 100;
+
+        pricePP = departurePricePP + departureUpgradesPP + returnPricePP + returnUpgradesPP;
 
         setDeparturePricePPState(departurePricePP);
+        setDesUpgradesPP(departureUpgradesPP);
         setReturnPricePPState(returnPricePP);
+        setRetUpgradesPP(returnUpgradesPP);
         setRTPricePerPassengerState(pricePP);
 
         const departureTaxesPerPassenger =
-            Math.round(pricePP * 0.07 * 100) / 100;
+            Math.round((departurePricePP + returnUpgradesPP) * 0.07 * 100) / 100;
         setDepartureTaxesPP(departureTaxesPerPassenger);
 
         const returnTaxesPerPassenger =
-            Math.round(pricePP * 0.07 * 100) / 100;
+            Math.round((returnPricePP + returnUpgradesPP) * 0.07 * 100) / 100;
         setReturnTaxesPP(returnTaxesPerPassenger);
 
         const totalTaxesPP = departureTaxesPerPassenger + returnTaxesPerPassenger;
@@ -770,6 +848,11 @@ const Booking = () => {
             departureTaxesPP={departureTaxesPP}
             returnTaxesPP={returnTaxesPP}
             passengerCount={passengerCount}
+            retCheckInGroup={retCheckInGroup}
+            depCheckInGroup={depCheckInGroup}
+            upgradesPP={upgradesPP}
+            retUpgradesPP={retUpgradesPP}
+            desUpgradesPP={desUpgradesPP}
         />
     );
     const promise = loadStripe(
@@ -834,9 +917,21 @@ const Booking = () => {
                         departureFlight={departureFlight}
                         returnFlight={returnFlight}
                         departureSelectionMade={departureSelectionMade}
+                        departureClass={departureClass}
+                        departurePricePP={departurePricePPState}
+                        returnPricePP={returnPricePPState}
                         returnSelectionMade={returnSelectionMade}
+                        returnClass={returnClass}
                         departureFlightPage={departureFlightPage}
                         returnFlightPage={returnFlightPage}
+                        retCheckInGroup={retCheckInGroup}
+                        depCheckInGroup={depCheckInGroup}
+                        setCheckInGroup={setCheckInGroup}
+                        setDepCheckInGroup={setDepCheckInGroup}
+                        setRetCheckInGroup={setRetCheckInGroup}
+                        setUpgradesPP={setUpgradesPP}
+                        setDesUpgradesPP={setDesUpgradesPP}
+                        setRetUpgradesPP={setRetUpgradesPP}
                         handlePageChange={handlePageChange}
                         handleFilterChange={handleFilterChange}
                         onFlightSelection={handleFlightSelection}
