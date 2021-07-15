@@ -80,13 +80,13 @@ const FlightList = (props) => {
                 <div className="one-way">
                 <Container>
                 <center><h4>Results from Search</h4></center>
-                <label htmlFor="sort-by"><b>Sort by:</b></label> 
+                <label for="sort-by" htmlFor="sort-by"><b>Sort by:</b></label> 
                 {'  '}
 
-                <select name="sort-by" id="sort-by" onChange={props.onSortBy}>
-                <option value="economyPrice">Price</option>
-                <option value="departureTime">Departure</option>
-                <option value="arrivalTime">Arrival</option>
+                <select data-testid="search-1" htmlFor="sort-by" name="sort-by" id="sort-by" onChange={props.onSortBy}>
+                <option id="sort-by" value="economyPrice">Price</option>
+                <option id="sort-by" value="departureTime">Departure</option>
+                <option id="sort-by" value="arrivalTime">Arrival</option>
                 </select>
                 </Container>
 
@@ -118,10 +118,10 @@ const FlightList = (props) => {
                 <div className="round-trip">
                 <Container id="departure-sort">
                 <center><h4>Departure Flights</h4></center>
-                <label htmlFor="sort-by"><b>Sort by:</b></label> 
+                <label htmlFor="d-sort-by"><b>Sort by:</b></label> 
                 {'  '}
 
-                <select name="sort-by" id="sort-by" onChange={props.onDeparturesSortBy}>
+                <select data-testid="search-1" name="d-sort-by" id="sort-by" onChange={props.onDeparturesSortBy}>
                 <option value="economyPrice">Price</option>
                 <option value="departureTime">Departure</option>
                 <option value="arrivalTime">Arrival</option>
@@ -158,10 +158,10 @@ const FlightList = (props) => {
                 <br />
                 <Container id="return-sort">
                 <center><h4>Return Flights</h4></center>
-                <label htmlFor="sort-by"><b>Sort by:</b></label> 
+                <label htmlFor="r-sort-by"><b>Sort by:</b></label> 
                 {'  '}
 
-                <select name="sort-by" id="sort-by" onChange={props.onReturnsSortBy}>
+                <select name="r-sort-by" id="sort-by" onChange={props.onReturnsSortBy}>
                 <option value="economyPrice">Price</option>
                 <option value="departureTime">Departure</option>
                 <option value="arrivalTime">Arrival</option>

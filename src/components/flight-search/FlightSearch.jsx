@@ -20,16 +20,14 @@ const FlightSearch = (props) => {
                 {bookingType === "One Way" &&
                 <Form className="search-form" onSubmit={props.handleSubmit} >
 
-                <form id="booking-type" onChange={handleBookingType}>
                 <Row>
                 <Col lg={true}>
-                <label for="one-way" id="cbs">One Way</label><input type="radio" id="one-way" name="booking-type" value="One Way" checked={bookingType === 'One Way'} />
+                <label htmlFor="one-way" id="cbs">One Way</label><input type="radio" id="one-way" name="booking-type" value="One Way" defaultChecked={bookingType === 'One Way'} onChange={handleBookingType} />
                 </Col>
                 <Col lg={true}>
-                <label for="round-trip" id="cbs">Round Trip</label><input type="radio" id="round-trip" name="booking-type" value="Round Trip" checked={bookingType === 'Round Trip'} />
+                <label htmlFor="round-trip" id="cbs">Round Trip</label><input type="radio" id="round-trip" name="booking-type" value="Round Trip" defaultChecked={bookingType === 'Round Trip'} onChange={handleBookingType}/>
                 </Col>
                 </Row><br />
-                </form>
 
                     <Row>
                         <Col lg={true}>

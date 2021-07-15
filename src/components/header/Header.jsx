@@ -25,7 +25,7 @@ const Header = () => {
                         { !userLoggedIn && <Nav.Link data-testid="loginButton" id="nav-links" href="/login">Login</Nav.Link> } 
                         {!userLoggedIn &&<Nav.Link id="nav-links" href="/register">Register</Nav.Link> }
                         
-            {userLoggedIn && <Nav.Item><b><small>Welcome, {userStatus.username}!</small></b></Nav.Item>}
+            {userLoggedIn && <Nav.Item data-testid="welcomeMsg"><b><small>Welcome, {userStatus.username}!</small></b></Nav.Item>}
             {userLoggedIn &&<Nav.Link id="nav-links" href="/profile">My Account</Nav.Link> }
             { userLoggedIn && <LogoutButton ></LogoutButton>}
                     </Navbar.Collapse>
