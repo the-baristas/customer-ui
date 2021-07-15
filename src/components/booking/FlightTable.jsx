@@ -23,7 +23,8 @@ const FlightTable = (props) => {
             seatClassDisplayName = "First Class";
             break;
         default:
-            throw new Error(`Invalid seat class: ${props.seatClass}`);
+            // TODO: Uncomment
+            // throw new Error(`Invalid seat class: ${props.seatClass}`);
     }
 
     switch (props.departureClass) {
@@ -37,7 +38,8 @@ const FlightTable = (props) => {
             f1ClassDisplayName = "First Class";
             break;
         default:
-            throw new Error(`Invalid seat class: ${props.departureClass}`);
+            // TODO: Uncomment
+            // throw new Error(`Invalid seat class: ${props.departureClass}`);
     }
 
     switch (props.returnClass) {
@@ -51,7 +53,8 @@ const FlightTable = (props) => {
             f2ClassDisplayName = "First Class";
             break;
         default:
-            throw new Error(`Invalid seat class: ${props.returnClass}`);
+            // TODO: Uncomment
+            // throw new Error(`Invalid seat class: ${props.returnClass}`);
     }
 
     const totalPerPassenger = props.pricePerPassenger + props.taxesPerPassenger;
@@ -119,8 +122,11 @@ const FlightTable = (props) => {
         props.setCheckInGroup(group);
     };
 
+    // Elements
+
+    let flightTable;
     if (props.isRoundTrip) {
-        return (
+        flightTable = (
             <Container>
                 <br />
                 <Row className="border border-dark">
@@ -310,7 +316,7 @@ const FlightTable = (props) => {
             </Container>
         );
     } else {
-        return (
+        flightTable = (
             <Container fluid>
                 <Row className="border border-dark">
                     <Col xs={12} sm={12} className="p-2">
@@ -437,6 +443,8 @@ const FlightTable = (props) => {
             </Container>
         );
     }
+
+    return flightTable;
 };
 
 export default FlightTable;

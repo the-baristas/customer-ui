@@ -1135,9 +1135,11 @@ const Booking = () => {
             depCheckInGroup={depCheckInGroup}
         />
     );
+
     const promise = loadStripe(
         process.env.REACT_APP_STRIPE_TEST_PUBLISHABLE_KEY
     );
+
     const flightCards = flights.map((flight) => (
         <FlightCard
             id={flight.id}
