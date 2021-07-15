@@ -18,6 +18,16 @@ const FlightList = (props) => {
         props.handlePageChange(newPage - 1);
     }
 
+    function handleReturnClick(event, newPage) {
+        setCurrentReturnsPage(newPage - 1);
+        props.handlePageChangeReturns(newPage - 1);
+    }
+
+    function handleDepartureClick(event, newPage) {
+        setCurrentDeparturesPage(newPage - 1);
+        props.handlePageChangeDepartures(newPage - 1);
+    }
+
     function handleRTFlightSelection(e) {
         props.onRTFlightSelection(e);
     }
@@ -50,6 +60,12 @@ const FlightList = (props) => {
 
     // state
     const [currentPage, setCurrentPage] = useState(props.flightPage.number);
+    const [currentReturnsPage, setCurrentReturnsPage] = useState(
+        props.departureFlightPage.number
+    );
+    const [currentDeparturesPage, setCurrentDeparturesPage] = useState(
+        props.returnFlightPage.number
+    );
 
     return (
         <div className="search-results">
@@ -136,7 +152,7 @@ const FlightList = (props) => {
                         <select
                             name="sort-by"
                             id="sort-by"
-                            onChange={props.onSortBy}
+                            onChange={props.onDeparturesSortBy}
                         >
                             <option value="economyPrice">Price</option>
                             <option value="departureTime">Departure</option>
@@ -153,7 +169,7 @@ const FlightList = (props) => {
                         <select
                             name="filter"
                             id="filter"
-                            onChange={props.handleFilterChange}
+                            onChange={props.handleFilterChangeDepartures}
                         >
                             <option value="all">All</option>
                             <option value="morning">
@@ -173,7 +189,7 @@ const FlightList = (props) => {
                             <Pagination
                                 count={props.departureFlightPage.totalPages}
                                 page={currentPage + 1}
-                                onChange={handleClick}
+                                onChange={handleDepartureClick}
                             />
                         </div>
                     )}
@@ -186,7 +202,7 @@ const FlightList = (props) => {
                             <Pagination
                                 count={props.departureFlightPage.totalPages}
                                 page={currentPage + 1}
-                                onChange={handleClick}
+                                onChange={handleDepartureClick}
                             />
                         </div>
                     )}
@@ -204,7 +220,7 @@ const FlightList = (props) => {
                         <select
                             name="sort-by"
                             id="sort-by"
-                            onChange={props.onSortBy}
+                            onChange={props.onReturnsSortBy}
                         >
                             <option value="economyPrice">Price</option>
                             <option value="departureTime">Departure</option>
@@ -221,7 +237,7 @@ const FlightList = (props) => {
                         <select
                             name="filter"
                             id="filter"
-                            onChange={props.handleFilterChange}
+                            onChange={props.handleFilterChangeReturns}
                         >
                             <option value="all">All</option>
                             <option value="morning">
@@ -240,8 +256,8 @@ const FlightList = (props) => {
                         <div className="pagination">
                             <Pagination
                                 count={props.returnFlightPage.totalPages}
-                                page={currentPage + 1}
-                                onChange={handleClick}
+                                page={currentReturnsPage + 1}
+                                onChange={handleReturnClick}
                             />
                         </div>
                     )}
@@ -253,19 +269,16 @@ const FlightList = (props) => {
                         <div className="pagination">
                             <Pagination
                                 count={props.returnFlightPage.totalPages}
-                                page={currentPage + 1}
-                                onChange={handleClick}
+                                page={currentReturnsPage + 1}
+                                onChange={handleReturnClick}
                             />
                         </div>
                     )}
 
                     {/** selected flights here */}
 
-                    <br />
-                    <br />
-
-                    {props.returnSelectionMade |
-                        props.departureSelectionMade && (
+                    {(props.returnSelectionMade ||
+                        props.departureSelectionMade) && (
                         <Container>
                             <Row className="itinerary-title">Itinerary:</Row>
                         </Container>
@@ -372,6 +385,7 @@ const FlightList = (props) => {
                                                 </small>
                                             </p>
                                             <Card.Link
+                                                className="point"
                                                 onClick={() =>
                                                     handleDesUpgrade(15, 1)
                                                 }
@@ -380,6 +394,7 @@ const FlightList = (props) => {
                                             </Card.Link>
                                             {props.depCheckInGroup !== 2 && (
                                                 <Card.Link
+                                                    className="point"
                                                     onClick={() =>
                                                         handleDesUpgrade(12, 2)
                                                     }
@@ -495,6 +510,7 @@ const FlightList = (props) => {
                                                 </small>
                                             </p>
                                             <Card.Link
+                                                className="point"
                                                 onClick={() =>
                                                     handleRetUpgrade(15, 1)
                                                 }
@@ -503,6 +519,7 @@ const FlightList = (props) => {
                                             </Card.Link>
                                             {props.retCheckInGroup !== 2 && (
                                                 <Card.Link
+                                                    className="point"
                                                     onClick={() =>
                                                         handleRetUpgrade(12, 2)
                                                     }

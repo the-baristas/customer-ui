@@ -416,11 +416,15 @@ const FlightTable = (props) => {
                                         flight.
                                     </small>
                                 </p>
-                                <Card.Link onClick={() => handleUpgrade(15, 1)}>
+                                <Card.Link
+                                    className="point"
+                                    onClick={() => handleUpgrade(15, 1)}
+                                >
                                     Upgrade To Group 1
                                 </Card.Link>
                                 {props.checkInGroup !== 2 && (
                                     <Card.Link
+                                        className="point"
                                         onClick={() => handleUpgrade(12, 2)}
                                     >
                                         Upgrade To Group 2
