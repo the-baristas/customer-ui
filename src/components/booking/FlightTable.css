@@ -1,31 +1,31 @@
-.flights-total{
+.flights-total {
     background-color: #c46329;
     color: white;
     padding: 1%;
     border-radius: 5px;
-  }
+}
 
 h2 {
-      width: 100%;
-      text-align: right;
-      padding-right: 8%;
-  }
+    width: 100%;
+    text-align: right;
+    padding-right: 8%;
+}
 
 .submit {
-      background-color: #c46329 !important;
-      border-color: #c46329 !important;
-      color: white !important;
-  }
+    background-color: #c46329 !important;
+    border-color: #c46329 !important;
+    color: white !important;
+}
 
-  .totals {
+.totals {
     text-align: right;
     font-size: 0.8em;
     justify-content: center;
-  }
+}
 
-  .upgrade-bg{
+.upgrade-bg {
     width: auto;
     background-color: #c46329 !important;
     border-color: #c46329 !important;
     color: white !important;
-  }
+}

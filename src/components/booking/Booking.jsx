@@ -24,6 +24,10 @@ import PassengerInfoForm from "./PassengerInfoForm";
 import SeatClass from "./SeatClass";
 
 const Booking = () => {
+    // Constants
+
+    const USA_TAX_RATE = 0.075;
+
     // Redux
 
     const userStatus = useSelector((state) => state.userStatus);
@@ -119,7 +123,10 @@ const Booking = () => {
         route: null
     });
     const [date, setDate] = useState(new Date());
-    const [dateRange, setDateRange] = useState([new Date(), Date.now() + 6.048e+8]);
+    const [dateRange, setDateRange] = useState([
+        new Date(),
+        Date.now() + 6.048e8
+    ]);
     const [startDate, endDate] = dateRange;
     const [origin, setOrigin] = useState("");
     const [dest, setDest] = useState("");
@@ -135,28 +142,28 @@ const Booking = () => {
     const [hasRetBGUpgrade, setHasRetBgUpgrade] = useState(false);
     const [hasDepBGUpgrade, setHasDepBgUpgrade] = useState(false);
 
-    // callbacks
+    // Callbacks
 
     const handleUpgrades = (upgradePrice) => {
         if (hasBGUpgrade !== true) {
             setUpgradesPricePP(upgradePrice);
             setHasBgUpgrade(true);
         }
-    }
+    };
 
     const handleRetUpgrades = (upgradePrice) => {
         if (hasRetBGUpgrade !== true) {
             setUpgradesPricePP(upgradePrice);
             setHasRetBgUpgrade(true);
         }
-    }
+    };
 
     const handleDepUpgrades = (upgradePrice) => {
         if (hasDepBGUpgrade !== true) {
             setUpgradesPricePP(upgradePrice);
             setHasDepBgUpgrade(true);
         }
-    }
+    };
 
     const handleFlightSearch = (flights) => {
         setFlights(flights.content);
@@ -165,7 +172,7 @@ const Booking = () => {
     const handleFlightSelection = (selectedFlight, seatClass) => {
         setSelectedFlight(selectedFlight);
         setSeatClass(seatClass);
-        
+
         switch (seatClass) {
             case SeatClass.ECONOMY:
                 setCheckInGroup(3);
@@ -197,7 +204,9 @@ const Booking = () => {
     const handleDepartureSelection = (selectedFlight, seatClass) => {
         setDepartureFlight(selectedFlight);
         setDepartureClass(seatClass);
-        let selectedFlightCard = document.getElementById("fc"+selectedFlight.id);
+        let selectedFlightCard = document.getElementById(
+            "fc" + selectedFlight.id
+        );
         let flightCards = document.getElementById("depFlightCards");
         let departureSort = document.getElementById("departure-sort");
         let departureFilter = document.getElementById("departure-filter");
@@ -229,13 +238,14 @@ const Booking = () => {
                 // TODO: Go to error page.
                 break;
         }
-
     };
 
     const handleReturnSelection = (selectedFlight, seatClass) => {
         setReturnFlight(selectedFlight);
         setReturnClass(seatClass);
-        let selectedFlightCard = document.getElementById("fc"+selectedFlight.id);
+        let selectedFlightCard = document.getElementById(
+            "fc" + selectedFlight.id
+        );
         let flightCards = document.getElementById("retFlightCards");
         let returnSort = document.getElementById("return-sort");
         let returnFilter = document.getElementById("return-filter");
@@ -243,7 +253,6 @@ const Booking = () => {
         returnFilter.style.display = "none";
         flightCards.style.display = "none";
         let returnPricePP;
-
 
         setReturnSelectionMade(true);
         switch (seatClass) {
@@ -272,8 +281,12 @@ const Booking = () => {
     };
 
     const handleRTSelection = () => {
-            
-        calculateRTPrice(departureFlight, departureClass, returnFlight, returnClass);
+        calculateRTPrice(
+            departureFlight,
+            departureClass,
+            returnFlight,
+            returnClass
+        );
         (async () => {
             const confirmationCode = uuidv4().toUpperCase();
             const layoverCount = 0;
@@ -282,11 +295,10 @@ const Booking = () => {
                 layoverCount,
                 username: userStatus.username
             });
-    
 
             history.push(`${path}/passenger-info`);
         })();
-    }
+    };
 
     /**
      * Calculates price per passenger, taxes per passenger, total per passenger,
@@ -310,9 +322,8 @@ const Booking = () => {
         }
         pricePerPassenger = Math.round(pricePerPassenger * 100) / 100;
         setPricePerPassengerState(pricePerPassenger);
-        const usaTaxRate = 0.075;
         const taxesPerPassenger =
-            Math.round(pricePerPassenger * usaTaxRate * 100) / 100;
+            Math.round(pricePerPassenger * USA_TAX_RATE * 100) / 100;
         setTaxesPerPassenger(taxesPerPassenger);
         const totalPerPassenger = pricePerPassenger + taxesPerPassenger;
         setTotalPerPassenger(totalPerPassenger);
@@ -320,7 +331,12 @@ const Booking = () => {
         setTotalPrice(totalPerPassenger * passengerCount);
     };
 
-    const calculateRTPrice = (departureFlight, departureClass, returnFlight, returnClass) => {
+    const calculateRTPrice = (
+        departureFlight,
+        departureClass,
+        returnFlight,
+        returnClass
+    ) => {
         let departurePricePP;
         let returnPricePP;
         let pricePP;
@@ -356,11 +372,16 @@ const Booking = () => {
         }
 
         departurePricePP = Math.round(departurePricePP * 100) / 100;
-        let departureUpgradesPricePP = Math.round(desUpgradesPricePP * 100) / 100;
+        let departureUpgradesPricePP =
+            Math.round(desUpgradesPricePP * 100) / 100;
         returnPricePP = Math.round(returnPricePP * 100) / 100;
         let returnUpgradesPricePP = Math.round(retUpgradesPricePP * 100) / 100;
 
-        pricePP = departurePricePP + departureUpgradesPricePP + returnPricePP + returnUpgradesPricePP;
+        pricePP =
+            departurePricePP +
+            departureUpgradesPricePP +
+            returnPricePP +
+            returnUpgradesPricePP;
 
         setDeparturePricePPState(departurePricePP);
         setDesUpgradesPricePP(departureUpgradesPricePP);
@@ -369,14 +390,18 @@ const Booking = () => {
         setRTPricePerPassengerState(pricePP);
 
         const departureTaxesPerPassenger =
-            Math.round((departurePricePP + returnUpgradesPricePP) * 0.07 * 100) / 100;
+            Math.round(
+                (departurePricePP + returnUpgradesPricePP) * USA_TAX_RATE * 100
+            ) / 100;
         setDepartureTaxesPP(departureTaxesPerPassenger);
 
         const returnTaxesPerPassenger =
-            Math.round((returnPricePP + returnPricePP) * 0.07 * 100) / 100;
+            Math.round((returnPricePP + returnPricePP) * USA_TAX_RATE * 100) /
+            100;
         setReturnTaxesPP(returnTaxesPerPassenger);
 
-        const totalTaxesPP = departureTaxesPerPassenger + returnTaxesPerPassenger;
+        const totalTaxesPP =
+            departureTaxesPerPassenger + returnTaxesPerPassenger;
 
         const totalPerPassenger = pricePP + totalTaxesPP;
         setTotalPerPassenger(totalPerPassenger);
@@ -514,7 +539,6 @@ const Booking = () => {
                 )
                     .then((resp) => resp.json())
                     .then((data) => {
-                        
                         setFlights(data.content);
                         setFlightPage(data);
                         history.push("/booking/search-results");
@@ -527,14 +551,17 @@ const Booking = () => {
         }
     }
 
-
     function handleRTSubmit(event) {
         event.preventDefault();
         setIsRoundTrip(true);
-        if (origin === "" || dest === "" || startDate === "" || endDate === "") {
+        if (
+            origin === "" ||
+            dest === "" ||
+            startDate === "" ||
+            endDate === ""
+        ) {
             alert("Please make sure all search fields are completed.");
         } else {
-
             let departureMonth = startDate.getMonth() + 1;
             let departureDate = startDate.getDate();
             let departureYear = startDate.getFullYear();
@@ -564,13 +591,14 @@ const Booking = () => {
                 )
                     .then((resp) => resp.json())
                     .then((data) => {
-                        
                         setDepartureFlights(data.content);
                         setDepartureFlightPage(data);
                     })
                     .catch((error) => {
                         console.error(error);
-                        alert("No departure flights found for this query, try again!");
+                        alert(
+                            "No departure flights found for this query, try again!"
+                        );
                     })
             );
 
@@ -603,18 +631,17 @@ const Booking = () => {
                 )
                     .then((resp) => resp.json())
                     .then((data) => {
-                        
                         setReturnFlights(data.content);
                         setReturnFlightPage(data);
                         history.push("/booking/search-results");
                     })
                     .catch((error) => {
                         console.error(error);
-                        alert("No return flights found for this query, try again or consider purchasing a one way ticket!");
+                        alert(
+                            "No return flights found for this query, try again or consider purchasing a one way ticket!"
+                        );
                     })
             );
-
-
         }
     }
 
@@ -702,129 +729,128 @@ const Booking = () => {
             }
 
             if (isRoundTrip === false) {
-            try {
-                newPassengerInfo = await createPassenger({
-                    bookingConfirmationCode: newBooking.confirmationCode,
-                    originAirportCode:
-                        selectedFlight.route.originAirport.iataId,
-                    destinationAirportCode:
-                        selectedFlight.route.destinationAirport.iataId,
-                    airplaneModel: selectedFlight.airplane.model,
-                    departureTime: selectedFlight.departureTime,
-                    arrivalTime: selectedFlight.arrivalTime,
-                    givenName: passengerInfo.givenName,
-                    familyName: passengerInfo.familyName,
-                    dateOfBirth: passengerInfo.dateOfBirth,
-                    gender: passengerInfo.gender,
-                    address,
-                    seatClass: seatClass,
-                    // TODO: Allow user to choose seat.
-                    seatNumber: 1,
-                    // TODO: Create a seat class to check-in group map.
-                    checkInGroup: checkInGroup
-                });
-                setPassengerInfo(newPassengerInfo);
-            } catch (e) {
-                // TODO: Delete payment.
-                await deleteBooking(newBooking.id);
-                // TODO: Cancel stripe payment.
-                return;
+                try {
+                    newPassengerInfo = await createPassenger({
+                        bookingConfirmationCode: newBooking.confirmationCode,
+                        originAirportCode:
+                            selectedFlight.route.originAirport.iataId,
+                        destinationAirportCode:
+                            selectedFlight.route.destinationAirport.iataId,
+                        airplaneModel: selectedFlight.airplane.model,
+                        departureTime: selectedFlight.departureTime,
+                        arrivalTime: selectedFlight.arrivalTime,
+                        givenName: passengerInfo.givenName,
+                        familyName: passengerInfo.familyName,
+                        dateOfBirth: passengerInfo.dateOfBirth,
+                        gender: passengerInfo.gender,
+                        address,
+                        seatClass: seatClass,
+                        // TODO: Allow user to choose seat.
+                        seatNumber: 1,
+                        // TODO: Create a seat class to check-in group map.
+                        checkInGroup: checkInGroup
+                    });
+                    setPassengerInfo(newPassengerInfo);
+                } catch (e) {
+                    // TODO: Delete payment.
+                    await deleteBooking(newBooking.id);
+                    // TODO: Cancel stripe payment.
+                    return;
+                }
+            } else {
+                switch (departureClass) {
+                    case departureClass.ECONOMY:
+                        setDepCheckInGroup(3);
+                        break;
+                    case departureClass.BUSINESS:
+                        setDepCheckInGroup(2);
+                        break;
+                    case departureClass.FIRST:
+                        setDepCheckInGroup(1);
+                        break;
+                    default:
+                        // TODO: Go to error page.
+                        break;
+                }
+
+                switch (returnClass) {
+                    case returnClass.ECONOMY:
+                        setRetCheckInGroup(3);
+                        break;
+                    case returnClass.BUSINESS:
+                        setRetCheckInGroup(2);
+                        break;
+                    case returnClass.FIRST:
+                        setRetCheckInGroup(1);
+                        break;
+                    default:
+                        // TODO: Go to error page.
+                        break;
+                }
+
+                try {
+                    newPassengerInfo = await createPassenger({
+                        bookingConfirmationCode: newBooking.confirmationCode,
+                        originAirportCode:
+                            departureFlight.route.originAirport.iataId,
+                        destinationAirportCode:
+                            departureFlight.route.destinationAirport.iataId,
+                        airplaneModel: departureFlight.airplane.model,
+                        departureTime: departureFlight.departureTime,
+                        arrivalTime: departureFlight.arrivalTime,
+                        givenName: passengerInfo.givenName,
+                        familyName: passengerInfo.familyName,
+                        dateOfBirth: passengerInfo.dateOfBirth,
+                        gender: passengerInfo.gender,
+                        address,
+                        seatClass: departureClass,
+                        // TODO: Allow user to choose seat.
+                        seatNumber: 1,
+                        // TODO: Create a seat class to check-in group map.
+                        checkInGroup: depCheckInGroup
+                    });
+                    setPassengerInfo(newPassengerInfo);
+                } catch (e) {
+                    // TODO: Delete payment.
+                    await deleteBooking(newBooking.id);
+                    // TODO: Cancel stripe payment.
+                    return;
+                }
+
+                try {
+                    newPassengerInfo = await createPassenger({
+                        bookingConfirmationCode: newBooking.confirmationCode,
+                        originAirportCode:
+                            returnFlight.route.originAirport.iataId,
+                        destinationAirportCode:
+                            returnFlight.route.destinationAirport.iataId,
+                        airplaneModel: returnFlight.airplane.model,
+                        departureTime: returnFlight.departureTime,
+                        arrivalTime: returnFlight.arrivalTime,
+                        givenName: passengerInfo.givenName,
+                        familyName: passengerInfo.familyName,
+                        dateOfBirth: passengerInfo.dateOfBirth,
+                        gender: passengerInfo.gender,
+                        address,
+                        seatClass: seatClass,
+                        // TODO: Allow user to choose seat.
+                        seatNumber: 1,
+                        // TODO: Create a seat class to check-in group map.
+                        checkInGroup: retCheckInGroup
+                    });
+                    setPassengerInfo(newPassengerInfo);
+                } catch (e) {
+                    // TODO: Delete payment.
+                    await deleteBooking(newBooking.id);
+                    // TODO: Cancel stripe payment.
+                    return;
+                }
+
+                const rtTotalPerPassenger =
+                    RTPricePerPassengerState + departureTaxesPP + returnTaxesPP;
+                const finalTotal = rtTotalPerPassenger * passengerCount;
+                setTotalPrice(finalTotal);
             }
-        } else {
-
-            switch (departureClass) {
-                case departureClass.ECONOMY:
-                    setDepCheckInGroup(3);
-                    break;
-                case departureClass.BUSINESS:
-                    setDepCheckInGroup(2);
-                    break;
-                case departureClass.FIRST:
-                    setDepCheckInGroup(1);
-                    break;
-                default:
-                    // TODO: Go to error page.
-                    break;
-            }
-
-            switch (returnClass) {
-                case returnClass.ECONOMY:
-                    setRetCheckInGroup(3);
-                    break;
-                case returnClass.BUSINESS:
-                    setRetCheckInGroup(2);
-                    break;
-                case returnClass.FIRST:
-                    setRetCheckInGroup(1);
-                    break;
-                default:
-                    // TODO: Go to error page.
-                    break;
-            }
-
-            try {
-                newPassengerInfo = await createPassenger({
-                    bookingConfirmationCode: newBooking.confirmationCode,
-                    originAirportCode:
-                        departureFlight.route.originAirport.iataId,
-                    destinationAirportCode:
-                        departureFlight.route.destinationAirport.iataId,
-                    airplaneModel: departureFlight.airplane.model,
-                    departureTime: departureFlight.departureTime,
-                    arrivalTime: departureFlight.arrivalTime,
-                    givenName: passengerInfo.givenName,
-                    familyName: passengerInfo.familyName,
-                    dateOfBirth: passengerInfo.dateOfBirth,
-                    gender: passengerInfo.gender,
-                    address,
-                    seatClass: departureClass,
-                    // TODO: Allow user to choose seat.
-                    seatNumber: 1,
-                    // TODO: Create a seat class to check-in group map.
-                    checkInGroup: depCheckInGroup
-                });
-                setPassengerInfo(newPassengerInfo);
-            } catch (e) {
-                // TODO: Delete payment.
-                await deleteBooking(newBooking.id);
-                // TODO: Cancel stripe payment.
-                return;
-            }
-
-            try {
-                newPassengerInfo = await createPassenger({
-                    bookingConfirmationCode: newBooking.confirmationCode,
-                    originAirportCode:
-                        returnFlight.route.originAirport.iataId,
-                    destinationAirportCode:
-                        returnFlight.route.destinationAirport.iataId,
-                    airplaneModel: returnFlight.airplane.model,
-                    departureTime: returnFlight.departureTime,
-                    arrivalTime: returnFlight.arrivalTime,
-                    givenName: passengerInfo.givenName,
-                    familyName: passengerInfo.familyName,
-                    dateOfBirth: passengerInfo.dateOfBirth,
-                    gender: passengerInfo.gender,
-                    address,
-                    seatClass: seatClass,
-                    // TODO: Allow user to choose seat.
-                    seatNumber: 1,
-                    // TODO: Create a seat class to check-in group map.
-                    checkInGroup: retCheckInGroup
-                });
-                setPassengerInfo(newPassengerInfo);
-            } catch (e) {
-                // TODO: Delete payment.
-                await deleteBooking(newBooking.id);
-                // TODO: Cancel stripe payment.
-                return;
-            }  
-            
-            const rtTotalPerPassenger = RTPricePerPassengerState + departureTaxesPP + returnTaxesPP;
-            const finalTotal = rtTotalPerPassenger * passengerCount;
-            setTotalPrice(finalTotal);
-
-        }
 
             try {
                 await updateBooking({
@@ -903,78 +929,76 @@ const Booking = () => {
     ));
 
     return (
-        <div>
-            <Switch>
-                <Route exact path={path}>
-                    <Image
-                        src={mainImage}
-                        className="img-bg"
-                        aria-label="main image"
+        <Switch>
+            <Route exact path={path}>
+                <Image
+                    src={mainImage}
+                    className="img-bg"
+                    aria-label="main image"
+                />
+                <FlightSearch
+                    onFlightSearch={handleFlightSearch}
+                    sortBy={sortBy}
+                    handleSubmit={handleSubmit}
+                    handleRTSubmit={handleRTSubmit}
+                    handleOriginChange={handleOriginChange}
+                    handleDestChange={handleDestChange}
+                    date={date}
+                    onDateChange={onDateChange}
+                    dateRange={dateRange}
+                    startDate={startDate}
+                    endDate={endDate}
+                    setDateRange={setDateRange}
+                ></FlightSearch>
+            </Route>
+            <Route path={`${path}/search-results`}>
+                <FlightList
+                    flightCards={flightCards}
+                    departureFlightCards={departureFlightCards}
+                    returnFlightCards={returnFlightCards}
+                    flightPage={flightPage}
+                    departureFlight={departureFlight}
+                    returnFlight={returnFlight}
+                    departureSelectionMade={departureSelectionMade}
+                    departureClass={departureClass}
+                    departurePricePP={departurePricePPState}
+                    returnPricePP={returnPricePPState}
+                    returnSelectionMade={returnSelectionMade}
+                    returnClass={returnClass}
+                    departureFlightPage={departureFlightPage}
+                    returnFlightPage={returnFlightPage}
+                    retCheckInGroup={retCheckInGroup}
+                    depCheckInGroup={depCheckInGroup}
+                    setCheckInGroup={setCheckInGroup}
+                    setDepCheckInGroup={setDepCheckInGroup}
+                    setRetCheckInGroup={setRetCheckInGroup}
+                    setUpgradesPricePP={setUpgradesPricePP}
+                    setDesUpgradesPricePP={setDesUpgradesPricePP}
+                    setRetUpgradesPricePP={setRetUpgradesPricePP}
+                    handlePageChange={handlePageChange}
+                    handleFilterChange={handleFilterChange}
+                    onFlightSelection={handleFlightSelection}
+                    onRTFlightSelection={handleRTSelection}
+                    onSortBy={handleSortByChange}
+                    isRoundTrip={isRoundTrip}
+                />
+            </Route>
+            <Route path={`${path}/passenger-info`}>
+                {flightTable}
+                <PassengerInfoForm
+                    onPassengerInfoSubmit={handlePassengerInfoSubmit}
+                />
+            </Route>
+            <Route path={`${path}/checkout`}>
+                {flightTable}
+                <Elements stripe={promise}>
+                    <PaymentForm
+                        totalDollars={totalPrice}
+                        onPaymentCreation={handlePaymentCreation}
                     />
-                    <FlightSearch
-                        onFlightSearch={handleFlightSearch}
-                        sortBy={sortBy}
-                        handleSubmit={handleSubmit}
-                        handleRTSubmit={handleRTSubmit}
-                        handleOriginChange={handleOriginChange}
-                        handleDestChange={handleDestChange}
-                        date={date}
-                        onDateChange={onDateChange}
-                        dateRange={dateRange}
-                        startDate={startDate}
-                        endDate={endDate}
-                        setDateRange={setDateRange}
-                    ></FlightSearch>
-                </Route>
-                <Route path={`${path}/search-results`}>
-                    <FlightList
-                        flightCards={flightCards}
-                        departureFlightCards={departureFlightCards}
-                        returnFlightCards={returnFlightCards}
-                        flightPage={flightPage}
-                        departureFlight={departureFlight}
-                        returnFlight={returnFlight}
-                        departureSelectionMade={departureSelectionMade}
-                        departureClass={departureClass}
-                        departurePricePP={departurePricePPState}
-                        returnPricePP={returnPricePPState}
-                        returnSelectionMade={returnSelectionMade}
-                        returnClass={returnClass}
-                        departureFlightPage={departureFlightPage}
-                        returnFlightPage={returnFlightPage}
-                        retCheckInGroup={retCheckInGroup}
-                        depCheckInGroup={depCheckInGroup}
-                        setCheckInGroup={setCheckInGroup}
-                        setDepCheckInGroup={setDepCheckInGroup}
-                        setRetCheckInGroup={setRetCheckInGroup}
-                        setUpgradesPricePP={setUpgradesPricePP}
-                        setDesUpgradesPricePP={setDesUpgradesPricePP}
-                        setRetUpgradesPricePP={setRetUpgradesPricePP}
-                        handlePageChange={handlePageChange}
-                        handleFilterChange={handleFilterChange}
-                        onFlightSelection={handleFlightSelection}
-                        onRTFlightSelection={handleRTSelection}
-                        onSortBy={handleSortByChange}
-                        isRoundTrip={isRoundTrip}
-                    />
-                </Route>
-                <Route path={`${path}/passenger-info`}>
-                    {flightTable}
-                    <PassengerInfoForm
-                        onPassengerInfoSubmit={handlePassengerInfoSubmit}
-                    />
-                </Route>
-                <Route path={`${path}/checkout`}>
-                    {flightTable}
-                    <Elements stripe={promise}>
-                        <PaymentForm
-                            totalDollars={totalPrice}
-                            onPaymentCreation={handlePaymentCreation}
-                        />
-                    </Elements>
-                </Route>
-            </Switch>
-        </div>
+                </Elements>
+            </Route>
+        </Switch>
     );
 };
 
