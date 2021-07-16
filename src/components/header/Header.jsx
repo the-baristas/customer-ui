@@ -8,10 +8,15 @@ import Button from 'react-bootstrap/Button';
 import './Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+import SettingsMenu from '../user-profile/SettingsMenu';
 
 const Header = () => {
 
     const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn)
+
+    const currentPageIsUserProfile = () => {
+        return window.location.href.includes("/profile");
+    }
 
     return ( 
 
@@ -24,7 +29,8 @@ const Header = () => {
                         { !userLoggedIn && <Nav.Link data-testid="loginButton" id="nav-links" href="/login">Login</Nav.Link> } 
                         {!userLoggedIn &&<Nav.Link id="nav-links" href="/register">Register</Nav.Link> }
                         
-            {userLoggedIn &&<Nav.Link id="nav-links" href="/profile">My Account</Nav.Link> }
+            {userLoggedIn && !currentPageIsUserProfile() && <Nav.Link id="nav-links" href="/profile">My Account</Nav.Link> }
+            {userLoggedIn && currentPageIsUserProfile() && <SettingsMenu className="settings-menu" ></SettingsMenu>}
             { userLoggedIn && <LogoutButton ></LogoutButton>}
                     </Navbar.Collapse>
                     </Navbar>

@@ -11,7 +11,7 @@ const EditButton = (props) => {
 
     const handleEdit = () => {
         setButtonIsPressed(true);
-       props.onClickEdit();
+        props.onClickEdit();
     }
 
     const handleCancel = () => {
@@ -21,22 +21,22 @@ const EditButton = (props) => {
 
     //Once the edit button is pressed, it will turn into a cancel button.
     const getButtonType = () => {
-        if(!buttonIsPressed)
-            return <Button data-testid="editButton" variant="contained" onClick={handleEdit} color="primary" style={{ maxWidth: 20}}><EditIcon style={{ maxWidth: 15}}/></Button>
+        if (!buttonIsPressed)
+            return <Button data-testid="editButton" variant="contained" onClick={handleEdit} color="primary" style={{ maxWidth: 20 }}><EditIcon style={{ maxWidth: 15 }} /></Button>
         else
-            return <Button data-testid="cancelButton" variant="contained" color="secondary" onClick={handleCancel} style={{ maxWidth: 20}}><CancelIcon style={{ maxWidth: 15}}/></Button>
+            return <Button data-testid="cancelButton" variant="contained" color="secondary" onClick={handleCancel} style={{ maxWidth: 20 }}><CancelIcon style={{ maxWidth: 15 }} /></Button>
     }
 
-    return ( 
+    return (
         <div>
             {getButtonType()}
         </div>
-     );
+    );
 }
 
 Button.propTypes = {
     onClickEdit: PropTypes.func,
     onClickCancel: PropTypes.func
 }
- 
+
 export default EditButton;
