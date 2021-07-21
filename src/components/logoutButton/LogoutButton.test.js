@@ -9,14 +9,11 @@ import LogoutButton from "./LogoutButton";
 
 describe("Logout button", () => {
     const useSelectorMock = jest.spyOn(reactRedux, 'useSelector');
-    //const useDispatchMock = jest.spyOn(reactRedux, 'useDispatch');
     
 
 
     beforeEach(() => {
         useSelectorMock.mockClear()
-        //useDispatchMock.mockClear()
-        //useHistoryMock.mockClear();
       });
 
     it("Logout button exists", () => {
