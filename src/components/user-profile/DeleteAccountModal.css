@@ -1,0 +1,13 @@
+.cancelButton{
+    max-width: 120px;
+}
+
+.deleteButton{
+    max-width: 170px;
+    align-content: flex-end;
+    float:right
+}
+
+.inputPassword{
+    max-width: 70%;
+}
