@@ -94,7 +94,7 @@ it("throws an error when #createPassenger is unsuccessful", async () => {
     );
 });
 
-it("does not throw an error when #deleteBooking is successful", async () => {
+it("does not throw an error when #deletePassenger is successful", async () => {
     const id = 1;
     const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers/${id}`;
     server.use(
@@ -106,7 +106,7 @@ it("does not throw an error when #deleteBooking is successful", async () => {
     await expect(deletePassenger(id)).resolves.not.toThrowError();
 });
 
-it("does not throw an error when #deleteBooking is unsuccessful", async () => {
+it("does not throw an error when #deletePassenger is unsuccessful", async () => {
     const id = 1;
     const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers/${id}`;
     server.use(
