@@ -177,6 +177,7 @@ const UserProfile = () => {
                                     data-testid="inputUsername"
                                     type="text" 
                                     value={username}
+                                    disabled={true}
                                     onChange={(input) => setUsername(input.target.value)}
                                     required/>
                             </Form.Group>
