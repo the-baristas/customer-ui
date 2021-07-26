@@ -193,7 +193,7 @@ const PassengerInfoForm = (props) => {
                         </Form.Control.Feedback>
                     </Form.Group>
                 </Form.Row>
-                <Button variant="primary" type="submit">
+                <Button className="submit" variant="primary" type="submit">
                     Continue
                 </Button>
             </Form>

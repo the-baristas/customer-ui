@@ -39,3 +39,32 @@
     font-weight: 600;
     text-transform: uppercase;
   }
+
+  .departure-selected{
+    border-top: solid black 1px;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    border-bottom: solid black 1px;
+  }
+
+  .return-selected {
+    padding-top: 1%;
+  }
+
+  .itinerary-title {
+    margin-bottom: 3%;
+    text-transform: uppercase;
+    color: #c46329;
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-left: 5%;
+  }
+
+  button.close{
+    box-shadow: 0px 0px 0px 0px !important;
+    width: auto;
+  }
+
+  .point {
+    cursor: pointer;
+  }

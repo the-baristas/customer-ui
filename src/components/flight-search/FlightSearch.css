@@ -4,7 +4,7 @@ body{
 }
 
 .search-container.container {
-    top: 20%;
+    top: 40%;
     z-index: 1;
     position: absolute;
     display: grid;
@@ -57,4 +57,20 @@ body{
 #search-submit {
     background-color: #c46329 !important;
     border-color: #c46329 !important;
+}
+
+#booking-type{
+    width: 100% !important;
+    box-shadow: none;
+    border: 0;
+    padding: 0;
+}
+
+#cbs{
+    color: #c46329 !important;
+    font-size: .8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+    width: 100%;
 }

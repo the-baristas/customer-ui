@@ -12,7 +12,8 @@ import SettingsMenu from '../user-profile/SettingsMenu';
 
 const Header = () => {
 
-    const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn)
+    const userStatus = useSelector((state) => state.userStatus);
+    const userLoggedIn = useSelector( state => state.userStatus.userLoggedIn);
 
     const currentPageIsUserProfile = () => {
         return window.location.href.includes("/profile");
