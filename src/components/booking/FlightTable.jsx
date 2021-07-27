@@ -323,7 +323,6 @@ const FlightTable = (props) => {
                         <h5>Flight Details</h5>
                     </Col>
                 </Row>
-                <Row>
                     <Row className="return-selected">
                         <Col xs={12} lg={3}>
                             <Row className="origin-airport">
@@ -439,7 +438,6 @@ const FlightTable = (props) => {
                             </Card.Body>
                         </Card>
                     )}
-                </Row>
             </Container>
         );
     }
