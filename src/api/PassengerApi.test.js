@@ -54,21 +54,10 @@ it("receives passenger data when #createPassenger is successful", async () => {
 });
 
 it("throws an error when #createPassenger is unsuccessful", async () => {
-    const passengerData = {
-        id: 0,
-        givenName: "givenName",
-        familyName: "familyName",
-        dateOfBirth: "2000-01-01",
-        gender: "other",
-        streetAddress: "1 Main Street",
-        city: "Test City",
-        state: "FL",
-        zipCode: "12345"
-    };
     const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers`;
     server.use(
         rest.post(url, (req, res, ctx) => {
-            return res(ctx.status(500), ctx.json(passengerData));
+            return res(ctx.status(500));
         })
     );
 

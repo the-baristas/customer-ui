@@ -22,7 +22,10 @@ export const createPassenger = async ({
     try {
         response = await fetch(url, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": getToken() },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: getToken()
+            },
             body: JSON.stringify({
                 bookingConfirmationCode,
                 originAirportCode,
@@ -38,8 +41,7 @@ export const createPassenger = async ({
                 seatClass,
                 seatNumber,
                 checkInGroup
-            }),
-            credentials: 'include'  
+            })
         });
         if (response.ok === false) {
             throw new Error(
@@ -61,8 +63,7 @@ export const deletePassenger = async (id) => {
     try {
         const response = await fetch(url, {
             method: "DELETE",
-            headers: { "Authorization": getToken() },
-            credentials: 'include'  
+            headers: { Authorization: getToken() }
         });
         if (response.ok === false) {
             throw new Error(

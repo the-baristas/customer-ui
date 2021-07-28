@@ -11,9 +11,11 @@ export const createBooking = async ({
     try {
         response = await fetch(url, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": getToken() },
-            body: JSON.stringify({ confirmationCode, layoverCount, username }),
-            credentials: 'include'
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: getToken()
+            },
+            body: JSON.stringify({ confirmationCode, layoverCount, username })
         });
         if (response.ok === false) {
             throw new Error(
@@ -41,15 +43,17 @@ export const updateBooking = async ({
     try {
         response = await fetch(url, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": getToken() },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: getToken()
+            },
             body: JSON.stringify({
                 id,
                 confirmationCode,
                 layoverCount,
                 totalPrice,
                 username
-            }),
-            credentials: 'include'
+            })
         });
         if (response.ok === false) {
             throw new Error(
@@ -71,8 +75,7 @@ export const deleteBooking = async (id) => {
     try {
         const response = await fetch(url, {
             method: "DELETE",
-            headers: { "Authorization": getToken() },
-            credentials: 'include'
+            headers: { Authorization: getToken() }
         });
         if (response.ok === false) {
             throw new Error(
@@ -91,7 +94,10 @@ export const getBookingsByUsername = async (username, index, size) => {
         `?index=${index}&size=${size}`;
     const response = await fetch(url, {
         method: "GET",
-        headers: { "Content-Type": "application/json", "Authorization": getToken() }
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: getToken()
+        }
     });
     const data = await response.json();
     if (data.error) {
