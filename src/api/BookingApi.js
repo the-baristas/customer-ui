@@ -23,8 +23,11 @@ export const createBooking = async ({
             );
         }
         data = await response.json();
-    } catch (e) {
-        console.error("There has been a problem with your fetch operation:", e);
+    } catch (error) {
+        console.error(
+            "There has been a problem with your fetch operation:",
+            error
+        );
         data = {};
     }
     return data;
@@ -61,10 +64,10 @@ export const updateBooking = async ({
             );
         }
         data = await response.json();
-    } catch (e) {
+    } catch (error) {
         throw new Error(
             "There has been a problem with updating the booking:",
-            e
+            error
         );
     }
     return data;
@@ -82,8 +85,11 @@ export const deleteBooking = async (id) => {
                 `Response was not successful. Status code: ${response.status}`
             );
         }
-    } catch (e) {
-        console.error("There has been a problem with deleting the booking:", e);
+    } catch (error) {
+        console.error(
+            "There has been a problem with deleting the booking:",
+            error
+        );
     }
 };
 

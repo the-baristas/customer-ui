@@ -17,9 +17,9 @@ const PassengerInfoForm = (props) => {
     const [state, setState] = useState("");
     const [zipCode, setZipCode] = useState("");
 
-    const handleSubmit = (e) => {
-        const form = e.currentTarget;
-        if (form.checkValidity() === true) {
+    const handleSubmit = (event) => {
+        const form = event.currentTarget;
+        if (form.checkValidity()) {
             props.onPassengerInfoSubmit({
                 givenName,
                 familyName,
@@ -31,8 +31,8 @@ const PassengerInfoForm = (props) => {
                 zipCode
             });
         } else {
-            e.preventDefault();
-            e.stopPropagation();
+            event.preventDefault();
+            event.stopPropagation();
             setValidated(true);
         }
     };

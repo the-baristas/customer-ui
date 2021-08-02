@@ -40,7 +40,6 @@ const ResetPasswordForm = () => {
                 throw Error("There was a problem. Please try again later")
         })
         .catch((error) => {
-            console.log(error);
             setIsPending(false);
             if(error.name === 'TypeError')
                 setError('There was a problem on our end. Please try again later.')

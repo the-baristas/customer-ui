@@ -49,10 +49,10 @@ export const createPassenger = async ({
             );
         }
         data = await response.json();
-    } catch (e) {
+    } catch (error) {
         throw new Error(
             "There has been a problem with creating the passenger:",
-            e
+            error
         );
     }
     return data;
@@ -70,10 +70,10 @@ export const deletePassenger = async (id) => {
                 `Response was not successful. Status code: ${response.status}`
             );
         }
-    } catch (e) {
+    } catch (error) {
         console.error(
             "There has been a problem with deleting the passenger:",
-            e
+            error
         );
     }
 };
@@ -94,10 +94,10 @@ export const searchPassengers = async (searchTerm, index, size) => {
             );
         }
         data = await response.json();
-    } catch (e) {
+    } catch (error) {
         console.error(
             "There has been a problem with searching for passengers:",
-            e
+            error
         );
     }
     return data;

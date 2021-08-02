@@ -40,9 +40,9 @@ export const searchFlights = ({
             }
             return response.json();
         })
-        .catch((e) => {
+        .catch((error) => {
             throw new Error(
-                `There has been a problem with searching flights: ${e}`
+                `There has been a problem with searching flights: ${error}`
             );
         });
 };

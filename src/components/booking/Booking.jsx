@@ -75,26 +75,11 @@ const Booking = () => {
     const [passengerCount, setPassengerCount] = useState(1);
     const [totalPerPassenger, setTotalPerPassenger] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [flights, setFlights] = useState([]);
     const [departureFlights, setDepartureFlights] = useState([]);
     const [returnFlights, setReturnFlights] = useState([]);
     const [flightPage, setFlightPage] = useState({});
     const [departureFlightPage, setDepartureFlightPage] = useState({});
     const [returnFlightPage, setReturnFlightPage] = useState({});
-    const [selectedFlight, setSelectedFlight] = useState({
-        id: 0,
-        airplane: null,
-        departureTime: "",
-        arrivalTime: "",
-        firstReserved: 0,
-        firstPrice: 0,
-        businessReserved: 0,
-        businessPrice: 0,
-        economyReserved: 0,
-        economyPrice: 0,
-        isActive: false,
-        route: null
-    });
     const [departureFlight, setDepartureFlight] = useState({
         id: 0,
         airplane: null,
@@ -123,18 +108,12 @@ const Booking = () => {
         isActive: false,
         route: null
     });
-    const [oneWayDate, setOneWayDate] = useState(new Date());
-    const [dateRange, setDateRange] = useState([
-        new Date(),
-        Date.now() + 6.048e8
-    ]);
-    const [startDate, endDate] = dateRange;
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(Date.now() + 6.048e8);
     const [origin, setOrigin] = useState("");
     const [dest, setDest] = useState("");
-    const [oneWaySortBy, setOneWaySortBy] = useState("departureTime");
     const [departureSortBy, setDepartureSortBy] = useState("departureTime");
     const [returnSortBy, setReturnSortBy] = useState("departureTime");
-    const [oneWayFilter, setOneWayFilter] = useState("all");
     const [departureFilter, setDepartureFilter] = useState("all");
     const [returnFilter, setReturnFilter] = useState("all");
     // sets the total price of upgrades
@@ -170,12 +149,8 @@ const Booking = () => {
         }
     };
 
-    const handleFlightSearch = (flights) => {
-        setFlights(flights.content);
-    };
-
     const handleFlightSelection = (selectedFlight, seatClass) => {
-        setSelectedFlight(selectedFlight);
+        setDepartureFlight(selectedFlight);
         setSeatClass(seatClass);
 
         switch (seatClass) {
@@ -425,27 +400,27 @@ const Booking = () => {
             origin,
             dest,
             sortBy: newSortBy,
-            month: oneWayDate.getMonth() + 1,
-            date: oneWayDate.getDate(),
-            year: oneWayDate.getFullYear(),
+            month: startDate.getMonth() + 1,
+            date: startDate.getDate(),
+            year: startDate.getFullYear(),
             hours: 0,
             mins: 0,
-            filter: oneWayFilter
+            filter: departureFilter
         })
             .then((data) => {
-                setFlights(data.content);
-                setFlightPage(data);
+                setDepartureFlights(data.content);
+                setDepartureFlights(data);
             })
-            .catch((e) => {
-                console.error(e);
+            .catch((error) => {
+                console.error(error);
                 alert("No flights found, try again!");
             });
 
-        setOneWaySortBy(newSortBy);
+        setDepartureFilter(newSortBy);
     }
 
     function handleSortByChangeDepartures(event) {
-        const newSortBy = event.taget.value;
+        const newSortBy = event.target.value;
         searchFlights({
             origin,
             dest,
@@ -455,14 +430,14 @@ const Booking = () => {
             year: startDate.getFullYear(),
             hours: 0,
             mins: 0,
-            filter: oneWayFilter
+            filter: departureFilter
         })
             .then((data) => {
                 setDepartureFlights(data.content);
                 setDepartureFlightPage(data);
             })
-            .catch((e) => {
-                console.error(e);
+            .catch((error) => {
+                console.error(error);
                 alert("No flights found, try again!");
             });
 
@@ -470,7 +445,7 @@ const Booking = () => {
     }
 
     function handleSortByChangeReturns(event) {
-        const newSortBy = event.taget.value;
+        const newSortBy = event.target.value;
         searchFlights({
             origin,
             dest,
@@ -480,14 +455,14 @@ const Booking = () => {
             year: endDate.getFullYear(),
             hours: 0,
             mins: 0,
-            filter: oneWayFilter
+            filter: returnFilter
         })
             .then((data) => {
                 setDepartureFlights(data.content);
                 setDepartureFlightPage(data);
             })
-            .catch((e) => {
-                console.error(e);
+            .catch((error) => {
+                console.error(error);
                 alert("No flights found, try again!");
             });
 
@@ -499,32 +474,7 @@ const Booking = () => {
         searchFlights({
             origin,
             dest,
-            sortBy: oneWaySortBy,
-            month: oneWayDate.getMonth() + 1,
-            date: oneWayDate.getDate(),
-            year: oneWayDate.getFullYear(),
-            hours: 0,
-            mins: 0,
-            filter: newFilter
-        })
-            .then((data) => {
-                setDepartureFlights(data.content);
-                setDepartureFlightPage(data);
-            })
-            .catch((e) => {
-                console.error(e);
-                alert("No flights found, try again!");
-            });
-
-        setOneWayFilter(newFilter);
-    }
-
-    function handleFilterChangeDepartures(event) {
-        const newFilter = event.target.value;
-        searchFlights({
-            origin,
-            dest,
-            sortBy: oneWaySortBy,
+            sortBy: departureSortBy,
             month: startDate.getMonth() + 1,
             date: startDate.getDate(),
             year: startDate.getFullYear(),
@@ -536,8 +486,33 @@ const Booking = () => {
                 setDepartureFlights(data.content);
                 setDepartureFlightPage(data);
             })
-            .catch((e) => {
-                console.error(e);
+            .catch((error) => {
+                console.error(error);
+                alert("No flights found, try again!");
+            });
+
+        setDepartureFilter(newFilter);
+    }
+
+    function handleFilterChangeDepartures(event) {
+        const newFilter = event.target.value;
+        searchFlights({
+            origin,
+            dest,
+            sortBy: departureSortBy,
+            month: startDate.getMonth() + 1,
+            date: startDate.getDate(),
+            year: startDate.getFullYear(),
+            hours: 0,
+            mins: 0,
+            filter: newFilter
+        })
+            .then((data) => {
+                setDepartureFlights(data.content);
+                setDepartureFlightPage(data);
+            })
+            .catch((error) => {
+                console.error(error);
                 alert("No flights found, try again!");
             });
 
@@ -549,7 +524,7 @@ const Booking = () => {
         searchFlights({
             origin,
             dest,
-            sortBy: oneWaySortBy,
+            sortBy: returnSortBy,
             month: endDate.getMonth() + 1,
             date: endDate.getDate(),
             year: endDate.getFullYear(),
@@ -564,101 +539,68 @@ const Booking = () => {
         setDepartureFilter(event.target.value);
     }
 
-    function onDateChange(date) {
-        setOneWayDate(date);
-    }
-
-    function handleOriginChange(event) {
-        setOrigin(event.target.value);
-    }
-
-    function handleDestChange(event) {
-        setDest(event.target.value);
-    }
-
-    function handleSubmit(event) {
-        event.preventDefault();
-        setIsRoundTrip(false);
-        if (origin === "" || dest === "" || oneWayDate === "") {
-            alert("Please make sure all search fields are completed.");
-        } else {
-            trackPromise(
-                searchFlights({
-                    origin,
-                    dest,
-                    sortBy: oneWaySortBy,
-                    month: oneWayDate.getMonth() + 1,
-                    date: oneWayDate.getDate(),
-                    year: oneWayDate.getFullYear(),
-                    hours: 0,
-                    mins: 0,
-                    filter: oneWayFilter
-                })
-                    .then((data) => {
-                        setDepartureFlights(data.content);
-                        setDepartureFlightPage(data);
+    function handleFlightSearchSubmit({
+        roundTrip,
+        origin,
+        destination,
+        startDate,
+        endDate
+    }) {
+        trackPromise(
+            searchFlights({
+                origin,
+                dest,
+                sortBy: departureSortBy,
+                month: startDate.getMonth() + 1,
+                date: startDate.getDate(),
+                year: startDate.getFullYear(),
+                filter: departureFilter
+            })
+                .then((data) => {
+                    setDepartureFlights(data.content);
+                    setDepartureFlightPage(data);
+                    if (!roundTrip) {
                         history.push("/booking/search-results");
-                    })
-                    .catch((e) => {
-                        console.error(e);
-                        alert("No flights found, try again!");
-                    })
-            );
-        }
-    }
-
-    function handleRTSubmit(event) {
-        event.preventDefault();
-        setIsRoundTrip(true);
-        if (
-            origin === "" ||
-            dest === "" ||
-            startDate === "" ||
-            endDate === ""
-        ) {
-            alert("Please make sure all search fields are completed.");
-        } else {
-            trackPromise(
-                searchFlights({
-                    origin,
-                    dest,
-                    month: startDate.getMonth() + 1,
-                    date: startDate.getDate(),
-                    year: startDate.getFullYear()
+                    }
                 })
-                    .then((data) => {
-                        setDepartureFlights(data.content);
-                        setDepartureFlightPage(data);
-                    })
-                    .catch((e) => {
-                        console.error(e);
-                        alert(
-                            "No departure flights found for this query, try again!"
-                        );
-                    })
-            );
+                .catch((error) => {
+                    console.error(error);
+                    alert(
+                        "No departure flights found for this query, try again!"
+                    );
+                })
+        );
 
+        if (roundTrip) {
             trackPromise(
                 searchFlights({
                     dest,
                     origin,
+                    sortBy: returnSortBy,
                     month: endDate.getMonth() + 1,
                     date: endDate.getDate(),
-                    year: endDate.getFullYear()
+                    year: endDate.getFullYear(),
+                    filter: returnFilter
                 })
                     .then((data) => {
                         setReturnFlights(data.content);
                         setReturnFlightPage(data);
                         history.push("/booking/search-results");
                     })
-                    .catch((e) => {
-                        console.error(e);
+                    .catch((error) => {
+                        console.error(error);
                         alert(
                             "No return flights found for this query, try again or consider purchasing a one way ticket!"
                         );
                     })
             );
         }
+
+        setIsRoundTrip(roundTrip);
+        setOrigin(origin);
+        setDest(destination);
+        setStartDate(startDate);
+        setEndDate(endDate);
     }
 
     function handlePageChange(newPage) {
@@ -667,18 +609,18 @@ const Booking = () => {
                 origin,
                 dest,
                 newPage,
-                sortBy: oneWaySortBy,
-                month: oneWayDate.getMonth() + 1,
-                date: oneWayDate.getDate(),
-                year: oneWayDate.getFullYear(),
-                filter: oneWayFilter
+                sortBy: departureSortBy,
+                month: startDate.getMonth() + 1,
+                date: startDate.getDate(),
+                year: startDate.getFullYear(),
+                filter: departureFilter
             })
                 .then((data) => {
-                    setFlights(data.content);
-                    setFlightPage(data);
+                    setDepartureFlights(data.content);
+                    setDepartureFlightPage(data);
                 })
-                .catch((e) => {
-                    console.error(e);
+                .catch((error) => {
+                    console.error(error);
                     alert("No flights found, try again!");
                 })
         );
@@ -690,18 +632,18 @@ const Booking = () => {
                 origin,
                 dest,
                 newPage,
-                sortBy: oneWaySortBy,
+                sortBy: departureSortBy,
                 month: endDate.getMonth() + 1,
                 date: endDate.getDate(),
                 year: endDate.getFullYear(),
-                filter: oneWayFilter
+                filter: departureFilter
             })
                 .then((data) => {
-                    setFlights(data.content);
-                    setFlightPage(data);
+                    setReturnFlights(data.content);
+                    setReturnFlightPage(data);
                 })
-                .catch((e) => {
-                    console.error(e);
+                .catch((error) => {
+                    console.error(error);
                     alert("No flights found, try again!");
                 })
         );
@@ -713,18 +655,18 @@ const Booking = () => {
                 origin,
                 dest,
                 newPage,
-                sortBy: oneWaySortBy,
+                sortBy: departureSortBy,
                 month: startDate.getMonth() + 1,
                 date: startDate.getDate(),
                 year: startDate.getFullYear(),
-                filter: oneWayFilter
+                filter: departureFilter
             })
                 .then((data) => {
-                    setFlights(data.content);
-                    setFlightPage(data);
+                    setDepartureFlights(data.content);
+                    setDepartureFlightPage(data);
                 })
-                .catch((e) => {
-                    console.error(e);
+                .catch((error) => {
+                    console.error(error);
                     alert("No flights found, try again!");
                 })
         );
@@ -739,8 +681,8 @@ const Booking = () => {
                     layoverCount: bookingToCreate.layoverCount,
                     username: userStatus.username
                 });
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                console.error(error);
                 // TODO: Cancel stripe payment.
                 return;
             }
@@ -748,15 +690,12 @@ const Booking = () => {
             let payment;
             try {
                 payment = await createPayment(clientSecret, newBooking.id);
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                console.error(error);
                 await deleteBooking(newBooking.id);
                 // TODO: Cancel stripe payment.
                 return;
             }
-
-            const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
-            let newPassengerInfo;
 
             switch (SeatClass) {
                 case SeatClass.ECONOMY:
@@ -773,17 +712,19 @@ const Booking = () => {
                     break;
             }
 
+            const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
+            let newPassengerInfo;
             if (isRoundTrip === false) {
                 try {
                     newPassengerInfo = await createPassenger({
                         bookingConfirmationCode: newBooking.confirmationCode,
                         originAirportCode:
-                            selectedFlight.route.originAirport.iataId,
+                            departureFlight.route.originAirport.iataId,
                         destinationAirportCode:
-                            selectedFlight.route.destinationAirport.iataId,
-                        airplaneModel: selectedFlight.airplane.model,
-                        departureTime: selectedFlight.departureTime,
-                        arrivalTime: selectedFlight.arrivalTime,
+                            departureFlight.route.destinationAirport.iataId,
+                        airplaneModel: departureFlight.airplane.model,
+                        departureTime: departureFlight.departureTime,
+                        arrivalTime: departureFlight.arrivalTime,
                         givenName: passengerInfo.givenName,
                         familyName: passengerInfo.familyName,
                         dateOfBirth: passengerInfo.dateOfBirth,
@@ -796,7 +737,7 @@ const Booking = () => {
                         checkInGroup: checkInGroup
                     });
                     setPassengerInfo(newPassengerInfo);
-                } catch (e) {
+                } catch (error) {
                     // TODO: Delete payment.
                     await deleteBooking(newBooking.id);
                     // TODO: Cancel stripe payment.
@@ -855,7 +796,7 @@ const Booking = () => {
                         checkInGroup: depCheckInGroup
                     });
                     setPassengerInfo(newPassengerInfo);
-                } catch (e) {
+                } catch (error) {
                     // TODO: Delete payment.
                     await deleteBooking(newBooking.id);
                     // TODO: Cancel stripe payment.
@@ -884,7 +825,7 @@ const Booking = () => {
                         checkInGroup: retCheckInGroup
                     });
                     setPassengerInfo(newPassengerInfo);
-                } catch (e) {
+                } catch (error) {
                     // TODO: Delete payment.
                     await deleteBooking(newBooking.id);
                     // TODO: Cancel stripe payment.
@@ -907,7 +848,7 @@ const Booking = () => {
                 });
                 // TODO: Redirect to booking confirmation page.
                 history.push(`${path}`);
-            } catch (e) {
+            } catch (error) {
                 await deletePassenger(newPassengerInfo.id);
                 await deletePayment(payment.stripeId);
                 await deleteBooking(newBooking.id);
@@ -920,7 +861,6 @@ const Booking = () => {
 
     const flightTable = (
         <FlightTable
-            selectedFlight={selectedFlight}
             departureFlight={departureFlight}
             returnFlight={returnFlight}
             seatClass={seatClass}
@@ -946,18 +886,10 @@ const Booking = () => {
         />
     );
 
-    const promise = loadStripe(
+    // FIXME
+    const stripePromise = loadStripe(
         process.env.REACT_APP_STRIPE_TEST_PUBLISHABLE_KEY
     );
-
-    const flightCards = flights.map((flight) => (
-        <FlightCard
-            id={flight.id}
-            key={flight.id}
-            flight={flight}
-            onFlightSelection={handleFlightSelection}
-        />
-    ));
 
     const departureFlightCards = departureFlights.map((flight) => (
         <FlightCard
@@ -984,23 +916,11 @@ const Booking = () => {
                     aria-label="main image"
                 />
                 <FlightSearch
-                    onFlightSearch={handleFlightSearch}
-                    sortBy={oneWaySortBy}
-                    handleSubmit={handleSubmit}
-                    handleRTSubmit={handleRTSubmit}
-                    handleOriginChange={handleOriginChange}
-                    handleDestChange={handleDestChange}
-                    date={oneWayDate}
-                    onDateChange={onDateChange}
-                    dateRange={dateRange}
-                    startDate={startDate}
-                    endDate={endDate}
-                    setDateRange={setDateRange}
+                    onFlightSearchSubmit={handleFlightSearchSubmit}
                 ></FlightSearch>
             </Route>
             <Route path={`${path}/search-results`}>
                 <FlightList
-                    flightCards={flightCards}
                     departureFlightCards={departureFlightCards}
                     returnFlightCards={returnFlightCards}
                     flightPage={flightPage}
@@ -1044,7 +964,7 @@ const Booking = () => {
             </Route>
             <Route path={`${path}/checkout`}>
                 {flightTable}
-                <Elements stripe={promise}>
+                <Elements stripe={stripePromise}>
                     <PaymentForm
                         totalDollars={totalPrice}
                         onPaymentCreation={handlePaymentCreation}

@@ -56,7 +56,7 @@ const DeleteAccountModal = (props) => {
                         );
                     }
                 } else {
-                    console.log("delete");
+                    ("delete");
                     setError("");
                     deleteUserAccount(userStatus.username)
                         .then((response) => {

@@ -37,7 +37,6 @@ export const userServiceHealthCheck = async () =>
 
 export const resetPassword = async (token, password) =>
 {
-    console.log(token + ' ' + password);
     return fetch(process.env.REACT_APP_USER_SERVICE_URL + '/users/password', {
         method: 'PUT',
         headers: { "Content-Type": "application/json","Authorization": getToken()},
