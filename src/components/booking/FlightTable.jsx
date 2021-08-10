@@ -8,24 +8,8 @@ import "./FlightTable.css";
 import SeatClass from "./SeatClass";
 
 const FlightTable = (props) => {
-    let seatClassDisplayName;
     let f1ClassDisplayName;
     let f2ClassDisplayName;
-
-    switch (props.seatClass) {
-        case SeatClass.ECONOMY:
-            seatClassDisplayName = "Economy Class";
-            break;
-        case SeatClass.BUSINESS:
-            seatClassDisplayName = "Business Class";
-            break;
-        case SeatClass.FIRST:
-            seatClassDisplayName = "First Class";
-            break;
-        default:
-        // TODO: Uncomment
-        // throw new Error(`Invalid seat class: ${props.seatClass}`);
-    }
 
     switch (props.departureClass) {
         case SeatClass.ECONOMY:
@@ -75,41 +59,41 @@ const FlightTable = (props) => {
     const totalPrice = totalPerPassenger * passengerCount;
     const rtTotal = rtTotalPerPassenger * passengerCount;
 
-    const departureTime = moment(props.departureFlight.departureTime).format(
-        "MM/DD/YYYY hh:mm"
-    );
-    const arrivalTime = moment(props.departureFlight.arrivalTime).format(
-        "MM/DD/YYYY hh:mm"
-    );
+    const departureTime = moment(
+        props.selectedDepartingFlight.departureTime
+    ).format("MM/DD/YYYY hh:mm");
+    const arrivalTime = moment(
+        props.selectedDepartingFlight.arrivalTime
+    ).format("MM/DD/YYYY hh:mm");
     const duration = moment.duration(
-        moment(props.departureFlight.arrivalTime).diff(
-            props.departureFlight.departureTime
+        moment(props.selectedDepartingFlight.arrivalTime).diff(
+            props.selectedDepartingFlight.departureTime
         )
     );
     const durationHours = Math.floor(duration.asHours());
     const durationMinutes = duration.minutes();
 
     // RT values
-    const f1DepartureTime = moment(props.departureFlight.departureTime).format(
-        "MM/DD/YYYY hh:mm"
-    );
-    const f1ArrivalTime = moment(props.departureFlight.arrivalTime).format(
-        "MM/DD/YYYY hh:mm"
-    );
-    const f2DepartureTime = moment(props.returnFlight.departureTime).format(
-        "MM/DD/YYYY hh:mm"
-    );
-    const f2ArrivalTime = moment(props.returnFlight.arrivalTime).format(
-        "MM/DD/YYYY hh:mm"
-    );
+    const f1DepartureTime = moment(
+        props.selectedDepartingFlight.departureTime
+    ).format("MM/DD/YYYY hh:mm");
+    const f1ArrivalTime = moment(
+        props.selectedDepartingFlight.arrivalTime
+    ).format("MM/DD/YYYY hh:mm");
+    const f2DepartureTime = moment(
+        props.selectedReturningFlight.departureTime
+    ).format("MM/DD/YYYY hh:mm");
+    const f2ArrivalTime = moment(
+        props.selectedReturningFlight.arrivalTime
+    ).format("MM/DD/YYYY hh:mm");
     const f1Duration = moment.duration(
-        moment(props.departureFlight.arrivalTime).diff(
-            props.departureFlight.departureTime
+        moment(props.selectedDepartingFlight.arrivalTime).diff(
+            props.selectedDepartingFlight.departureTime
         )
     );
     const f2Duration = moment.duration(
-        moment(props.returnFlight.arrivalTime).diff(
-            props.returnFlight.departureTime
+        moment(props.selectedReturningFlight.arrivalTime).diff(
+            props.selectedReturningFlight.departureTime
         )
     );
     const f1DurationHours = Math.floor(f1Duration.asHours());
@@ -136,22 +120,25 @@ const FlightTable = (props) => {
                     <Row className="return-selected">
                         <Col xs={12} lg={3}>
                             <Row className="origin-airport">
-                                {props.departureFlight.route.originAirport.city}{" "}
+                                {
+                                    props.selectedDepartingFlight.route
+                                        .originAirport.city
+                                }{" "}
                                 (
                                 {
-                                    props.departureFlight.route.originAirport
-                                        .iataId
+                                    props.selectedDepartingFlight.route
+                                        .originAirport.iataId
                                 }
                                 )
                             </Row>
                             <Row className="departure-time">
                                 {moment(
-                                    props.departureFlight.departureTime
+                                    props.selectedDepartingFlight.departureTime
                                 ).format("h:mm a")}
                             </Row>
                             <Row className="departure-date">
                                 {moment(
-                                    props.departureFlight.departureTime
+                                    props.selectedDepartingFlight.departureTime
                                 ).format("MMMM Do, YYYY")}
                             </Row>
                         </Col>
@@ -168,18 +155,18 @@ const FlightTable = (props) => {
                         <Col xs={12} lg={3}>
                             <Row className="dest-airport">
                                 {
-                                    props.departureFlight.route
+                                    props.selectedDepartingFlight.route
                                         .destinationAirport.city
                                 }
                             </Row>
                             <Row className="arrival-time">
                                 {moment(
-                                    props.departureFlight.arrivalTime
+                                    props.selectedDepartingFlight.arrivalTime
                                 ).format("h:mm a")}
                             </Row>
                             <Row className="arrival-date">
                                 {moment(
-                                    props.departureFlight.arrivalTime
+                                    props.selectedDepartingFlight.arrivalTime
                                 ).format("MMMM Do, YYYY")}
                             </Row>
                         </Col>
@@ -264,18 +251,26 @@ const FlightTable = (props) => {
                 <Row className="return-selected">
                     <Col xs={12} lg={3}>
                         <Row className="origin-airport">
-                            {props.returnFlight.route.originAirport.city} (
-                            {props.returnFlight.route.originAirport.iataId})
+                            {
+                                props.selectedReturningFlight.route
+                                    .originAirport.city
+                            }{" "}
+                            (
+                            {
+                                props.selectedReturningFlight.route
+                                    .originAirport.iataId
+                            }
+                            )
                         </Row>
                         <Row className="departure-time">
-                            {moment(props.returnFlight.departureTime).format(
-                                "h:mm a"
-                            )}
+                            {moment(
+                                props.selectedReturningFlight.departureTime
+                            ).format("h:mm a")}
                         </Row>
                         <Row className="departure-date">
-                            {moment(props.returnFlight.departureTime).format(
-                                "MMMM Do, YYYY"
-                            )}
+                            {moment(
+                                props.selectedReturningFlight.departureTime
+                            ).format("MMMM Do, YYYY")}
                         </Row>
                     </Col>
 
@@ -290,17 +285,20 @@ const FlightTable = (props) => {
 
                     <Col xs={12} lg={3}>
                         <Row className="dest-airport">
-                            {props.returnFlight.route.destinationAirport.city}
+                            {
+                                props.selectedReturningFlight.route
+                                    .destinationAirport.city
+                            }
                         </Row>
                         <Row className="arrival-time">
-                            {moment(props.returnFlight.arrivalTime).format(
-                                "h:mm a"
-                            )}
+                            {moment(
+                                props.selectedReturningFlight.arrivalTime
+                            ).format("h:mm a")}
                         </Row>
                         <Row className="arrival-date">
-                            {moment(props.returnFlight.arrivalTime).format(
-                                "MMMM Do, YYYY"
-                            )}
+                            {moment(
+                                props.selectedReturningFlight.arrivalTime
+                            ).format("MMMM Do, YYYY")}
                         </Row>
                     </Col>
 

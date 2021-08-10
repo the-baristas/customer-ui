@@ -15,7 +15,6 @@ import {
 import { searchFlights } from "../../api/FlightApi";
 import { createPassenger, deletePassenger } from "../../api/PassengerApi";
 import { createPayment, deletePayment } from "../../api/PaymentService";
-import FlightCard from "../flight-list/FlightCard";
 import FlightList from "../flight-list/FlightList";
 import FlightSearch from "../flight-search/FlightSearch";
 import PaymentForm from "../paymentForm/PaymentForm";
@@ -45,26 +44,42 @@ const Booking = () => {
         layoverCount: 0,
         username: ""
     });
-    const [passengerInfo, setPassengerInfo] = useState({
-        id: 0,
-        givenName: "",
-        familyName: "",
-        dateOfBirth: "",
-        gender: "",
-        streetAddress: "",
-        city: "",
-        state: "",
-        zipCode: ""
-    });
-    const [seatClass, setSeatClass] = useState("");
-    const [checkInGroup, setCheckInGroup] = useState(3);
-    const [departureClass, setDepartureClass] = useState("");
-    const [depCheckInGroup, setDepCheckInGroup] = useState(3);
-    const [retCheckInGroup, setRetCheckInGroup] = useState(3);
-    const [returnClass, setReturnClass] = useState("");
+    const [departingFlightPassengerInfo, setDepartingFlightPassengerInfo] =
+        useState({
+            id: 0,
+            givenName: "",
+            familyName: "",
+            dateOfBirth: "",
+            gender: "",
+            streetAddress: "",
+            city: "",
+            state: "",
+            zipCode: "",
+            seatClass: "",
+            seatNumber: 0,
+            checkInGroup: 0
+        });
+    // TODO: Set returning ticket's info. It's different from the departing one.
+    const [returningFlightPassengerInfo, setReturningFlightPassengerInfo] =
+        useState({
+            id: 0,
+            givenName: "",
+            familyName: "",
+            dateOfBirth: "",
+            gender: "",
+            streetAddress: "",
+            city: "",
+            state: "",
+            zipCode: "",
+            seatClass: "",
+            seatNumber: 0,
+            checkInGroup: 0
+        });
+    const [departingFlightClass, setDepartingFlightClass] = useState("economy");
+    const [returningFlightClass, setReturningFlightClass] = useState("economy");
+    const [departingFlightCheckInGroup, setDepCheckInGroup] = useState(3);
+    const [returningFlightCheckInGroup, setRetCheckInGroup] = useState(3);
     const [isRoundTrip, setIsRoundTrip] = useState(false);
-    const [departureSelectionMade, setDepartureSelectionMade] = useState(false);
-    const [returnSelectionMade, setReturnSelectionMade] = useState(false);
     const [pricePerPassengerState, setPricePerPassengerState] = useState(0);
     const [departurePricePPState, setDeparturePricePPState] = useState(0);
     const [returnPricePPState, setReturnPricePPState] = useState(0);
@@ -75,12 +90,13 @@ const Booking = () => {
     const [passengerCount, setPassengerCount] = useState(1);
     const [totalPerPassenger, setTotalPerPassenger] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [departureFlights, setDepartureFlights] = useState([]);
-    const [returnFlights, setReturnFlights] = useState([]);
-    const [flightPage, setFlightPage] = useState({});
-    const [departureFlightPage, setDepartureFlightPage] = useState({});
-    const [returnFlightPage, setReturnFlightPage] = useState({});
-    const [departureFlight, setDepartureFlight] = useState({
+    const [departingFlights, setDepartingFlights] = useState([]);
+    const [returningFlights, setReturnFlights] = useState([]);
+    const [departingFlightsPagesCount, setDepartingFlightsPagesCount] =
+        useState(0);
+    const [returningFlightsPagesCount, setReturningFlightsPagesCount] =
+        useState(0);
+    const [selectedDepartingFlight, setSelectedDepartingFlight] = useState({
         id: 0,
         airplane: null,
         departureTime: "",
@@ -92,9 +108,18 @@ const Booking = () => {
         economyReserved: 0,
         economyPrice: 0,
         isActive: false,
-        route: null
+        route: {
+            originAirport: {
+                city: "",
+                iataId: ""
+            },
+            destinationAirport: {
+                city: "",
+                iataId: ""
+            }
+        }
     });
-    const [returnFlight, setReturnFlight] = useState({
+    const [selectedReturningFlight, setSelectedReturningFlight] = useState({
         id: 0,
         airplane: null,
         departureTime: "",
@@ -106,21 +131,25 @@ const Booking = () => {
         economyReserved: 0,
         economyPrice: 0,
         isActive: false,
-        route: null
+        route: {
+            originAirport: {
+                city: "",
+                iataId: ""
+            },
+            destinationAirport: {
+                city: "",
+                iataId: ""
+            }
+        }
     });
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(Date.now() + 6.048e8);
     const [origin, setOrigin] = useState("");
-    const [dest, setDest] = useState("");
-    const [departureSortBy, setDepartureSortBy] = useState("departureTime");
-    const [returnSortBy, setReturnSortBy] = useState("departureTime");
-    const [departureFilter, setDepartureFilter] = useState("all");
-    const [returnFilter, setReturnFilter] = useState("all");
+    const [destination, setDestination] = useState("");
     // sets the total price of upgrades
     const [upgradesPricePP, setUpgradesPricePP] = useState(0);
     const [desUpgradesPricePP, setDesUpgradesPricePP] = useState(0);
     const [retUpgradesPricePP, setRetUpgradesPricePP] = useState(0);
-
     // state variables check if a boarding group upgrade has already been applied
     const [hasBGUpgrade, setHasBgUpgrade] = useState(false);
     const [hasRetBGUpgrade, setHasRetBgUpgrade] = useState(false);
@@ -149,26 +178,14 @@ const Booking = () => {
         }
     };
 
-    const handleFlightSelection = (selectedFlight, seatClass) => {
-        setDepartureFlight(selectedFlight);
-        setSeatClass(seatClass);
+    const handleOneWayTripContinue = (
+        selectedFlight,
+        seatClass,
+        checkInGroup,
+        additionalCost
+    ) => {
+        // calculateTotalPrice(selectedFlight, seatClass);
 
-        switch (seatClass) {
-            case SeatClass.ECONOMY:
-                setCheckInGroup(3);
-                break;
-            case SeatClass.BUSINESS:
-                setCheckInGroup(2);
-                break;
-            case SeatClass.FIRST:
-                setCheckInGroup(1);
-                break;
-            default:
-                // TODO: Go to error page.
-                break;
-        }
-
-        calculateTotalPrice(selectedFlight, seatClass);
         (async () => {
             const confirmationCode = uuidv4().toUpperCase();
             const layoverCount = 0;
@@ -179,105 +196,9 @@ const Booking = () => {
             });
             history.push(`${path}/passenger-info`);
         })();
-    };
 
-    const handleDepartureSelection = (selectedFlight, seatClass) => {
-        setDepartureFlight(selectedFlight);
-        setDepartureClass(seatClass);
-        let selectedFlightCard = document.getElementById(
-            "fc" + selectedFlight.id
-        );
-        let flightCards = document.getElementById("depFlightCards");
-        let departureSort = document.getElementById("departure-sort");
-        let departureFilter = document.getElementById("departure-filter");
-        departureSort.style.display = "none";
-        departureFilter.style.display = "none";
-        flightCards.style.display = "none";
-        setDepartureSelectionMade(true);
-        let depPricePP;
-        switch (seatClass) {
-            case SeatClass.ECONOMY:
-                setDepCheckInGroup(3);
-                depPricePP = selectedFlight.economyPrice;
-                depPricePP = Math.round(depPricePP * 100) / 100;
-                setDeparturePricePPState(depPricePP);
-                break;
-            case SeatClass.BUSINESS:
-                setDepCheckInGroup(2);
-                depPricePP = selectedFlight.businessPrice;
-                depPricePP = Math.round(depPricePP * 100) / 100;
-                setDeparturePricePPState(depPricePP);
-                break;
-            case SeatClass.FIRST:
-                setDepCheckInGroup(1);
-                depPricePP = selectedFlight.firstPrice;
-                depPricePP = Math.round(depPricePP * 100) / 100;
-                setDeparturePricePPState(depPricePP);
-                break;
-            default:
-                // TODO: Go to error page.
-                break;
-        }
-    };
-
-    const handleReturnSelection = (selectedFlight, seatClass) => {
-        setReturnFlight(selectedFlight);
-        setReturnClass(seatClass);
-        let selectedFlightCard = document.getElementById(
-            "fc" + selectedFlight.id
-        );
-        let flightCards = document.getElementById("retFlightCards");
-        let returnSort = document.getElementById("return-sort");
-        let returnFilter = document.getElementById("return-filter");
-        returnSort.style.display = "none";
-        returnFilter.style.display = "none";
-        flightCards.style.display = "none";
-        let returnPricePP;
-
-        setReturnSelectionMade(true);
-        switch (seatClass) {
-            case SeatClass.ECONOMY:
-                setRetCheckInGroup(3);
-                returnPricePP = selectedFlight.economyPrice;
-                returnPricePP = Math.round(returnPricePP * 100) / 100;
-                setReturnPricePPState(returnPricePP);
-                break;
-            case SeatClass.BUSINESS:
-                setRetCheckInGroup(2);
-                returnPricePP = selectedFlight.businessPrice;
-                returnPricePP = Math.round(returnPricePP * 100) / 100;
-                setReturnPricePPState(returnPricePP);
-                break;
-            case SeatClass.FIRST:
-                setRetCheckInGroup(1);
-                returnPricePP = selectedFlight.firstPrice;
-                returnPricePP = Math.round(returnPricePP * 100) / 100;
-                setReturnPricePPState(returnPricePP);
-                break;
-            default:
-                // TODO: Go to error page.
-                break;
-        }
-    };
-
-    const handleRTSelection = () => {
-        calculateRTPrice(
-            departureFlight,
-            departureClass,
-            returnFlight,
-            returnClass
-        );
-        (async () => {
-            const confirmationCode = uuidv4().toUpperCase();
-            const layoverCount = 0;
-            setBookingToCreate({
-                confirmationCode,
-                layoverCount,
-                username: userStatus.username
-            });
-
-            history.push(`${path}/passenger-info`);
-        })();
+        setSelectedDepartingFlight(selectedFlight);
+        setDepartingFlightClass(seatClass);
     };
 
     /**
@@ -309,6 +230,106 @@ const Booking = () => {
         setTotalPerPassenger(totalPerPassenger);
         // TODO: Allow creation of more than 1 passenger at a time.
         setTotalPrice(totalPerPassenger * passengerCount);
+    };
+
+    // const handleDepartingFlightSelection = (selectedFlight, seatClass) => {
+    //     let selectedFlightCard = document.getElementById(
+    //         "fc" + selectedFlight.id
+    //     );
+    //     let flightCards = document.getElementById("depFlightCards");
+    //     let departureSort = document.getElementById("departure-sort");
+    //     let departureFilter = document.getElementById("departure-filter");
+    //     departureSort.style.display = "none";
+    //     departureFilter.style.display = "none";
+    //     flightCards.style.display = "none";
+    //     setDepartureSelectionMade(true);
+    //     let depPricePP;
+    //     switch (seatClass) {
+    //         case SeatClass.ECONOMY:
+    //             setDepCheckInGroup(3);
+    //             depPricePP = selectedFlight.economyPrice;
+    //             depPricePP = Math.round(depPricePP * 100) / 100;
+    //             setDeparturePricePPState(depPricePP);
+    //             break;
+    //         case SeatClass.BUSINESS:
+    //             setDepCheckInGroup(2);
+    //             depPricePP = selectedFlight.businessPrice;
+    //             depPricePP = Math.round(depPricePP * 100) / 100;
+    //             setDeparturePricePPState(depPricePP);
+    //             break;
+    //         case SeatClass.FIRST:
+    //             setDepCheckInGroup(1);
+    //             depPricePP = selectedFlight.firstPrice;
+    //             depPricePP = Math.round(depPricePP * 100) / 100;
+    //             setDeparturePricePPState(depPricePP);
+    //             break;
+    //         default:
+    //             // TODO: Go to error page.
+    //             break;
+    //     }
+
+    //     setSelectedDepartingFlight(selectedFlight);
+    //     setDepartingFlightClass(seatClass);
+    // };
+
+    // const handleReturningFlightSelection = (selectedFlight, seatClass) => {
+    //     setSelectedReturningFlight(selectedFlight);
+    //     setReturningFlightClass(seatClass);
+    //     let selectedFlightCard = document.getElementById(
+    //         "fc" + selectedFlight.id
+    //     );
+    //     let flightCards = document.getElementById("retFlightCards");
+    //     let returnSort = document.getElementById("return-sort");
+    //     let returnFilter = document.getElementById("return-filter");
+    //     returnSort.style.display = "none";
+    //     returnFilter.style.display = "none";
+    //     flightCards.style.display = "none";
+    //     let returnPricePP;
+
+    //     setReturnSelectionMade(true);
+    //     switch (seatClass) {
+    //         case SeatClass.ECONOMY:
+    //             setRetCheckInGroup(3);
+    //             returnPricePP = selectedFlight.economyPrice;
+    //             returnPricePP = Math.round(returnPricePP * 100) / 100;
+    //             setReturnPricePPState(returnPricePP);
+    //             break;
+    //         case SeatClass.BUSINESS:
+    //             setRetCheckInGroup(2);
+    //             returnPricePP = selectedFlight.businessPrice;
+    //             returnPricePP = Math.round(returnPricePP * 100) / 100;
+    //             setReturnPricePPState(returnPricePP);
+    //             break;
+    //         case SeatClass.FIRST:
+    //             setRetCheckInGroup(1);
+    //             returnPricePP = selectedFlight.firstPrice;
+    //             returnPricePP = Math.round(returnPricePP * 100) / 100;
+    //             setReturnPricePPState(returnPricePP);
+    //             break;
+    //         default:
+    //             // TODO: Go to error page.
+    //             break;
+    //     }
+    // };
+
+    const handleRoundTripContinue = () => {
+        calculateRTPrice(
+            selectedDepartingFlight,
+            departingFlightClass,
+            selectedReturningFlight,
+            returningFlightClass
+        );
+        (async () => {
+            const confirmationCode = uuidv4().toUpperCase();
+            const layoverCount = 0;
+            setBookingToCreate({
+                confirmationCode,
+                layoverCount,
+                username: userStatus.username
+            });
+
+            history.push(`${path}/passenger-info`);
+        })();
     };
 
     const calculateRTPrice = (
@@ -389,154 +410,97 @@ const Booking = () => {
         setTotalPrice(totalPerPassenger * passengerCount);
     };
 
+    // TODO: Add handler for returning flight.
     const handlePassengerInfoSubmit = (passengerInfo) => {
-        setPassengerInfo(passengerInfo);
+        setDepartingFlightPassengerInfo(passengerInfo);
         history.push(`${path}/checkout`);
     };
 
-    function handleSortByChange(event) {
-        const newSortBy = event.target.value;
+    function handleDepartingFlightsSortChange(pageNumber, sort, filter) {
         searchFlights({
             origin,
-            dest,
-            sortBy: newSortBy,
+            dest: destination,
+            newPage: pageNumber - 1,
+            sortBy: sort,
             month: startDate.getMonth() + 1,
             date: startDate.getDate(),
             year: startDate.getFullYear(),
             hours: 0,
             mins: 0,
-            filter: departureFilter
+            filter
         })
             .then((data) => {
-                setDepartureFlights(data.content);
-                setDepartureFlights(data);
+                setDepartingFlights(data.content);
+                setDepartingFlightsPagesCount(data.totalPages);
             })
             .catch((error) => {
                 console.error(error);
                 alert("No flights found, try again!");
             });
-
-        setDepartureFilter(newSortBy);
     }
 
-    function handleSortByChangeDepartures(event) {
-        const newSortBy = event.target.value;
+    function handleReturningFlightsSortChange(pageNumber, sort, filter) {
         searchFlights({
             origin,
-            dest,
-            sortBy: newSortBy,
-            month: startDate.getMonth() + 1,
-            date: startDate.getDate(),
-            year: startDate.getFullYear(),
-            hours: 0,
-            mins: 0,
-            filter: departureFilter
-        })
-            .then((data) => {
-                setDepartureFlights(data.content);
-                setDepartureFlightPage(data);
-            })
-            .catch((error) => {
-                console.error(error);
-                alert("No flights found, try again!");
-            });
-
-        setDepartureSortBy(newSortBy);
-    }
-
-    function handleSortByChangeReturns(event) {
-        const newSortBy = event.target.value;
-        searchFlights({
-            origin,
-            dest,
-            sortBy: newSortBy,
+            dest: destination,
+            newPage: pageNumber - 1,
+            sortBy: sort,
             month: endDate.getMonth() + 1,
             date: endDate.getDate(),
             year: endDate.getFullYear(),
             hours: 0,
             mins: 0,
-            filter: returnFilter
+            filter
         })
             .then((data) => {
-                setDepartureFlights(data.content);
-                setDepartureFlightPage(data);
+                setDepartingFlights(data.content);
+                setDepartingFlightsPagesCount(data.totalPages);
             })
             .catch((error) => {
                 console.error(error);
                 alert("No flights found, try again!");
             });
-
-        setReturnSortBy(newSortBy);
     }
 
-    function handleFilterChange(event) {
-        const newFilter = event.target.value;
+    function handleDepartingFlightsFilterChange(pageNumber, sort, filter) {
         searchFlights({
             origin,
-            dest,
-            sortBy: departureSortBy,
+            dest: destination,
+            newPage: pageNumber - 1,
+            sortBy: sort,
             month: startDate.getMonth() + 1,
             date: startDate.getDate(),
             year: startDate.getFullYear(),
             hours: 0,
             mins: 0,
-            filter: newFilter
+            filter
         })
             .then((data) => {
-                setDepartureFlights(data.content);
-                setDepartureFlightPage(data);
+                setDepartingFlights(data.content);
+                setDepartingFlightsPagesCount(data.totalPages);
             })
             .catch((error) => {
                 console.error(error);
                 alert("No flights found, try again!");
             });
-
-        setDepartureFilter(newFilter);
     }
 
-    function handleFilterChangeDepartures(event) {
-        const newFilter = event.target.value;
+    function handleReturningFlightsFilterChange(pageNumber, sort, filter) {
         searchFlights({
             origin,
-            dest,
-            sortBy: departureSortBy,
-            month: startDate.getMonth() + 1,
-            date: startDate.getDate(),
-            year: startDate.getFullYear(),
-            hours: 0,
-            mins: 0,
-            filter: newFilter
-        })
-            .then((data) => {
-                setDepartureFlights(data.content);
-                setDepartureFlightPage(data);
-            })
-            .catch((error) => {
-                console.error(error);
-                alert("No flights found, try again!");
-            });
-
-        setDepartureFilter(newFilter);
-    }
-
-    function handleFilterChangeReturns(event) {
-        const newFilter = event.target.value;
-        searchFlights({
-            origin,
-            dest,
-            sortBy: returnSortBy,
+            dest: destination,
+            newPage: pageNumber - 1,
+            sortBy: sort,
             month: endDate.getMonth() + 1,
             date: endDate.getDate(),
             year: endDate.getFullYear(),
             hours: 0,
             mins: 0,
-            filter: newFilter
+            filter
         }).then((data) => {
-            setDepartureFlights(data.content);
-            setDepartureFlightPage(data);
+            setReturnFlights(data.content);
+            setReturningFlightsPagesCount(data.totalPages);
         });
-
-        setDepartureFilter(event.target.value);
     }
 
     function handleFlightSearchSubmit({
@@ -549,16 +513,14 @@ const Booking = () => {
         trackPromise(
             searchFlights({
                 origin,
-                dest,
-                sortBy: departureSortBy,
+                dest: destination,
                 month: startDate.getMonth() + 1,
                 date: startDate.getDate(),
-                year: startDate.getFullYear(),
-                filter: departureFilter
+                year: startDate.getFullYear()
             })
                 .then((data) => {
-                    setDepartureFlights(data.content);
-                    setDepartureFlightPage(data);
+                    setDepartingFlights(data.content);
+                    setDepartingFlightsPagesCount(data.totalPages);
                     if (!roundTrip) {
                         history.push("/booking/search-results");
                     }
@@ -574,17 +536,15 @@ const Booking = () => {
         if (roundTrip) {
             trackPromise(
                 searchFlights({
-                    dest,
+                    dest: destination,
                     origin,
-                    sortBy: returnSortBy,
                     month: endDate.getMonth() + 1,
                     date: endDate.getDate(),
-                    year: endDate.getFullYear(),
-                    filter: returnFilter
+                    year: endDate.getFullYear()
                 })
                     .then((data) => {
                         setReturnFlights(data.content);
-                        setReturnFlightPage(data);
+                        setReturningFlightsPagesCount(data.totalPages);
                         history.push("/booking/search-results");
                     })
                     .catch((error) => {
@@ -598,26 +558,26 @@ const Booking = () => {
 
         setIsRoundTrip(roundTrip);
         setOrigin(origin);
-        setDest(destination);
+        setDestination(destination);
         setStartDate(startDate);
         setEndDate(endDate);
     }
 
-    function handlePageChange(newPage) {
+    function handleDepartingFlightsPageChange(pageNumber, sort, filter) {
         trackPromise(
             searchFlights({
                 origin,
-                dest,
-                newPage,
-                sortBy: departureSortBy,
+                dest: destination,
+                newPage: pageNumber - 1,
+                sortBy: sort,
                 month: startDate.getMonth() + 1,
                 date: startDate.getDate(),
                 year: startDate.getFullYear(),
-                filter: departureFilter
+                filter: filter
             })
                 .then((data) => {
-                    setDepartureFlights(data.content);
-                    setDepartureFlightPage(data);
+                    setDepartingFlights(data.content);
+                    setDepartingFlightsPagesCount(data.totalPages);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -626,44 +586,21 @@ const Booking = () => {
         );
     }
 
-    function handlePageChangeReturns(newPage) {
+    function handleReturningFlightsPageChange(pageNumber, sort, filter) {
         trackPromise(
             searchFlights({
                 origin,
-                dest,
-                newPage,
-                sortBy: departureSortBy,
+                dest: destination,
+                newPage: pageNumber - 1,
+                sortBy: sort,
                 month: endDate.getMonth() + 1,
                 date: endDate.getDate(),
                 year: endDate.getFullYear(),
-                filter: departureFilter
+                filter
             })
                 .then((data) => {
                     setReturnFlights(data.content);
-                    setReturnFlightPage(data);
-                })
-                .catch((error) => {
-                    console.error(error);
-                    alert("No flights found, try again!");
-                })
-        );
-    }
-
-    function handlePageChangeDepartures(newPage) {
-        trackPromise(
-            searchFlights({
-                origin,
-                dest,
-                newPage,
-                sortBy: departureSortBy,
-                month: startDate.getMonth() + 1,
-                date: startDate.getDate(),
-                year: startDate.getFullYear(),
-                filter: departureFilter
-            })
-                .then((data) => {
-                    setDepartureFlights(data.content);
-                    setDepartureFlightPage(data);
+                    setReturningFlightsPagesCount(data.totalPages);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -697,46 +634,32 @@ const Booking = () => {
                 return;
             }
 
-            switch (SeatClass) {
-                case SeatClass.ECONOMY:
-                    setCheckInGroup(3);
-                    break;
-                case SeatClass.BUSINESS:
-                    setCheckInGroup(2);
-                    break;
-                case SeatClass.FIRST:
-                    setCheckInGroup(1);
-                    break;
-                default:
-                    // TODO: Go to error page.
-                    break;
-            }
-
-            const address = `${passengerInfo.streetAddress} ${passengerInfo.city} ${passengerInfo.state} ${passengerInfo.zipCode}`;
+            const address = `${departingFlightPassengerInfo.streetAddress} ${departingFlightPassengerInfo.city} ${departingFlightPassengerInfo.state} ${departingFlightPassengerInfo.zipCode}`;
             let newPassengerInfo;
             if (isRoundTrip === false) {
                 try {
                     newPassengerInfo = await createPassenger({
                         bookingConfirmationCode: newBooking.confirmationCode,
                         originAirportCode:
-                            departureFlight.route.originAirport.iataId,
+                            selectedDepartingFlight.route.originAirport.iataId,
                         destinationAirportCode:
-                            departureFlight.route.destinationAirport.iataId,
-                        airplaneModel: departureFlight.airplane.model,
-                        departureTime: departureFlight.departureTime,
-                        arrivalTime: departureFlight.arrivalTime,
-                        givenName: passengerInfo.givenName,
-                        familyName: passengerInfo.familyName,
-                        dateOfBirth: passengerInfo.dateOfBirth,
-                        gender: passengerInfo.gender,
+                            selectedDepartingFlight.route.destinationAirport
+                                .iataId,
+                        airplaneModel: selectedDepartingFlight.airplane.model,
+                        departureTime: selectedDepartingFlight.departureTime,
+                        arrivalTime: selectedDepartingFlight.arrivalTime,
+                        givenName: departingFlightPassengerInfo.givenName,
+                        familyName: departingFlightPassengerInfo.familyName,
+                        dateOfBirth: departingFlightPassengerInfo.dateOfBirth,
+                        gender: departingFlightPassengerInfo.gender,
                         address,
-                        seatClass: seatClass,
+                        seatClass: departingFlightClass,
                         // TODO: Allow user to choose seat.
                         seatNumber: 1,
                         // TODO: Create a seat class to check-in group map.
-                        checkInGroup: checkInGroup
+                        checkInGroup: departingFlightCheckInGroup
                     });
-                    setPassengerInfo(newPassengerInfo);
+                    setDepartingFlightPassengerInfo(newPassengerInfo);
                 } catch (error) {
                     // TODO: Delete payment.
                     await deleteBooking(newBooking.id);
@@ -744,14 +667,14 @@ const Booking = () => {
                     return;
                 }
             } else {
-                switch (departureClass) {
-                    case departureClass.ECONOMY:
+                switch (departingFlightClass) {
+                    case departingFlightClass.ECONOMY:
                         setDepCheckInGroup(3);
                         break;
-                    case departureClass.BUSINESS:
+                    case departingFlightClass.BUSINESS:
                         setDepCheckInGroup(2);
                         break;
-                    case departureClass.FIRST:
+                    case departingFlightClass.FIRST:
                         setDepCheckInGroup(1);
                         break;
                     default:
@@ -759,14 +682,14 @@ const Booking = () => {
                         break;
                 }
 
-                switch (returnClass) {
-                    case returnClass.ECONOMY:
+                switch (returningFlightClass) {
+                    case returningFlightClass.ECONOMY:
                         setRetCheckInGroup(3);
                         break;
-                    case returnClass.BUSINESS:
+                    case returningFlightClass.BUSINESS:
                         setRetCheckInGroup(2);
                         break;
-                    case returnClass.FIRST:
+                    case returningFlightClass.FIRST:
                         setRetCheckInGroup(1);
                         break;
                     default:
@@ -778,24 +701,25 @@ const Booking = () => {
                     newPassengerInfo = await createPassenger({
                         bookingConfirmationCode: newBooking.confirmationCode,
                         originAirportCode:
-                            departureFlight.route.originAirport.iataId,
+                            selectedDepartingFlight.route.originAirport.iataId,
                         destinationAirportCode:
-                            departureFlight.route.destinationAirport.iataId,
-                        airplaneModel: departureFlight.airplane.model,
-                        departureTime: departureFlight.departureTime,
-                        arrivalTime: departureFlight.arrivalTime,
-                        givenName: passengerInfo.givenName,
-                        familyName: passengerInfo.familyName,
-                        dateOfBirth: passengerInfo.dateOfBirth,
-                        gender: passengerInfo.gender,
+                            selectedDepartingFlight.route.destinationAirport
+                                .iataId,
+                        airplaneModel: selectedDepartingFlight.airplane.model,
+                        departureTime: selectedDepartingFlight.departureTime,
+                        arrivalTime: selectedDepartingFlight.arrivalTime,
+                        givenName: departingFlightPassengerInfo.givenName,
+                        familyName: departingFlightPassengerInfo.familyName,
+                        dateOfBirth: departingFlightPassengerInfo.dateOfBirth,
+                        gender: departingFlightPassengerInfo.gender,
                         address,
-                        seatClass: departureClass,
+                        seatClass: departingFlightClass,
                         // TODO: Allow user to choose seat.
                         seatNumber: 1,
                         // TODO: Create a seat class to check-in group map.
-                        checkInGroup: depCheckInGroup
+                        checkInGroup: departingFlightCheckInGroup
                     });
-                    setPassengerInfo(newPassengerInfo);
+                    setDepartingFlightPassengerInfo(newPassengerInfo);
                 } catch (error) {
                     // TODO: Delete payment.
                     await deleteBooking(newBooking.id);
@@ -807,24 +731,25 @@ const Booking = () => {
                     newPassengerInfo = await createPassenger({
                         bookingConfirmationCode: newBooking.confirmationCode,
                         originAirportCode:
-                            returnFlight.route.originAirport.iataId,
+                            selectedReturningFlight.route.originAirport.iataId,
                         destinationAirportCode:
-                            returnFlight.route.destinationAirport.iataId,
-                        airplaneModel: returnFlight.airplane.model,
-                        departureTime: returnFlight.departureTime,
-                        arrivalTime: returnFlight.arrivalTime,
-                        givenName: passengerInfo.givenName,
-                        familyName: passengerInfo.familyName,
-                        dateOfBirth: passengerInfo.dateOfBirth,
-                        gender: passengerInfo.gender,
+                            selectedReturningFlight.route.destinationAirport
+                                .iataId,
+                        airplaneModel: selectedReturningFlight.airplane.model,
+                        departureTime: selectedReturningFlight.departureTime,
+                        arrivalTime: selectedReturningFlight.arrivalTime,
+                        givenName: returningFlightPassengerInfo.givenName,
+                        familyName: returningFlightPassengerInfo.familyName,
+                        dateOfBirth: returningFlightPassengerInfo.dateOfBirth,
+                        gender: returningFlightPassengerInfo.gender,
                         address,
-                        seatClass: seatClass,
+                        seatClass: returningFlightClass,
                         // TODO: Allow user to choose seat.
                         seatNumber: 1,
                         // TODO: Create a seat class to check-in group map.
-                        checkInGroup: retCheckInGroup
+                        checkInGroup: returningFlightCheckInGroup
                     });
-                    setPassengerInfo(newPassengerInfo);
+                    setDepartingFlightPassengerInfo(newPassengerInfo);
                 } catch (error) {
                     // TODO: Delete payment.
                     await deleteBooking(newBooking.id);
@@ -861,12 +786,9 @@ const Booking = () => {
 
     const flightTable = (
         <FlightTable
-            departureFlight={departureFlight}
-            returnFlight={returnFlight}
-            seatClass={seatClass}
-            departureClass={departureClass}
-            returnClass={returnClass}
             isRoundTrip={isRoundTrip}
+            departureClass={departingFlightClass}
+            returnClass={returningFlightClass}
             pricePerPassenger={pricePerPassengerState}
             departurePricePP={departurePricePPState}
             returnPricePP={returnPricePPState}
@@ -875,14 +797,14 @@ const Booking = () => {
             departureTaxesPP={departureTaxesPP}
             returnTaxesPP={returnTaxesPP}
             passengerCount={passengerCount}
-            setCheckInGroup={setCheckInGroup}
-            checkInGroup={checkInGroup}
             upgradesPricePP={upgradesPricePP}
             desUpgradesPricePP={desUpgradesPricePP}
             retUpgradesPricePP={retUpgradesPricePP}
             setUpgradesPricePP={setUpgradesPricePP}
-            retCheckInGroup={retCheckInGroup}
-            depCheckInGroup={depCheckInGroup}
+            retCheckInGroup={returningFlightCheckInGroup}
+            depCheckInGroup={departingFlightCheckInGroup}
+            selectedDepartingFlight={selectedDepartingFlight}
+            selectedReturningFlight={selectedReturningFlight}
         />
     );
 
@@ -890,22 +812,6 @@ const Booking = () => {
     const stripePromise = loadStripe(
         process.env.REACT_APP_STRIPE_TEST_PUBLISHABLE_KEY
     );
-
-    const departureFlightCards = departureFlights.map((flight) => (
-        <FlightCard
-            key={flight.id}
-            flight={flight}
-            onFlightSelection={handleDepartureSelection}
-        />
-    ));
-
-    const returnFlightCards = returnFlights.map((flight) => (
-        <FlightCard
-            key={flight.id}
-            flight={flight}
-            onFlightSelection={handleReturnSelection}
-        />
-    ));
 
     return (
         <Switch>
@@ -921,39 +827,31 @@ const Booking = () => {
             </Route>
             <Route path={`${path}/search-results`}>
                 <FlightList
-                    departureFlightCards={departureFlightCards}
-                    returnFlightCards={returnFlightCards}
-                    flightPage={flightPage}
-                    departureFlight={departureFlight}
-                    returnFlight={returnFlight}
-                    departureSelectionMade={departureSelectionMade}
-                    departureClass={departureClass}
-                    departurePricePP={departurePricePPState}
-                    returnPricePP={returnPricePPState}
-                    returnSelectionMade={returnSelectionMade}
-                    returnClass={returnClass}
-                    departureFlightPage={departureFlightPage}
-                    returnFlightPage={returnFlightPage}
-                    retCheckInGroup={retCheckInGroup}
-                    depCheckInGroup={depCheckInGroup}
-                    setCheckInGroup={setCheckInGroup}
-                    setDepCheckInGroup={setDepCheckInGroup}
-                    setRetCheckInGroup={setRetCheckInGroup}
-                    setUpgradesPricePP={setUpgradesPricePP}
-                    setDesUpgradesPricePP={setDesUpgradesPricePP}
-                    setRetUpgradesPricePP={setRetUpgradesPricePP}
-                    handlePageChange={handlePageChange}
-                    handlePageChangeDepartures={handlePageChangeDepartures}
-                    handlePageChangeReturns={handlePageChangeReturns}
-                    handleFilterChange={handleFilterChange}
-                    handleFilterChangeDepartures={handleFilterChangeDepartures}
-                    handleFilterChangeReturns={handleFilterChangeReturns}
-                    onFlightSelection={handleFlightSelection}
-                    onRTFlightSelection={handleRTSelection}
-                    onSortBy={handleSortByChange}
-                    onReturnsSortBy={handleSortByChangeReturns}
-                    onDeparturesSortBy={handleSortByChangeDepartures}
                     isRoundTrip={isRoundTrip}
+                    departingFlightTotalPages={departingFlightsPagesCount}
+                    returningFlightTotalPages={returningFlightsPagesCount}
+                    departingFlights={departingFlights}
+                    returningFlights={returningFlights}
+                    oneDepartingFlightsPageChange={
+                        handleDepartingFlightsPageChange
+                    }
+                    onReturningFlightsPageChange={
+                        handleReturningFlightsPageChange
+                    }
+                    onDepartingFlightsFilterChange={
+                        handleDepartingFlightsFilterChange
+                    }
+                    onReturningFlightFilterChange={
+                        handleReturningFlightsFilterChange
+                    }
+                    onReturningFlightsSortChange={
+                        handleReturningFlightsSortChange
+                    }
+                    onDepartingFlightsSortChange={
+                        handleDepartingFlightsSortChange
+                    }
+                    onOneWayTripContinue={handleOneWayTripContinue}
+                    onRoundTripContinue={handleRoundTripContinue}
                 />
             </Route>
             <Route path={`${path}/passenger-info`}>
@@ -982,7 +880,6 @@ Booking.propTypes = {
     booking: PropTypes.object,
     passenger: PropTypes.object,
     totalPrice: PropTypes.number,
-    sortBy: PropTypes.string,
     date: PropTypes.object,
     origin: PropTypes.string,
     dest: PropTypes.string
