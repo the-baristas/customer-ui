@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import store from "../../redux/store";
 import * as usersService from "../../api/UsersService";
 import UserProfile from "./UserProfile";
+import * as loginService from '../../api/LoginService';
 
 let user = { userId: 1, givenName: "First", familyName: "Last",
             username: "username", email: "email@email.com", 
@@ -103,6 +104,9 @@ describe("UserProfile", () => {
         const updateUserMock = jest.spyOn(usersService, "updateUser");
         updateUserMock.mockResolvedValue({ ok: true, status: 200 });
 
+        const loginMock = jest.spyOn(loginService, "userLogin");
+        loginMock.mockResolvedValue({ok: true, status: 200, headers: { get: () => {return "token";}}})
+
         const { getByTestId } = render(
             <Provider store={store}>
                 <UserProfile></UserProfile>
@@ -127,6 +131,7 @@ describe("UserProfile", () => {
 
         getUserMock.mockClear();
         updateUserMock.mockClear();
+        loginMock.mockClear();
     });
 
     it("test update button makes fetch request; error responds with generic message", async () => {
@@ -148,6 +153,9 @@ describe("UserProfile", () => {
                 return Promise.resolve({});
             }
         });
+        const loginMock = jest.spyOn(loginService, "userLogin");
+        loginMock.mockResolvedValue({ok: true, status: 200, headers: { get: () => {return "token";}}})
+        
 
         const { getByTestId } = render(
             <Provider store={store}>
@@ -172,6 +180,7 @@ describe("UserProfile", () => {
         window.alert.mockClear();
         getUserMock.mockClear();
         updateUserMock.mockClear();
+        loginMock.mockClear();
     });
 
     it("test update button makes fetch request; error response with message from fetch response", async () => {
@@ -186,6 +195,9 @@ describe("UserProfile", () => {
                 return Promise.resolve({ message: "Error message" });
             }
         });
+
+        const loginMock = jest.spyOn(loginService, "userLogin");
+        loginMock.mockResolvedValue({ok: true, status: 200, headers: { get: () => {return "token";}}})
 
         const { getByTestId } = render(
             <Provider store={store}>
@@ -209,6 +221,42 @@ describe("UserProfile", () => {
 
         getUserMock.mockClear();
         updateUserMock.mockClear();
+        loginMock.mockClear();
+    })
+
+    it("test update button makes fetch request; incorrect password (login recieves 401)", async () => {
+        const getUserMock = jest.spyOn(usersService, 'getUserByUsername');
+        getUserMock.mockResolvedValue({ok: true, status: 200, json: () => {return Promise.resolve(user)}})
+
+        const updateUserMock = jest.spyOn(usersService, "updateUser");
+        updateUserMock.mockResolvedValue({ ok: true, status: 200 });
+
+        const loginMock = jest.spyOn(loginService, "userLogin");
+        loginMock.mockResolvedValue({ok: false, status: 401})
+
+        const { getByTestId } = render(
+            <Provider store={store}>
+                <UserProfile></UserProfile>
+            </Provider>
+        );
+        await waitForElementToBeRemoved(() => getByTestId("loadingProfile"));
+
+        const error = getByTestId("divError");
+        expect(error.innerHTML).toEqual("");
+
+        const editButton = getByTestId("editButton");
+        userEvent.click(editButton);
+
+        const form = getByTestId("formRegistration");
+
+        userEvent.click(getByTestId("formRegistration"));
+        fireEvent.submit(form);
+        await waitForElementToBeRemoved(() => getByTestId("loadingUpdate"));
+        expect(error.innerHTML).toEqual("Password is incorrect.");
+
+        getUserMock.mockClear();
+        updateUserMock.mockClear();
+        loginMock.mockClear();
     })
 })
 
