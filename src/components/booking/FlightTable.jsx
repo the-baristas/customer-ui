@@ -1,16 +1,22 @@
 import { faPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
-import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import React, { useState } from "react";
+import { Col, Container, Row, Button } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import "./FlightTable.css";
 import SeatClass from "./SeatClass";
+
+import { getTakenSeats } from "../../api/PassengerApi";
 
 const FlightTable = (props) => {
     let seatClassDisplayName;
     let f1ClassDisplayName;
     let f2ClassDisplayName;
+
+    const [seatChoiceMade, setSeatChoiceMade] = useState(true);
+    const [retSeatChoiceMade, setRetSeatChoiceMade] = useState(true);
+    const [depSeatChoiceMade, setDepSeatChoiceMade] = useState(true);
 
     switch (props.seatClass) {
         case SeatClass.ECONOMY:
@@ -57,13 +63,78 @@ const FlightTable = (props) => {
             // throw new Error(`Invalid seat class: ${props.returnClass}`);
     }
 
-    const totalPerPassenger = props.pricePerPassenger + props.taxesPerPassenger;
+   // one way option returns for seat choice
+
+        const seatSelect = () => {
+            return (props.takenSeats.map((seat) => (
+        <option value={seat}>{seat}</option>
+            )));
+        }
+
+        const handleSeatChoice = (event) => {
+            setSeatChoiceMade(false);
+            props.setSeatChoice(event.target.value);
+        }
+
+        const submitSeatChoice = (event) => {
+            props.setHasSeatChoiceUpgrade(true);
+            props.setSCUPricePP(25);
+
+        }
+
+    const seatSelectDep = () => {
+        return (props.depSeats.map((seat) => (
+            <option value={seat}>{seat}</option>
+                )));
+            };
+
+    const handleDepSeatChoice = (event) => {
+        setDepSeatChoiceMade(false);
+        props.setDepartureSeatChoice(event.target.value);
+    }
+
+    const submitDepSeatChoice = (event) => {
+        props.setHasDepSeatChoiceUpgrade(true);
+        props.setDepSCUPricePP(25);
+
+    }
+
+        const seatSelectRet = () => {
+            return (props.retSeats.map((seat) => (
+                <option value={seat}>{seat}</option>
+                    )));
+        };
+
+        const handleRetSeatChoice = (event) => {
+            setRetSeatChoiceMade(false);
+            props.setReturnSeatChoice(event.target.value);
+        }
+    
+        const submitRetSeatChoice = (event) => {
+            props.setHasRetSeatChoiceUpgrade(true);
+            props.setRetSCUPricePP(25);
+    
+        }
+
+
+    const USA_TAX_RATE = 0.075;
+    const upgradesPricePP = props.CIUPricePP + props.SCUPricePP;
+    const returnUpgradesPricePP = props.retUpgradesPricePP + props.retSCUPricePP;
+    const departUpgradesPricePP = props.desUpgradesPricePP + props.depSCUPricePP;
+    const taxesPP = Math.round((props.pricePerPassenger + upgradesPricePP) * USA_TAX_RATE * 100) / 100;
+    const returnTaxesPP = Math.round((props.returnPricePP + returnUpgradesPricePP) * USA_TAX_RATE * 100) / 100;
+    const departTaxesPP = Math.round((props.departurePricePP + departUpgradesPricePP) * USA_TAX_RATE * 100) / 100;
+    const totalPerPassenger = props.pricePerPassenger + props.taxesPerPassenger + upgradesPricePP + (Math.round(upgradesPricePP * USA_TAX_RATE * 100)/100);
     const departurePerPassengerTtl =
         props.departurePricePP +
-        +props.desUpgradesPricePP +
+        departUpgradesPricePP +
+        (Math.round(departUpgradesPricePP * USA_TAX_RATE * 100)/100) +
         props.departureTaxesPP;
     const returnPerPassengerTtl =
-        props.returnPricePP + +props.retUpgradesPricePP + props.returnTaxesPP;
+        props.returnPricePP + 
+        props.returnTaxesPP
+        + returnUpgradesPricePP
+        + (Math.round(returnUpgradesPricePP * USA_TAX_RATE * 100)/100);
     const rtTotalPerPassenger =
         props.rtPricePerPassenger +
         props.departureTaxesPP +
@@ -117,10 +188,11 @@ const FlightTable = (props) => {
     const f2DurationHours = Math.floor(f2Duration.asHours());
     const f2DurationMinutes = f2Duration.minutes();
 
-    const handleUpgrade = (amount, group) => {
-        props.setUpgradesPricePP(amount);
+    const handleCheckInUpgrade = (amount, group) => {
+        props.setCIUPricePP(amount);
         props.setCheckInGroup(group);
     };
+
 
     // Elements
 
@@ -193,18 +265,22 @@ const FlightTable = (props) => {
                                     {props.depCheckInGroup}
                                     <br />
                                     <b>Class:</b> {props.departureClass}
+                                    <br />
+                                    <b>Seat Number:</b> {props.departureSeatChoice}
                                 </p>
                             </Row>
                         </Col>
                         <Col xs={12} lg={3}>
                             <Row className="totals">
-                                Price Per Passenger: ${props.departurePricePP}
-                                <br />
-                                Upgrade(s) Per Passenger: $
-                                {props.desUpgradesPricePP}
-                                <br />
+                            Price Per Passenger: ${props.departurePricePP.toFixed(2)}
+                                <br /> <br />
+                                - Boarding Group Upgrade: ${props.desUpgradesPricePP.toFixed(2)}<br />
+                                - Seat Choice Upgrade: ${props.depSCUPricePP.toFixed(2)}<br />
+                                Total Upgrade(s) Per Passenger: $
+                                {departUpgradesPricePP.toFixed(2)}
+                                <br /><br />
                                 Taxes Per Passenger: $
-                                {props.departureTaxesPP.toFixed(2)}
+                                {departTaxesPP.toFixed(2)}
                                 <br />
                                 Total Per Passenger: $
                                 {departurePerPassengerTtl.toFixed(2)}
@@ -218,7 +294,24 @@ const FlightTable = (props) => {
                     </Row>
                 </Container>
                 <br />
+                <Card className="upgrade-dep-bg">
+                            <Card.Body>
+                                <Card.Title>Choose Seat?</Card.Title>
+                                    <small>
+                                        { !props.hasDepSeatChoiceUpgrade && <>Your seat number is randomly assigned when you book your ticket. If you have a seating preference, you can make a selection below for an additional $25 fee.</>}
+                                        { props.hasDepSeatChoiceUpgrade && <>Your seat choice has been made and the upgrade is reflected above. You may still change your seat below for no additional fee.</>}
+                                    </small><br /><br />
+                                    <center>
+                                    <select style={{ "width": "300px", "height": "40px" }} onChange={handleDepSeatChoice}>
+                                    <option>Open this select menu</option>
+                                    {seatSelectDep()}
+                                    </select><br />
+                                    { !props.hasDepSeatChoiceUpgrade && <Button style={{ "width": "300px" }} variant="primary" disabled={depSeatChoiceMade} onClick={submitDepSeatChoice}>Submit Seat Choice Add-On</Button> }
+                                    </center>
+                            </Card.Body>
+                        </Card>
 
+                <br />
                 <br />
 
                 <Row className="border border-dark">
@@ -280,18 +373,22 @@ const FlightTable = (props) => {
                                     {props.retCheckInGroup}
                                     <br />
                                     <b>Class:</b> {props.returnClass}
+                                    <br />
+                                    <b>Seat Number:</b> {props.returnSeatChoice}
                                 </p>
                             </Row>
                         </Col>
                         <Col xs={12} lg={3}>
                             <Row className="totals">
-                                Price Per Passenger: ${props.returnPricePP}
-                                <br />
-                                Upgrade(s) Per Passenger: $
-                                {props.retUpgradesPricePP}
-                                <br />
+                                Price Per Passenger: ${props.returnPricePP.toFixed(2)}
+                                <br /><br />
+                                - Boarding Group Upgrade: ${props.retUpgradesPricePP.toFixed(2)}<br />
+                                - Seat Choice Upgrade: ${props.retSCUPricePP.toFixed(2)}<br />
+                                Total Upgrade(s) Per Passenger: $
+                                {returnUpgradesPricePP.toFixed(2)}
+                                <br /><br />
                                 Taxes Per Passenger: $
-                                {props.returnTaxesPP.toFixed(2)}
+                                {returnTaxesPP.toFixed(2)}
                                 <br />
                                 Total Per Passenger: $
                                 {returnPerPassengerTtl.toFixed(2)}
@@ -303,6 +400,23 @@ const FlightTable = (props) => {
                             </Row>
                         </Col>
                     </Row>
+                    <br />
+                    <Card className="upgrade-dep-bg">
+                            <Card.Body>
+                                <Card.Title>Choose Seat?</Card.Title>
+                                    <small>
+                                        { !props.hasRetSeatChoiceUpgrade && <>Your seat number is randomly assigned when you book your ticket. If you have a seating preference, you can make a selection below for an additional $25 fee.</>}
+                                        { props.hasRetSeatChoiceUpgrade && <>Your seat choice has been made and the upgrade is reflected above. You may still change your seat below for no additional fee.</>}
+                                    </small><br /><br />
+                                    <center>
+                                    <select style={{ "width": "300px", "height": "40px" }} onChange={handleRetSeatChoice}>
+                                    <option>Open this select menu</option>
+                                    {seatSelectRet()}
+                                    </select><br />
+                                    { !props.hasRetSeatChoiceUpgrade && <Button style={{ "width": "300px" }} variant="primary" disabled={retSeatChoiceMade} onClick={submitRetSeatChoice}>Submit Seat Choice Add-On</Button> }
+                                    </center>
+                            </Card.Body>
+                        </Card>
                     <br />
                 </Container>
                 <br />
@@ -380,18 +494,25 @@ const FlightTable = (props) => {
                                     <b>Boarding Group: </b> {props.checkInGroup}
                                     <br />
                                     <b>Class:</b> {props.seatClass}
+                                    <br />
+                                    { props.hasSeatChoiceUpgrade && (
+                                        <><b>Seat Number:</b> { props.seatChoice }
+                                    </>)
+                                    }
                                 </p>
                             </Row>
                         </Col>
                         <Col xs={12} lg={3}>
                             <Row className="totals">
-                                Price Per Passenger: ${props.pricePerPassenger}
-                                <br />
-                                Upgrade(s) Per Passenger: $
-                                {props.upgradesPricePP}
-                                <br />
+                                Price Per Passenger: ${props.pricePerPassenger.toFixed(2)}
+                                <br /><br />
+                                - Boarding Group Upgrade: ${props.CIUPricePP.toFixed(2)}<br />
+                                - Seat Choice Upgrade: ${props.SCUPricePP.toFixed(2)}<br />
+                                Total Upgrade(s) Per Passenger: $
+                                {upgradesPricePP.toFixed(2)}
+                                <br /><br />
                                 Taxes Per Passenger: $
-                                {props.taxesPerPassenger.toFixed(2)}
+                                {taxesPP.toFixed(2)}
                                 <br />
                                 Total Per Passenger: $
                                 {totalPerPassenger.toFixed(2)}
@@ -405,6 +526,25 @@ const FlightTable = (props) => {
                     </Row>
 
                     <br />
+
+                    <Card className="upgrade-dep-bg">
+                            <Card.Body>
+                                <Card.Title>Choose Seat?</Card.Title>
+                                    <small>
+                                        { !props.hasSeatChoiceUpgrade && <>Your seat number is randomly assigned when you book your ticket. If you have a seating preference, you can make a selection below for an additional $25 fee.</>}
+                                        { props.hasSeatChoiceUpgrade && <>Your seat choice has been made and the upgrade is reflected above. You may still change your seat below for no additional fee.</>}
+                                    </small><br /><br />
+                                    <center>
+                                    <select style={{ "width": "300px", "height": "40px" }} onChange={handleSeatChoice}>
+                                    <option>Open this select menu</option>
+                                    {seatSelect()}
+                                    </select><br />
+                                    { !props.hasSeatChoiceUpgrade && <Button style={{ "width": "300px" }} variant="primary" disabled={seatChoiceMade} onClick={submitSeatChoice}>Submit Seat Choice Add-On</Button> }
+                                    </center>
+                            </Card.Body>
+                        </Card>
+
+                        <br />
 
                     {props.checkInGroup !== 1 && (
                         <Card className="upgrade-dep-bg">
@@ -423,14 +563,14 @@ const FlightTable = (props) => {
                                 </p>
                                 <Card.Link
                                     className="point"
-                                    onClick={() => handleUpgrade(15, 1)}
+                                    onClick={() => handleCheckInUpgrade(15, 1)}
                                 >
                                     Upgrade To Group 1
                                 </Card.Link>
                                 {props.checkInGroup !== 2 && (
                                     <Card.Link
                                         className="point"
-                                        onClick={() => handleUpgrade(12, 2)}
+                                        onClick={() => handleCheckInUpgrade(12, 2)}
                                     >
                                         Upgrade To Group 2
                                     </Card.Link>

@@ -22,6 +22,7 @@ import mainImage from "./customer-ui-01.jpg";
 import FlightTable from "./FlightTable";
 import PassengerInfoForm from "./PassengerInfoForm";
 import SeatClass from "./SeatClass";
+import { getTakenSeats } from "../../api/PassengerApi";
 
 const Booking = () => {
     // Constants
@@ -94,6 +95,7 @@ const Booking = () => {
         isActive: false,
         route: null
     });
+    const [takenSeats, setTakenSeats] = useState([]);
     const [departureFlight, setDepartureFlight] = useState({
         id: 0,
         airplane: null,
@@ -108,6 +110,7 @@ const Booking = () => {
         isActive: false,
         route: null
     });
+    const [depSeats, setDepSeats] = useState([]);
     const [returnFlight, setReturnFlight] = useState({
         id: 0,
         airplane: null,
@@ -122,6 +125,7 @@ const Booking = () => {
         isActive: false,
         route: null
     });
+    const [retSeats, setRetSeats] = useState([]);
     const [date, setDate] = useState(new Date());
     const [dateRange, setDateRange] = useState([
         new Date(),
@@ -136,8 +140,9 @@ const Booking = () => {
     const [filter, setFilter] = useState("all");
     const [departureFilter, setDepartureFilter] = useState("all");
     const [returnFilter, setReturnFilter] = useState("all");
-    // sets the total price of upgrades
-    const [upgradesPricePP, setUpgradesPricePP] = useState(0);
+
+    // sets price of check-in group upgrade
+    const [CIUPricePP, setCIUPricePP] = useState(0);
     const [desUpgradesPricePP, setDesUpgradesPricePP] = useState(0);
     const [retUpgradesPricePP, setRetUpgradesPricePP] = useState(0);
 
@@ -146,25 +151,39 @@ const Booking = () => {
     const [hasRetBGUpgrade, setHasRetBgUpgrade] = useState(false);
     const [hasDepBGUpgrade, setHasDepBgUpgrade] = useState(false);
 
-    // Callbacks
+    // seat choice
 
-    const handleUpgrades = (upgradePrice) => {
+    const [SCUPricePP, setSCUPricePP] = useState(0);
+    const [depSCUPricePP, setDepSCUPricePP] = useState(0);
+    const [retSCUPricePP, setRetSCUPricePP] = useState(0);
+
+    const [seatChoice, setSeatChoice] = useState(0);
+    const [returnSeatChoice, setReturnSeatChoice] = useState(0);
+    const [departureSeatChoice, setDepartureSeatChoice] = useState(0);
+
+    // state variables check if a seat choice upgrade has been applied
+    const [hasSeatChoiceUpgrade, setHasSeatChoiceUpgrade] = useState(false);
+    const [hasRetSeatChoiceUpgrade, setHasRetSeatChoiceUpgrade] = useState(false);
+    const [hasDepSeatChoiceUpgrade, setHasDepSeatChoiceUpgrade] = useState(false);
+
+    // Callbacks
+    const handleCIUpgrade = (upgradePrice) => {
         if (hasBGUpgrade !== true) {
-            setUpgradesPricePP(upgradePrice);
+            setCIUPricePP(upgradePrice);
             setHasBgUpgrade(true);
         }
     };
 
     const handleRetUpgrades = (upgradePrice) => {
         if (hasRetBGUpgrade !== true) {
-            setUpgradesPricePP(upgradePrice);
+            setCIUPricePP(upgradePrice);
             setHasRetBgUpgrade(true);
         }
     };
 
     const handleDepUpgrades = (upgradePrice) => {
         if (hasDepBGUpgrade !== true) {
-            setUpgradesPricePP(upgradePrice);
+            setCIUPricePP(upgradePrice);
             setHasDepBgUpgrade(true);
         }
     };
@@ -180,12 +199,36 @@ const Booking = () => {
         switch (seatClass) {
             case SeatClass.ECONOMY:
                 setCheckInGroup(3);
+                let economyClassSeats = Array.from(Array(selectedFlight.airplane.economyClassSeatsMax), (x, index) => (index + selectedFlight.airplane.businessClassSeatsMax + selectedFlight.airplane.economyClassSeatsMax) + 1);
+
+                getTakenSeats(selectedFlight.id).then(result => {
+                    for(let i = 0; i <= result.length; i++) {
+                        economyClassSeats.splice(economyClassSeats.indexOf(result[i]), 1);
+                    } 
+                setTakenSeats(economyClassSeats);
+                });
                 break;
             case SeatClass.BUSINESS:
                 setCheckInGroup(2);
+                let businessClassSeats = Array.from(Array(selectedFlight.airplane.businessClassSeatsMax), (x, index) => (index + selectedFlight.airplane.firstClassSeatsMax) + 1);
+
+                getTakenSeats(selectedFlight.id).then(result => {
+                    for(let i = 0; i <= result.length; i++) {
+                        businessClassSeats.splice(businessClassSeats.indexOf(result[i]), 1);
+                    } 
+                setTakenSeats(businessClassSeats);
+                });
                 break;
             case SeatClass.FIRST:
                 setCheckInGroup(1);
+                let firstClassSeats = Array.from(Array(selectedFlight.airplane.firstClassSeatsMax), (x, index) => index + 1);
+
+                getTakenSeats(selectedFlight.id).then(result => {
+                    for(let i = 0; i <= result.length; i++) {
+                        firstClassSeats.splice(firstClassSeats.indexOf(result[i]), 1);
+                    } 
+                setTakenSeats(firstClassSeats);
+                });
                 break;
             default:
                 // TODO: Go to error page.
@@ -225,18 +268,48 @@ const Booking = () => {
                 depPricePP = selectedFlight.economyPrice;
                 depPricePP = Math.round(depPricePP * 100) / 100;
                 setDeparturePricePPState(depPricePP);
+
+                let economyClassSeats = Array.from(Array(selectedFlight.airplane.economyClassSeatsMax), (x, index) => (index + selectedFlight.airplane.economyClassSeatsMax) + 1);
+
+                getTakenSeats(selectedFlight.id).then(result => {
+                    for(let i = 0; i <= result.length; i++) {
+                        economyClassSeats.splice(economyClassSeats.indexOf(result[i]), 1);
+                    } 
+                setDepSeats(economyClassSeats);
+                });
+
                 break;
             case SeatClass.BUSINESS:
                 setDepCheckInGroup(2);
                 depPricePP = selectedFlight.businessPrice;
                 depPricePP = Math.round(depPricePP * 100) / 100;
                 setDeparturePricePPState(depPricePP);
+
+                let businessClassSeats = Array.from(Array(selectedFlight.airplane.businessClassSeatsMax), (x, index) => (index + selectedFlight.airplane.businessClassSeatsMax) + 1);
+
+                getTakenSeats(selectedFlight.id).then(result => {
+                    for(let i = 0; i <= result.length; i++) {
+                        businessClassSeats.splice(businessClassSeats.indexOf(result[i]), 1);
+                    } 
+                setDepSeats(businessClassSeats);
+                });
+
                 break;
             case SeatClass.FIRST:
                 setDepCheckInGroup(1);
                 depPricePP = selectedFlight.firstPrice;
                 depPricePP = Math.round(depPricePP * 100) / 100;
                 setDeparturePricePPState(depPricePP);
+
+                let firstClassSeats = Array.from(Array(selectedFlight.airplane.firstClassSeatsMax), (x, index) => (index + selectedFlight.airplane.firstClassSeatsMax) + 1);
+
+                getTakenSeats(selectedFlight.id).then(result => {
+                    for(let i = 0; i <= result.length; i++) {
+                        firstClassSeats.splice(firstClassSeats.indexOf(result[i]), 1);
+                    } 
+                setDepSeats(firstClassSeats);
+                });
+
                 break;
             default:
                 // TODO: Go to error page.
@@ -265,18 +338,48 @@ const Booking = () => {
                 returnPricePP = selectedFlight.economyPrice;
                 returnPricePP = Math.round(returnPricePP * 100) / 100;
                 setReturnPricePPState(returnPricePP);
+
+                let economyClassSeats = Array.from(Array(selectedFlight.airplane.economyClassSeatsMax), (x, index) => (index + selectedFlight.airplane.economyClassSeatsMax) + 1);
+
+                getTakenSeats(selectedFlight.id).then(result => {
+                    for(let i = 0; i <= result.length; i++) {
+                        economyClassSeats.splice(economyClassSeats.indexOf(result[i]), 1);
+                    } 
+                setRetSeats(economyClassSeats);
+                });
+
                 break;
             case SeatClass.BUSINESS:
                 setRetCheckInGroup(2);
                 returnPricePP = selectedFlight.businessPrice;
                 returnPricePP = Math.round(returnPricePP * 100) / 100;
                 setReturnPricePPState(returnPricePP);
+
+                let businessClassSeats = Array.from(Array(selectedFlight.airplane.businessClassSeatsMax), (x, index) => (index + selectedFlight.airplane.businessClassSeatsMax) + 1);
+
+                getTakenSeats(selectedFlight.id).then(result => {
+                    for(let i = 0; i <= result.length; i++) {
+                        businessClassSeats.splice(businessClassSeats.indexOf(result[i]), 1);
+                    } 
+                setDepSeats(businessClassSeats);
+                });
+
                 break;
             case SeatClass.FIRST:
                 setRetCheckInGroup(1);
                 returnPricePP = selectedFlight.firstPrice;
                 returnPricePP = Math.round(returnPricePP * 100) / 100;
                 setReturnPricePPState(returnPricePP);
+
+                let firstClassSeats = Array.from(Array(selectedFlight.airplane.firstClassSeatsMax), (x, index) => (index + selectedFlight.airplane.firstClassSeatsMax) + 1);
+
+                getTakenSeats(selectedFlight.id).then(result => {
+                    for(let i = 0; i <= result.length; i++) {
+                        firstClassSeats.splice(firstClassSeats.indexOf(result[i]), 1);
+                    } 
+                setDepSeats(firstClassSeats);
+                });
+
                 break;
             default:
                 // TODO: Go to error page.
@@ -395,12 +498,12 @@ const Booking = () => {
 
         const departureTaxesPerPassenger =
             Math.round(
-                (departurePricePP + returnUpgradesPricePP) * USA_TAX_RATE * 100
+                (departurePricePP) * USA_TAX_RATE * 100
             ) / 100;
         setDepartureTaxesPP(departureTaxesPerPassenger);
 
         const returnTaxesPerPassenger =
-            Math.round((returnPricePP + returnPricePP) * USA_TAX_RATE * 100) /
+            Math.round((returnPricePP) * USA_TAX_RATE * 100) /
             100;
         setReturnTaxesPP(returnTaxesPerPassenger);
 
@@ -1127,12 +1230,33 @@ const Booking = () => {
             passengerCount={passengerCount}
             setCheckInGroup={setCheckInGroup}
             checkInGroup={checkInGroup}
-            upgradesPricePP={upgradesPricePP}
+            CIUPricePP={CIUPricePP}
             desUpgradesPricePP={desUpgradesPricePP}
             retUpgradesPricePP={retUpgradesPricePP}
-            setUpgradesPricePP={setUpgradesPricePP}
+            setCIUPricePP={setCIUPricePP}
             retCheckInGroup={retCheckInGroup}
             depCheckInGroup={depCheckInGroup}
+            seatChoice={seatChoice}
+            setSeatChoice={setSeatChoice}
+            returnSeatChoice={returnSeatChoice}
+            setReturnSeatChoice={setReturnSeatChoice}
+            departureSeatChoice={departureSeatChoice}
+            setDepartureSeatChoice={setDepartureSeatChoice}
+            hasSeatChoiceUpgrade={hasSeatChoiceUpgrade}
+            setHasSeatChoiceUpgrade={setHasSeatChoiceUpgrade}
+            hasRetSeatChoiceUpgrade={hasRetSeatChoiceUpgrade}
+            setHasRetSeatChoiceUpgrade={setHasRetSeatChoiceUpgrade}
+            hasDepSeatChoiceUpgrade={hasDepSeatChoiceUpgrade}
+            setHasDepSeatChoiceUpgrade={setHasDepSeatChoiceUpgrade}
+            takenSeats={takenSeats}
+            retSeats={retSeats}
+            depSeats={depSeats}
+            SCUPricePP={SCUPricePP}
+            setSCUPricePP={setSCUPricePP}
+            depSCUPricePP={depSCUPricePP}
+            setDepSCUPricePP={setDepSCUPricePP}
+            retSCUPricePP={retSCUPricePP}
+            setRetSCUPricePP={setRetSCUPricePP}
         />
     );
 
@@ -1209,7 +1333,7 @@ const Booking = () => {
                     setCheckInGroup={setCheckInGroup}
                     setDepCheckInGroup={setDepCheckInGroup}
                     setRetCheckInGroup={setRetCheckInGroup}
-                    setUpgradesPricePP={setUpgradesPricePP}
+                    setCIUPricePP={setCIUPricePP}
                     setDesUpgradesPricePP={setDesUpgradesPricePP}
                     setRetUpgradesPricePP={setRetUpgradesPricePP}
                     handlePageChange={handlePageChange}
