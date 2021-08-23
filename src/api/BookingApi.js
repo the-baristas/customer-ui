@@ -33,7 +33,8 @@ export const updateBooking = async ({
     confirmationCode,
     layoverCount,
     totalPrice,
-    username
+    username,
+    active
 }) => {
     const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/bookings/${id}`;
     let response;
@@ -47,7 +48,8 @@ export const updateBooking = async ({
                 confirmationCode,
                 layoverCount,
                 totalPrice,
-                username
+                username,
+                active
             }),
             credentials: 'include'
         });
@@ -99,3 +101,16 @@ export const getBookingsByUsername = async (username, index, size) => {
     }
     return data;
 };
+
+export const emailBookingDetails = async (confirmationCode) => {
+    const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/bookings/email/${confirmationCode}`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json", "Authorization": getToken() }
+    });
+    if (!response.ok) {
+        throw new Error(
+            `Response was not successful. Status code: ${response.status}`
+        );
+    }
+}

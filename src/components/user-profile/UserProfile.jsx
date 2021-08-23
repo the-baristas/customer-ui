@@ -96,8 +96,8 @@ const UserProfile = () => {
             })
             .then(() => {
                 setIsPending(false);
+                setUser({username, givenName, familyName, email, phone})
                 alert("Information updated successfully");
-                getUserProfileInfo();
             })
             .catch((error) => {
                 setUpdateIsPending(false);
@@ -242,6 +242,7 @@ const UserProfile = () => {
                                     <Form.Label>First Name</Form.Label>
                                     <Form.Control
                                         data-testid="inputGivenName"
+                                        className="user-profile-form-field"
                                         type="text"
                                         value={givenName}
                                         onChange={(input) =>
@@ -255,6 +256,7 @@ const UserProfile = () => {
                                     <Form.Label>Last Name</Form.Label>
                                     <Form.Control
                                         data-testid="inputFamilyName"
+                                        className="user-profile-form-field"
                                         type="text"
                                         value={familyName}
                                         onChange={(input) =>
@@ -268,6 +270,7 @@ const UserProfile = () => {
                                     <Form.Label>Username</Form.Label>
                                     <Form.Control
                                         data-testid="inputUsername"
+                                        className="user-profile-form-field"
                                         type="text"
                                         value={username}
                                         onChange={(input) =>
@@ -281,6 +284,7 @@ const UserProfile = () => {
                                     <Form.Label>Email</Form.Label>
                                     <Form.Control
                                         data-testid="inputEmail"
+                                        className="user-profile-form-field"
                                         type="text"
                                         value={email}
                                         onChange={(input) =>
@@ -304,6 +308,7 @@ const UserProfile = () => {
                                     <Form.Label>Phone Number</Form.Label>
                                     <Form.Control
                                         data-testid="inputPhone"
+                                        className="user-profile-form-field"
                                         type="text"
                                         placeholder="Phone Number"
                                         value={phone}
@@ -337,6 +342,7 @@ const UserProfile = () => {
                                             <Form.Label><b>Please re-enter your password to confirm changes:</b></Form.Label>
                                             <Form.Control
                                                 data-testid="inputPassword"
+                                                className="user-profile-form-field"
                                                 placeholder="Password"
                                                 type="password"
                                                 onChange={(input) =>
