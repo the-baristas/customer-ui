@@ -23,13 +23,17 @@
     padding: 10px;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    text-align: left;
 
 }
 
 .user-profile-item{
     padding: 10px;
 
+}
+
+.user-profile-form-field{
+    width: 30%;
 }
 
 label{

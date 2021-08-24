@@ -1,7 +1,7 @@
 const SeatClass = {
-    ECONOMY: "ECONOMY",
-    BUSINESS: "BUSINESS",
-    FIRST: "FIRST"
+    ECONOMY: "economy",
+    BUSINESS: "business",
+    FIRST: "first"
 };
 
 export default SeatClass;

@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
     createBooking,
     deleteBooking,
+    emailBookingDetails,
     updateBooking
 } from "../../api/BookingApi";
 import { createPassenger, deletePassenger } from "../../api/PassengerApi";
@@ -1067,7 +1068,7 @@ const Booking = () => {
                         dateOfBirth: passengerInfo.dateOfBirth,
                         gender: passengerInfo.gender,
                         address,
-                        seatClass: seatClass,
+                        seatClass: seatClass.toLowerCase(),
                         // TODO: Allow user to choose seat.
                         seatNumber: 1,
                         // TODO: Create a seat class to check-in group map.
@@ -1093,9 +1094,15 @@ const Booking = () => {
                     confirmationCode: newBooking.confirmationCode,
                     layoverCount: newBooking.layoverCount,
                     totalPrice,
-                    username: newBooking.username
+                    username: newBooking.username,
+                    active: true
                 });
+                console.log("after update booking")
+                //Send confirmation email
+                await emailBookingDetails(newBooking.confirmationCode);
+
                 // TODO: Redirect to booking confirmation page.
+                console.log("booking creation successful")
                 history.push(`${path}`);
             } catch (e) {
                 await deletePassenger(newPassengerInfo.id);
