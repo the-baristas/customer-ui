@@ -2,10 +2,11 @@ import { faPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import React, { useState } from "react";
-import { Col, Container, Row, Button } from "react-bootstrap";
+import { Col, Container, Row, Button, Image } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import "./FlightTable.css";
 import SeatClass from "./SeatClass";
+import flightplan1 from "./flightplan01.jpg";
 
 import { getTakenSeats } from "../../api/PassengerApi";
 
@@ -114,6 +115,27 @@ const FlightTable = (props) => {
             props.setHasRetSeatChoiceUpgrade(true);
             props.setRetSCUPricePP(25);
     
+        }
+
+        const handleRemoveSeatChoice = () => {
+            setSeatChoiceMade(true);
+            props.setSeatChoice(null);
+            props.setHasSeatChoiceUpgrade(false);
+            props.setSCUPricePP(0);
+        }
+
+        const handleDepRemoveSeatChoice = () => {
+            setDepSeatChoiceMade(true);
+            props.setDepartureSeatChoice(null);
+            props.setHasDepSeatChoiceUpgrade(false);
+            props.setDepSCUPricePP(0);
+        }
+
+        const handleRetRemoveSeatChoice = () => {
+            setRetSeatChoiceMade(true);
+            props.setReturnSeatChoice(null);
+            props.setHasRetSeatChoiceUpgrade(false);
+            props.setRetSCUPricePP(0);
         }
 
 
@@ -266,7 +288,7 @@ const FlightTable = (props) => {
                                     <br />
                                     <b>Class:</b> {props.departureClass}
                                     <br />
-                                    <b>Seat Number:</b> {props.departureSeatChoice}
+                                    <b>Seat Number:</b> {props.hasDepSeatChoiceUpgrade && props.departureSeatChoice}
                                 </p>
                             </Row>
                         </Col>
@@ -307,6 +329,8 @@ const FlightTable = (props) => {
                                     {seatSelectDep()}
                                     </select><br />
                                     { !props.hasDepSeatChoiceUpgrade && <Button style={{ "width": "300px" }} variant="primary" disabled={depSeatChoiceMade} onClick={submitDepSeatChoice}>Submit Seat Choice Add-On</Button> }
+                                    <br />
+                                    <Button variant="link" onClick={() => handleDepRemoveSeatChoice()}>Remove Seat Choice Upgrade</Button><br />
                                     </center>
                             </Card.Body>
                         </Card>
@@ -374,7 +398,7 @@ const FlightTable = (props) => {
                                     <br />
                                     <b>Class:</b> {props.returnClass}
                                     <br />
-                                    <b>Seat Number:</b> {props.returnSeatChoice}
+                                    <b>Seat Number:</b> {props.hasRetSeatChoiceUpgrade && props.returnSeatChoice}
                                 </p>
                             </Row>
                         </Col>
@@ -414,6 +438,8 @@ const FlightTable = (props) => {
                                     {seatSelectRet()}
                                     </select><br />
                                     { !props.hasRetSeatChoiceUpgrade && <Button style={{ "width": "300px" }} variant="primary" disabled={retSeatChoiceMade} onClick={submitRetSeatChoice}>Submit Seat Choice Add-On</Button> }
+                                    <br />
+                                    <Button variant="link" onClick={() => handleRetRemoveSeatChoice()}>Remove Seat Choice Upgrade</Button><br />
                                     </center>
                             </Card.Body>
                         </Card>
@@ -535,11 +561,14 @@ const FlightTable = (props) => {
                                         { props.hasSeatChoiceUpgrade && <>Your seat choice has been made and the upgrade is reflected above. You may still change your seat below for no additional fee.</>}
                                     </small><br /><br />
                                     <center>
+                                    { props.selectedFlight.airplane.model === "Airbus A220" && <><Image src={flightplan1} style={{"width": "90%"}} /><br /><br /></> }
                                     <select style={{ "width": "300px", "height": "40px" }} onChange={handleSeatChoice}>
                                     <option>Open this select menu</option>
                                     {seatSelect()}
                                     </select><br />
                                     { !props.hasSeatChoiceUpgrade && <Button style={{ "width": "300px" }} variant="primary" disabled={seatChoiceMade} onClick={submitSeatChoice}>Submit Seat Choice Add-On</Button> }
+                                    <br />
+                                    <Button variant="link" onClick={() => handleRemoveSeatChoice()}>Remove Seat Choice Upgrade</Button><br />
                                     </center>
                             </Card.Body>
                         </Card>

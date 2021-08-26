@@ -157,9 +157,9 @@ const Booking = () => {
     const [depSCUPricePP, setDepSCUPricePP] = useState(0);
     const [retSCUPricePP, setRetSCUPricePP] = useState(0);
 
-    const [seatChoice, setSeatChoice] = useState(0);
-    const [returnSeatChoice, setReturnSeatChoice] = useState(0);
-    const [departureSeatChoice, setDepartureSeatChoice] = useState(0);
+    const [seatChoice, setSeatChoice] = useState(null);
+    const [returnSeatChoice, setReturnSeatChoice] = useState(null);
+    const [departureSeatChoice, setDepartureSeatChoice] = useState(null);
 
     // state variables check if a seat choice upgrade has been applied
     const [hasSeatChoiceUpgrade, setHasSeatChoiceUpgrade] = useState(false);
@@ -199,7 +199,7 @@ const Booking = () => {
         switch (seatClass) {
             case SeatClass.ECONOMY:
                 setCheckInGroup(3);
-                let economyClassSeats = Array.from(Array(selectedFlight.airplane.economyClassSeatsMax), (x, index) => (index + selectedFlight.airplane.businessClassSeatsMax + selectedFlight.airplane.economyClassSeatsMax) + 1);
+                let economyClassSeats = Array.from(Array(selectedFlight.airplane.economyClassSeatsMax), (x, index) => (index + selectedFlight.airplane.businessClassSeatsMax + selectedFlight.airplane.firstClassSeatsMax) + 1);
 
                 getTakenSeats(selectedFlight.id).then(result => {
                     for(let i = 0; i <= result.length; i++) {
@@ -361,7 +361,7 @@ const Booking = () => {
                     for(let i = 0; i <= result.length; i++) {
                         businessClassSeats.splice(businessClassSeats.indexOf(result[i]), 1);
                     } 
-                setDepSeats(businessClassSeats);
+                setRetSeats(businessClassSeats);
                 });
 
                 break;
@@ -377,7 +377,7 @@ const Booking = () => {
                     for(let i = 0; i <= result.length; i++) {
                         firstClassSeats.splice(firstClassSeats.indexOf(result[i]), 1);
                     } 
-                setDepSeats(firstClassSeats);
+                setRetSeats(firstClassSeats);
                 });
 
                 break;
