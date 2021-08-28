@@ -4,9 +4,12 @@ import { render } from "../../test-utils";
 import Booking from "./Booking";
 
 it("renders main image", async () => {
+
+    const pricePerPassenger = 1.00;
     render(
         <MemoryRouter>
-            <Booking />
+            <Booking 
+                pricePerPassenger={pricePerPassenger} />
         </MemoryRouter>,
         {
             initialState: {

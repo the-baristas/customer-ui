@@ -68,7 +68,7 @@ const FlightTable = (props) => {
 
         const seatSelect = () => {
             return (props.takenSeats.map((seat) => (
-        <option value={seat}>{seat}</option>
+        <option key={seat} value={seat}>{seat}</option>
             )));
         }
 
@@ -516,16 +516,15 @@ const FlightTable = (props) => {
 
                         <Col xs={12} lg={2}>
                             <Row className="dest-airport">
-                                <p>
+                                <div>
                                     <b>Boarding Group: </b> {props.checkInGroup}
                                     <br />
-                                    <b>Class:</b> {props.seatClass}
-                                    <br />
+                                    <div><b>Class:</b> {props.seatClass}</div><br />
                                     { props.hasSeatChoiceUpgrade && (
                                         <><b>Seat Number:</b> { props.seatChoice }
                                     </>)
                                     }
-                                </p>
+                                </div>
                             </Row>
                         </Col>
                         <Col xs={12} lg={3}>
@@ -593,9 +592,7 @@ const FlightTable = (props) => {
                                 <Card.Link
                                     className="point"
                                     onClick={() => handleCheckInUpgrade(15, 1)}
-                                >
-                                    Upgrade To Group 1
-                                </Card.Link>
+                                >Upgrade To Group 1</Card.Link>
                                 {props.checkInGroup !== 2 && (
                                     <Card.Link
                                         className="point"
