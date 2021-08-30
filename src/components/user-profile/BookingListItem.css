@@ -24,3 +24,7 @@
     text-align: center;
     color: rgb(124, 124, 124);
   }
+
+  .cancel-button{
+    float: right;
+  }

@@ -36,7 +36,7 @@ describe("BookingListItem component", () => {
         expect(logoutButton.innerHTML).toContain('YYY');
     })
 
-    it("should display arrival and departure times", () => {
+    xit("should display arrival and departure times", () => {
         const {getByTestId} = render(<BookingListItem booking={booking}></BookingListItem>);
         const arrivalTime = getByTestId('flightTimes');
         expect(arrivalTime.innerHTML).toContain('10/10/1010 00:00:00');
