@@ -114,3 +114,16 @@ export const emailBookingDetails = async (confirmationCode) => {
         );
     }
 }
+
+export const refundBooking = async (bookingId, refundAmount) => {
+    const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/bookings/refund?id=${bookingId}&refundAmount=${refundAmount}`;
+    const response = await fetch(url, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json", "Authorization": getToken()}
+    });
+    if(!response.ok) {
+        throw new Error(
+            `Response was not successful. Status code: ${response.status}`
+        );
+    }
+}
