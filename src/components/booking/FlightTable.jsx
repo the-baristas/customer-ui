@@ -7,6 +7,7 @@ import Card from "react-bootstrap/Card";
 import "./FlightTable.css";
 import SeatClass from "./SeatClass";
 import flightplan1 from "./flightplan01.jpg";
+import flightplan2 from "./flightplan02.jpg";
 
 import { getTakenSeats } from "../../api/PassengerApi";
 
@@ -561,6 +562,7 @@ const FlightTable = (props) => {
                                     </small><br /><br />
                                     <center>
                                     { props.selectedFlight.airplane.model === "Airbus A220" && <><Image src={flightplan1} style={{"width": "90%"}} /><br /><br /></> }
+                                    { props.selectedFlight.airplane.model === "Boeing 737" && <><Image src={flightplan2} style={{"width": "90%"}} /><br /><br /></> }
                                     <select style={{ "width": "300px", "height": "40px" }} onChange={handleSeatChoice}>
                                     <option>Open this select menu</option>
                                     {seatSelect()}
