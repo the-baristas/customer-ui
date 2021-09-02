@@ -1,4 +1,4 @@
-import { fireEvent, render, waitForElementToBeRemoved } from "@testing-library/react";
+import { fireEvent, render, waitForElementToBeRemoved, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { Provider } from "react-redux";
@@ -9,7 +9,9 @@ import * as loginService from '../../api/LoginService';
 
 let user = { userId: 1, givenName: "First", familyName: "Last",
             username: "username", email: "email@email.com", 
-            phone: "8051112222", role: "ROLE_CUSTOMER", active: true }
+            phone: "3135556666", dob: "1999-01-01",
+            streetAddress: "address", city: "city", state: "CA", zip: "12345",
+            role: "ROLE_CUSTOMER", active: true }
 
 describe("UserProfile", () => {
     it("test profile loads", async () => {
@@ -30,11 +32,13 @@ describe("UserProfile", () => {
         await waitForElementToBeRemoved(() => getByTestId("loadingProfile"));
         expect(getUserMock).toHaveBeenCalled();
 
-        expect(getByTestId("inputGivenName").value).toBe("First");
-        expect(getByTestId("inputFamilyName").value).toBe("Last");
-        expect(getByTestId("inputUsername").value).toBe("username");
-        expect(getByTestId("inputEmail").value).toBe("email@email.com");
-        expect(getByTestId("inputPhone").value).toBe("8051112222");
+        expect(getByTestId("inputGivenName").value).toBe(user.givenName);
+        expect(getByTestId("inputFamilyName").value).toBe(user.familyName);
+        expect(getByTestId("inputUsername").value).toBe(user.username);
+        expect(getByTestId("inputEmail").value).toBe(user.email);
+        expect(getByTestId("inputPhone").value).toBe(user.phone);
+        expect(getByTestId("inputDob").value).toBe(user.dob);
+        expect(getByTestId("fullAddress").innerHTML).toContain(`${user.streetAddress} ${user.city}, ${user.state} ${user.zip}`)
 
         getUserMock.mockRestore();
     });
@@ -56,37 +60,6 @@ describe("UserProfile", () => {
         expect(window.alert).toHaveBeenCalled();
 
         getUserMock.mockRestore();
-    });
-
-    it("test invalid email and phone number makes error divs display", async () => {
-        const getUserMock = jest.spyOn(usersService, "getUserByUsername");
-        getUserMock.mockResolvedValue({
-            ok: true,
-            status: 200,
-            json: () => {
-                return Promise.resolve(user);
-            }
-        });
-
-        const { getByTestId } = render(
-            <Provider store={store}>
-                <UserProfile></UserProfile>
-            </Provider>
-        );
-        await waitForElementToBeRemoved(() => getByTestId("loadingProfile"));
-        expect(getUserMock).toHaveBeenCalled();
-
-        const inputEmail = getByTestId("inputEmail");
-        const inputPhone = getByTestId("inputPhone");
-
-        fireEvent.change(inputEmail, { target: { value: "invalidemail" } });
-        fireEvent.change(inputPhone, { target: { value: "no" } });
-
-        const errorEmail = getByTestId("divEmailInvalid");
-        const errorPhone = getByTestId("divPhoneInvalid");
-
-        expect(errorEmail.innerHTML).toContain("valid email");
-        expect(errorPhone.innerHTML).toContain("valid phone");
     });
 
     it("test update button makes fetch request; no error", async () => {
@@ -112,6 +85,7 @@ describe("UserProfile", () => {
                 <UserProfile></UserProfile>
             </Provider>
         );
+
         await waitForElementToBeRemoved(() => getByTestId("loadingProfile"));
 
         const error = getByTestId("divError");
@@ -119,6 +93,8 @@ describe("UserProfile", () => {
 
         const editButton = getByTestId("editButton");
         userEvent.click(editButton);
+
+        userEvent.type(screen.getByTestId("inputPassword"), "P@ssw0rd");
 
         const form = getByTestId("formRegistration");
 
@@ -170,6 +146,8 @@ describe("UserProfile", () => {
         const editButton = getByTestId("editButton");
         userEvent.click(editButton);
 
+        userEvent.type(screen.getByTestId("inputPassword"), "P@ssw0rd");
+
         const form = getByTestId("formRegistration");
 
         userEvent.click(getByTestId("formRegistration"));
@@ -212,6 +190,8 @@ describe("UserProfile", () => {
         const editButton = getByTestId("editButton");
         userEvent.click(editButton);
 
+        userEvent.type(screen.getByTestId("inputPassword"), "P@ssw0rd");
+
         const form = getByTestId("formRegistration");
 
         userEvent.click(getByTestId("formRegistration"));
@@ -246,6 +226,8 @@ describe("UserProfile", () => {
 
         const editButton = getByTestId("editButton");
         userEvent.click(editButton);
+
+        userEvent.type(screen.getByTestId("inputPassword"), "P@ssw0rd");
 
         const form = getByTestId("formRegistration");
 
