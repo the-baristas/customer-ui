@@ -51,7 +51,7 @@ const UserProfile = () => {
         getUserByUsername(userStatus.username)
             .then((res) => {
                 if (!res.ok) {
-                    throw Error();
+                    throw Error(res.status);
                 }
                 return res.json();
             })
@@ -62,11 +62,16 @@ const UserProfile = () => {
                 setInitialFormValues(data);
             })
             .catch((error) => {
-                alert(
-                    "We are unable to load your information at this time. Please try again later."
-                );
-                setIsPending(false);
-                setInfoRetrievalSuccessful(false);
+                if(error.message === "403"){
+                    return;
+                }
+                else{
+                    alert(
+                        "We are unable to load your information at this time. Please try again later."
+                    );
+                    setIsPending(false);
+                    setInfoRetrievalSuccessful(false);
+                }
             });
     };
 

@@ -62,7 +62,6 @@ describe("UserProfileBookingList component", () => {
         await waitForElementToBeRemoved( () => getByTestId('loading') );
 
         expect(getBookingsMock).toHaveBeenCalled();
-        expect(window.alert).toHaveBeenCalled();
        
         getBookingsMock.mockRestore();
     })
