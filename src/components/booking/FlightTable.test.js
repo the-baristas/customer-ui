@@ -100,7 +100,7 @@ it("renders info for flight with economy seat class", async () => {
 
     expect(screen.getByText("(ABC)")).toBeInTheDocument();
     expect(screen.getByText("1 hr 0 min")).toBeInTheDocument();
-    expect(screen.getByText("ECONOMY")).toBeInTheDocument();
+    expect(screen.getByText("economy")).toBeInTheDocument();
 });
 
 it("renders info for flight with business seat class", async () => {
@@ -199,7 +199,7 @@ it("renders info for flight with business seat class", async () => {
 
     expect(screen.getByText("(ABC)")).toBeInTheDocument();
     expect(screen.getByText("1 hr 0 min")).toBeInTheDocument();
-    expect(screen.getByText("BUSINESS")).toBeInTheDocument();
+    expect(screen.getByText("business")).toBeInTheDocument();
 });
 
 it("renders info for flight with first seat class", async () => {
@@ -299,7 +299,7 @@ it("renders info for flight with first seat class", async () => {
     expect(screen.getByText("(ABC)")).toBeInTheDocument();
     expect(screen.getByText("2:00 am")).toBeInTheDocument();
     expect(screen.getByText("1 hr 0 min")).toBeInTheDocument();
-    expect(screen.getByText("FIRST")).toBeInTheDocument();
+    expect(screen.getByText("first")).toBeInTheDocument();
 });
 
 it("has a check-in group", async () => {
