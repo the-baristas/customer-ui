@@ -46,9 +46,6 @@ const UserProfileBookingsList = () => {
             .catch((error) => {
                 setIsPending(false);
                 setInfoRetrievalSuccessful(false);
-                alert(
-                    "We are unable to load your information at this time. Please try again later."
-                );
             });
     }
 
