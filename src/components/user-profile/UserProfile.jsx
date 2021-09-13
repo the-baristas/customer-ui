@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
 import { getUserByUsername, updateUser } from "../../api/UsersService";
-import { checkEmailIsValid, checkPhoneIsValid } from "../../utils/Validators";
+import {
+    EMAIL_REGEX,
+    PHONE_REGEX,
+    STATE_REGEX,
+    ZIPCODE_REGEX
+} from "../../utils/Validators";
 import "./UserProfile.css";
 import UserProfileBookingsList from "./UserProfileBookingsList";
 import Paper from "@material-ui/core/Paper";
@@ -9,7 +14,8 @@ import { Form } from "react-bootstrap";
 import EditButton from "./EditButton";
 import { userLogin } from "../../api/LoginService";
 import { saveToken } from "../../utils/Login";
-import { login } from '../../redux/userStatus/UserStatusActions';
+import { login } from "../../redux/userStatus/UserStatusActions";
+import moment from "moment";
 
 const UserProfile = () => {
     const userStatus = useSelector((state) => state.userStatus);
@@ -29,9 +35,13 @@ const UserProfile = () => {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
+    const [dob, setDob] = useState("");
+    const [streetAddress, setStreetAddress] = useState("");
+    const [city, setCity] = useState("");
+    const [state, setState] = useState("");
+    const [zip, setZip] = useState("");
 
-    const [phoneIsValid, setPhoneIsValid] = useState(true);
-    const [emailIsValid, setEmailIsValid] = useState(true);
+    const [isValidated, setIsValidated] = useState(false);
 
     useEffect(() => {
         getUserProfileInfo();
@@ -62,6 +72,12 @@ const UserProfile = () => {
 
     const handleSubmitUpdateProfile = (event) => {
         event.preventDefault();
+        let form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.stopPropagation();
+            setIsValidated(true);
+            return;
+        }
         const updatedUser = {
             givenName,
             familyName,
@@ -69,7 +85,12 @@ const UserProfile = () => {
             email,
             phone,
             active: true,
-            role: "ROLE_CUSTOMER"
+            role: "ROLE_CUSTOMER",
+            dob,
+            streetAddress,
+            city,
+            state,
+            zip
         };
 
         setUpdateIsPending(true);
@@ -78,25 +99,24 @@ const UserProfile = () => {
                 if (!response.ok) {
                     if (response.status === 401) {
                         throw Error("Password is incorrect.");
-                    }
-                    else {
-                        throw Error("There was a problem while trying to communicate with our server. Please try again later.")
+                    } else {
+                        throw Error(
+                            "There was a problem while trying to communicate with our server. Please try again later."
+                        );
                     }
                 }
                 return;
-                
             })
             .then(() => {
-                updateUserInfo(updatedUser)
-                .then( () => {
-                    logUserBackIn()
+                updateUserInfo(updatedUser).then(() => {
+                    logUserBackIn();
                     return;
-                } )
-                return
+                });
+                return;
             })
             .then(() => {
                 setIsPending(false);
-                setUser({username, givenName, familyName, email, phone})
+                setUser({ username, givenName, familyName, email, phone, dob, streetAddress, city, state, zip });
                 alert("Information updated successfully");
             })
             .catch((error) => {
@@ -107,33 +127,34 @@ const UserProfile = () => {
                         "There was a problem while updating. Please try again later."
                     );
                 else setError(error.message);
-            })
+            });
     };
 
     const logUserBackIn = () => {
         userLogin(username, password)
-        .then(response => {
-            if (!response.ok) {
-                if (response.status === 401) {
-                    throw Error("Username and/or password are incorrect.");
+            .then((response) => {
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        throw Error("Username and/or password are incorrect.");
+                    } else {
+                        throw Error(
+                            "There was a problem while trying to communicate with our server. Please try again later."
+                        );
+                    }
                 }
-                else {
-                    throw Error("There was a problem while trying to communicate with our server. Please try again later.")
-                }
-            }
-            saveToken(response.headers.get('Authorization'));
-            dispatch(login(username));
-        })
-        .catch((error) => {
-            setUpdateIsPending(false);
+                saveToken(response.headers.get("Authorization"));
+                dispatch(login(username));
+            })
+            .catch((error) => {
+                setUpdateIsPending(false);
 
-            if (error.name === "TypeError")
-                setError(
-                    "There was a problem while updating. Please try again later."
-                );
-            else setError(error.message);
-        })
-    }
+                if (error.name === "TypeError")
+                    setError(
+                        "There was a problem while updating. Please try again later."
+                    );
+                else setError(error.message);
+            });
+    };
 
     const updateUserInfo = (updatedUser) => {
         let responseOk = true;
@@ -143,28 +164,28 @@ const UserProfile = () => {
                 if (responseOk) {
                     setError(null);
                     return;
-                } else
-                    return response.json();
+                } else return response.json();
             })
             .then((data) => {
                 if (!responseOk) {
-                    if (data.message)
-                        throw Error(data.message);
+                    if (data.message) throw Error(data.message);
                     else
-                        throw Error("There was a problem while updating. Please try again later");
+                        throw Error(
+                            "There was a problem while updating. Please try again later"
+                        );
                 }
                 setUpdateIsPending(false);
             })
             .catch((error) => {
                 setUpdateIsPending(false);
-    
+
                 if (error.name === "TypeError")
                     setError(
                         "There was a problem while updating. Please try again later."
                     );
                 else setError(error.message);
-            })
-    }
+            });
+    };
 
     const setInitialFormValues = (user) => {
         setFamilyName(user.familyName);
@@ -172,6 +193,11 @@ const UserProfile = () => {
         setEmail(user.email);
         setPhone(user.phone);
         setUsername(user.username);
+        setDob(user.dob);
+        setStreetAddress(user.streetAddress);
+        setCity(user.city);
+        setState(user.state);
+        setZip(user.zip);
     };
 
     const handleEdit = () => {
@@ -184,27 +210,8 @@ const UserProfile = () => {
         setError("");
     };
 
-    const validateEmail = (input) => {
-        setEmail(input);
-        setEmailIsValid(checkEmailIsValid(input));
-    };
-
-    const validatePhone = (input) => {
-        setPhone(input);
-        setPhoneIsValid(checkPhoneIsValid(input));
-    };
-
-    //Used to disable the register button if the email or phone regular expressions don't pass or if the other fields are blank
-    const allFieldsAreValid = () => {
-        return (
-            !emailIsValid || !phoneIsValid ||
-            givenName === "" ||
-            familyName === "" ||
-            username === "" ||
-            email === "" ||
-            phone === "" ||
-            password === ""
-        );
+    const getFullAddress = () => {
+        return `${streetAddress} ${city}, ${state} ${zip}`;
     };
 
     return (
@@ -233,6 +240,8 @@ const UserProfile = () => {
                             {error}
                         </div>
                         <Form
+                            noValidate
+                            validated={isValidated}
                             data-testid="formRegistration"
                             onSubmit={handleSubmitUpdateProfile}
                             className="user-profile-form"
@@ -250,6 +259,9 @@ const UserProfile = () => {
                                         }
                                         required
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter a first name.
+                                    </Form.Control.Feedback>
                                 </Form.Group>
 
                                 <Form.Group className="user-profile-item">
@@ -264,6 +276,9 @@ const UserProfile = () => {
                                         }
                                         required
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter a last name.
+                                    </Form.Control.Feedback>
                                 </Form.Group>
 
                                 <Form.Group className="user-profile-item">
@@ -278,6 +293,9 @@ const UserProfile = () => {
                                         }
                                         required
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter a username.
+                                    </Form.Control.Feedback>
                                 </Form.Group>
 
                                 <Form.Group className="user-profile-item">
@@ -288,22 +306,16 @@ const UserProfile = () => {
                                         type="text"
                                         value={email}
                                         onChange={(input) =>
-                                            validateEmail(input.target.value)
+                                            setEmail(input.target.value)
                                         }
+                                        pattern={EMAIL_REGEX}
                                         required
                                     />
-                                </Form.Group>
-                                {!emailIsValid && (
-                                    <div
-                                        data-testid="divEmailInvalid"
-                                        style={{
-                                            backgroundColor: "red",
-                                            color: "white"
-                                        }}
-                                    >
+                                    <Form.Control.Feedback type="invalid">
                                         Please enter a valid email.
-                                    </div>
-                                )}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+
                                 <Form.Group className="user-profile-item">
                                     <Form.Label>Phone Number</Form.Label>
                                     <Form.Control
@@ -313,33 +325,152 @@ const UserProfile = () => {
                                         placeholder="Phone Number"
                                         value={phone}
                                         onChange={(input) =>
-                                            validatePhone(input.target.value)
+                                            setPhone(input.target.value)
                                         }
+                                        pattern={PHONE_REGEX}
                                         required
                                     />
-                                </Form.Group>
-                                {!phoneIsValid && (
-                                    <div
-                                        data-testid="divPhoneInvalid"
-                                        style={{
-                                            backgroundColor: "red",
-                                            color: "white"
-                                        }}
-                                    >
+                                    <Form.Control.Feedback type="invalid">
                                         Please enter a valid phone number.
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Form.Group className="user-profile-item">
+                                <Form.Label>Date of Birth</Form.Label>
+                                    <Form.Control
+                                        type="date"
+                                        data-testid="inputDob"
+                                        className="user-profile-form-field"
+                                        value={dob}
+                                        onChange={(input) =>
+                                            setDob(input.target.value)
+                                        }
+                                        max={moment(
+                                            new Date(Date.now())
+                                        ).format("YYYY-MM-DD")}
+                                        required
+                                    ></Form.Control>
+                                </Form.Group>
+
+                                <div className="user-profile-item">
+                                    <b>Address: </b>{" "}
+                                    {updateFormDisabled && (
+                                        <p data-testId="fullAddress">{getFullAddress()}</p>
+                                    )}
+                                </div>
+
+                                {!updateFormDisabled && (
+                                    <div className="user-profile-item">
+                                        <Form.Row className="user-profile-item">
+                                            <Form.Group
+                                                sm={12}
+                                                controlId="streetAddressForm"
+                                                className="user-profile-item"
+                                            >
+                                                <Form.Label>
+                                                    Street Address
+                                                </Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    data-testid="inputStreetAddress"
+                                                    value={streetAddress}
+                                                    onChange={(input) =>
+                                                        setStreetAddress(
+                                                            input.target.value
+                                                        )
+                                                    }
+                                                    required
+                                                ></Form.Control>
+                                                <Form.Control.Feedback type="invalid">
+                                                    Please enter a valid street
+                                                    address.
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                            <Form.Group
+                                                sm={5}
+                                                controlId="cityForm"
+                                                className="user-profile-item"
+                                            >
+                                                <Form.Label>City</Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    data-testid="inputCity"
+                                                    value={city}
+                                                    onChange={(input) =>
+                                                        setCity(
+                                                            input.target.value
+                                                        )
+                                                    }
+                                                    required
+                                                ></Form.Control>
+                                                <Form.Control.Feedback type="invalid">
+                                                    Please enter a valid city.
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                        </Form.Row>
+                                        <Form.Row className="user-profile-item">
+                                            <Form.Group
+                                                sm={2}
+                                                controlId="stateForm"
+                                                className="user-profile-item"
+                                            >
+                                                <Form.Label>State</Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    data-testid="inputState"
+                                                    value={state}
+                                                    onChange={(input) =>
+                                                        setState(
+                                                            input.target.value
+                                                        )
+                                                    }
+                                                    pattern={STATE_REGEX}
+                                                    maxLength="2"
+                                                    required
+                                                ></Form.Control>
+                                                <Form.Control.Feedback type="invalid">
+                                                    Please enter a valid state.
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                            <Form.Group
+                                                sm={5}
+                                                controlId="zipCodeForm"
+                                                className="user-profile-item"
+                                            >
+                                                <Form.Label>
+                                                    ZIP Code
+                                                </Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    data-testid="inputZip"
+                                                    value={zip}
+                                                    onChange={(input) =>
+                                                        setZip(
+                                                            input.target.value
+                                                        )
+                                                    }
+                                                    pattern={ZIPCODE_REGEX}
+                                                    maxLength="5"
+                                                    required
+                                                ></Form.Control>
+                                                <Form.Control.Feedback type="invalid">
+                                                    Please enter a valid ZIP
+                                                    code.
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                        </Form.Row>
                                     </div>
                                 )}
 
-                                <div className="user-profile-item">
-                                    <b>Address: </b>(Coming soon)
-                                </div>
-                                <div className="user-profile-item">
-                                    <b>Date of Birth: </b>(Coming soon)
-                                </div>
                                 {!updateFormDisabled && (
                                     <div>
                                         <Form.Group className="user-profile-item">
-                                            <Form.Label><b>Please re-enter your password to confirm changes:</b></Form.Label>
+                                            <Form.Label>
+                                                <b>
+                                                    Please re-enter your
+                                                    password to confirm changes:
+                                                </b>
+                                            </Form.Label>
                                             <Form.Control
                                                 data-testid="inputPassword"
                                                 className="user-profile-form-field"
@@ -358,7 +489,6 @@ const UserProfile = () => {
                                             <button
                                                 data-testid="updateButton"
                                                 className="btn btn-primary"
-                                                disabled={allFieldsAreValid()}
                                             >
                                                 Update
                                             </button>
@@ -381,4 +511,3 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
-
