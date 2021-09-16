@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getBookingsByUsername } from '../../api/BookingApi';
 import Typography from '@material-ui/core/Typography';
+import Switch from '@material-ui/core/Switch';
 import Pagination from '@material-ui/lab/Pagination';
 import BookingListItem from './BookingListItem';
 import './UserProfileBookingsList.css';
@@ -14,14 +15,22 @@ const UserProfileBookingsList = () => {
     const [currentPage, setCurrentPage] = useState({});
     const [bookingList, setBookingList] = useState([]);
 
+    const [pendingFlightsOnly, setPendingFlightsOnly] = useState(true);
+
     const [page, setPage] = useState(1);
 
     const handlePageChange = (event, value) => {
       setPage(value);
-      getBookings(value-1,10);
+      getBookings(pendingFlightsOnly, value-1,10);
+    };
+
+    const handleSwitchPendingOnly = (checked) => {
+        setPendingFlightsOnly(checked);
+        getBookings(checked, 0, 10);
     };
 
     const [expanded, setExpanded] = useState(false);
+
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     }
@@ -31,12 +40,12 @@ const UserProfileBookingsList = () => {
     ));
 
     useEffect(() => {
-        getBookings(0, 10);
+        getBookings(pendingFlightsOnly, 0, 10);
     }, [])
 
-    const getBookings = async (index, size) => {
+    const getBookings = async (pendingOnly, index, size) => {
         setIsPending(true);
-        return getBookingsByUsername(userStatus.username, index, size)
+        return getBookingsByUsername(userStatus.username, pendingOnly, index, size)
             .then((data) => {
                 setCurrentPage(data);
                 setBookingList(data.content);
@@ -50,7 +59,10 @@ const UserProfileBookingsList = () => {
     }
 
     return ( <div>
-        <h2 className="booking-list-title">Past Bookings</h2>
+        <h2 className="booking-list-title">
+            <p>Your Bookings</p>
+            <b style={{fontSize: 15}}>Pending Only<Switch color="primary" checked={pendingFlightsOnly} onChange={(event) => {handleSwitchPendingOnly(event.target.checked)}} /></b>
+            </h2>
         {isPending && <h3 data-testid='loading'>Loading...</h3>}
 
         {!isPending && infoRetrievalSuccessful && <div>
