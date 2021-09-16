@@ -510,7 +510,6 @@ const UserProfile = () => {
                     </Paper>
                 </div>
             )}
-            <UserProfileBookingsList />
         </div>
     );
 };

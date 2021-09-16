@@ -16,6 +16,7 @@ import store from "./redux/store";
 import ResetPasswordForm from './components/reset-password/ResetPasswordForm';
 import ForgotPasswordForm from './components/reset-password/ForgotPasswordForm';
 import FetchInterceptor from './utils/FetchInterceptor';
+import UserProfileBookingsList from './components/user-profile/UserProfileBookingsList';
 
 
 function App() {
@@ -42,8 +43,12 @@ function App() {
                         <LoginForm />
                     </Route>
 
-                    <Route path='/profile'>
+                    <Route exact path='/profile'>
                         <UserProfile />
+                    </Route>
+
+                    <Route path='/profile/history'>
+                        <UserProfileBookingsList />
                     </Route>
 
                     <Route path='/forgotpassword'>
