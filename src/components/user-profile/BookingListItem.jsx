@@ -76,8 +76,14 @@ const BookingListItem = (props) => {
 
             
             <Grid data-testid="flightTimes" container spacing={3}>
-                <Grid item xs={6}><h5>Departure:&nbsp;</h5>{booking.flights[0].departureTime.replace('T', ' ')}</Grid>
-                <Grid item xs={6}><h5>Arrival:&nbsp;</h5>{booking.flights[0].arrivalTime.replace('T', ' ')}</Grid>
+                <Grid item xs={6}><h5>Departure:&nbsp;</h5>
+                    {booking.flights[0].departureTime.replace('T', ' ')}
+                    &nbsp;(Gate: {booking.flights[0].departureGate})
+                </Grid>
+                <Grid item xs={6}><h5>Arrival:&nbsp;</h5>
+                    {booking.flights[0].arrivalTime.replace('T', ' ')}
+                    &nbsp;(Gate: {booking.flights[0].arrivalGate})
+                </Grid>
             </Grid>
             
             <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
