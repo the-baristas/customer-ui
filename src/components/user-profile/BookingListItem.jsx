@@ -10,6 +10,8 @@ import Paper from '@material-ui/core/Paper';
 import './BookingListItem.css';
 import Button from '@material-ui/core/Button';
 import CancelBookingModal from './CancelBookingModal';
+import moment from 'moment';
+import * as airportTimezone from 'airport-timezone'
 
 
 const BookingListItem = (props) => {
@@ -19,6 +21,15 @@ const BookingListItem = (props) => {
     const [expanded, setExpanded] = useState(false);
 
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+
+    const originAirportTimezoneInfo = airportTimezone.default.filter((airport) => {return airport.code === props.booking.flights[0].originAirportCode})[0];
+    const destinationAirportTimezoneInfo = airportTimezone.default.filter((airport) => {return airport.code === props.booking.flights[0].destinationAirportCode})[0];
+
+    const departureTimeTimezone = moment(props.booking.flights[0].departureTime)
+                                    .utcOffset(originAirportTimezoneInfo.offset.gmt);
+    const arrivalTimeTimezone = moment(props.booking.flights[0].arrivalTime)
+                                    .utcOffset(destinationAirportTimezoneInfo.offset.gmt);
 
     const handleOpenCancelModal = () => {
         setDeleteModalOpen(true);
@@ -77,11 +88,11 @@ const BookingListItem = (props) => {
             
             <Grid data-testid="flightTimes" container spacing={3}>
                 <Grid item xs={6}><h5>Departure:&nbsp;</h5>
-                    {booking.flights[0].departureTime.replace('T', ' ')}
+                    {departureTimeTimezone.format('MMMM Do, YYYY h:mm a')}
                     &nbsp;(Gate: {booking.flights[0].departureGate})
                 </Grid>
                 <Grid item xs={6}><h5>Arrival:&nbsp;</h5>
-                    {booking.flights[0].arrivalTime.replace('T', ' ')}
+                    {arrivalTimeTimezone.format('MMMM Do, YYYY h:mm a')}
                     &nbsp;(Gate: {booking.flights[0].arrivalGate})
                 </Grid>
             </Grid>
