@@ -4,6 +4,10 @@
     display:flexbox;
 }
 
+.booking-list-search-field{
+    min-width: 500px;
+}
+
 .pagination{
     padding: 35px;
     margin: 0 auto;
