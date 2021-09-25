@@ -89,7 +89,7 @@ const UserProfileBookingsList = () => {
                 <Grid item xs={6}>
                     {getRole() === ROLE_AGENT && <TextField className="booking-list-search-field"
                                                             inputProps={{ "data-testid": "searchField" }}
-                                                            label="Search Name or Phone"
+                                                            label="Search Name"
                                                             variant="filled" onChange={(input) => {handleSetSearchField(input.target.value)}} /> }
                 </Grid>
                 <Grid item xs={6}>
