@@ -45,7 +45,6 @@ const UserProfileBookingsList = () => {
     }
 
     const handleSetSearchField = (value) => {
-        console.log("------------------------------------------------------------" + value)
         setSearchField(value);
 
         if(value.length === 0)
@@ -99,14 +98,14 @@ const UserProfileBookingsList = () => {
         </h2>
         {isPending && <h3 data-testid='loading'>Loading...</h3>}
 
-        {!isPending && infoRetrievalSuccessful && <div>
+        {!isPending && infoRetrievalSuccessful && !currentPage.empty && <div>
                 {bookingComponents}
                 <div className='pagination'>
                     <Typography data-testid='page'>Page: {page}</Typography>
                     <Pagination count={currentPage.totalPages} page={page} onChange={handlePageChange} />
                 </div>
             </div>}
-        {infoRetrievalSuccessful && bookingList.length===0 && <h4>You have not booked any flights.</h4>}
+        {infoRetrievalSuccessful && currentPage.empty && <h4>No bookings found.</h4>}
     </div> );
 }
  
