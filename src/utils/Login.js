@@ -15,6 +15,13 @@ export const getUsername = () => {
     
 }
 
+export const getRole = () => {
+    var jwtToken = localStorage.getItem(keyName);
+    if (jwtToken === null)
+        return "";
+    return jwt_decode(jwtToken).authorities[0].authority;
+}
+
 export const saveToken = (token) => {
     localStorage.setItem(keyName, token);
 }

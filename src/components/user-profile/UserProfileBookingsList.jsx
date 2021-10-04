@@ -6,14 +6,23 @@ import Switch from '@material-ui/core/Switch';
 import Pagination from '@material-ui/lab/Pagination';
 import BookingListItem from './BookingListItem';
 import './UserProfileBookingsList.css';
+import { getRole } from '../../utils/Login';
+import { ROLE_AGENT } from '../../utils/Roles';
+import Grid from '@material-ui/core/Grid';
+import { TextField } from '@material-ui/core';
+
 
 const UserProfileBookingsList = () => {
     const userStatus = useSelector((state) => state.userStatus);
+
+    const pageLength = 10;
 
     const [isPending, setIsPending] = useState(true);
     const [infoRetrievalSuccessful, setInfoRetrievalSuccessful] = useState(false);
     const [currentPage, setCurrentPage] = useState({});
     const [bookingList, setBookingList] = useState([]);
+
+    const [searchField, setSearchField] = useState("");
 
     const [pendingFlightsOnly, setPendingFlightsOnly] = useState(true);
 
@@ -26,7 +35,7 @@ const UserProfileBookingsList = () => {
 
     const handleSwitchPendingOnly = (checked) => {
         setPendingFlightsOnly(checked);
-        getBookings(checked, 0, 10);
+        getBookings(checked, 0, pageLength);
     };
 
     const [expanded, setExpanded] = useState(false);
@@ -35,17 +44,32 @@ const UserProfileBookingsList = () => {
         setExpanded(isExpanded ? panel : false);
     }
 
+    const handleSetSearchField = (value) => {
+        console.log("------------------------------------------------------------" + value)
+        setSearchField(value);
+
+        if(value.length === 0)
+            getBookings(pendingFlightsOnly, 0, pageLength, value)
+        else if(value.length < 3)
+            return;
+        else{
+            getBookings(pendingFlightsOnly, 0, pageLength, value);
+        }
+            
+
+    }
+
     const bookingComponents = bookingList.map((booking) => (
         <BookingListItem key={booking.id} booking={booking}></BookingListItem>
     ));
 
     useEffect(() => {
-        getBookings(pendingFlightsOnly, 0, 10);
+        getBookings(pendingFlightsOnly, 0, pageLength);
     }, [])
 
-    const getBookings = async (pendingOnly, index, size) => {
+    const getBookings = async (pendingOnly, index, size, searchTerm="") => {
         setIsPending(true);
-        return getBookingsByUsername(userStatus.username, pendingOnly, index, size)
+        return getBookingsByUsername(userStatus.username, pendingOnly, index, size, searchTerm)
             .then((data) => {
                 setCurrentPage(data);
                 setBookingList(data.content);
@@ -61,8 +85,18 @@ const UserProfileBookingsList = () => {
     return ( <div>
         <h2 className="booking-list-title">
             <p>Your Bookings</p>
-            <b style={{fontSize: 15}}>Pending Only<Switch color="primary" checked={pendingFlightsOnly} onChange={(event) => {handleSwitchPendingOnly(event.target.checked)}} /></b>
-            </h2>
+            <Grid className="booking-list-tooldbar" container spacing={3}>
+                <Grid item xs={6}>
+                    {getRole() === ROLE_AGENT && <TextField className="booking-list-search-field"
+                                                            inputProps={{ "data-testid": "searchField" }}
+                                                            label="Search Name"
+                                                            variant="filled" onChange={(input) => {handleSetSearchField(input.target.value)}} /> }
+                </Grid>
+                <Grid item xs={6}>
+                    <b style={{fontSize: 15}}>Pending Only<Switch color="primary" checked={pendingFlightsOnly} onChange={(event) => {handleSwitchPendingOnly(event.target.checked)}} /></b>
+                </Grid>
+            </Grid>     
+        </h2>
         {isPending && <h3 data-testid='loading'>Loading...</h3>}
 
         {!isPending && infoRetrievalSuccessful && <div>

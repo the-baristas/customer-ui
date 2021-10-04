@@ -1,6 +1,6 @@
 import * as actions from './UserStatusActionTypes';
 
-export const login = (username) => {
+export const login = (username, role) => {
     return { type: actions.USER_LOGGED_IN, username: username}
 }
 

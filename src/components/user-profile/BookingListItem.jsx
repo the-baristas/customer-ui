@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Typography from '@material-ui/core/Typography';
-import Pagination from '@material-ui/lab/Pagination';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -42,7 +41,6 @@ const BookingListItem = (props) => {
     const handleCancelComplete = () => {
         handleCloseCancelModal();
         setBookingActive(false);
-        console.log(bookingActive);
         alert("Your booking has been cancelled successfully.");
     }
 
