@@ -46,6 +46,11 @@ npm install --save @fortawesome/react-fontawesome
 
     npm install jwt-decode
 
+## airport-timezone
+
+	npm i airport-timezone
+	https://npm.io/package/airport-timezone
+
 ---
 
 ## Writing fetch requests to the APIs with CSRF

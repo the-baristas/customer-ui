@@ -1,22 +1,32 @@
 import moment from 'moment';
 import React from 'react';
-import { Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import Container from 'react-bootstrap/Container';
-import ListGroup from 'react-bootstrap/ListGroup';
-import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import SeatClass from "../booking/SeatClass";
 import './FlightCard.css';
-import Pagination from 'react-bootstrap/Pagination';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as airportTimezone from 'airport-timezone'
 
 const FlightCard = (props) => {
     const handleClick = (e, seatClass) => {
         props.onFlightSelection(props.flight, seatClass);
     };
+
+    const originAirportTimezoneInfo = airportTimezone.default.filter((airport) => {return airport.code === props.flight.route.originAirport.iataId})[0];
+    const destinationAirportTimezoneInfo = airportTimezone.default.filter((airport) => {return airport.code === props.flight.route.destinationAirport.iataId})[0];
+    
+
+    console.log(destinationAirportTimezoneInfo);
+    console.log(originAirportTimezoneInfo);
+    // console.log(props.flight.departureTime)
+    // console.log(props.flight.arrivalTime)
+
+    const departureTimeTimezone = moment(props.flight.departureTime)
+                                    .utcOffset(originAirportTimezoneInfo.offset.gmt);
+    const arrivalTimeTimezone = moment(props.flight.arrivalTime)
+                                    .utcOffset(destinationAirportTimezoneInfo.offset.gmt);
 
 
     const duration = moment.duration(
@@ -37,10 +47,10 @@ const FlightCard = (props) => {
             { props.flight.route.originAirport.city } ({ props.flight.route.originAirport.iataId })
             </Row>
             <Row className="departure-time">
-            { moment(props.flight.departureTime).format('h:mm a') }
+            { departureTimeTimezone.format('h:mm a') }
             </Row>
             <Row className="departure-date">
-            { moment(props.flight.departureTime).format('MMMM Do, YYYY') }
+            { departureTimeTimezone.format('MMMM Do, YYYY') }
             </Row>
             </Col>
 
@@ -58,10 +68,10 @@ const FlightCard = (props) => {
             { props.flight.route.destinationAirport.city }
             </Row>
             <Row className="arrival-time">
-            { moment(props.flight.arrivalTime).format('h:mm a') }
+            { arrivalTimeTimezone.format('h:mm a') }
             </Row>
             <Row className="arrival-date">
-            { moment(props.flight.arrivalTime).format('MMMM Do, YYYY') }
+            { arrivalTimeTimezone.format('MMMM Do, YYYY') }
             </Row>
             </Col>
 
