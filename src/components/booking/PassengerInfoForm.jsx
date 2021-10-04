@@ -21,6 +21,8 @@ const PassengerInfoForm = (props) => {
     const [city, setCity] = useState("");
     const [state, setState] = useState("");
     const [zipCode, setZipCode] = useState("");
+    const [isVeteran, setIsVeteran] = useState(false)
+
 
     useEffect(() => {
         getUserProfileInfo();
@@ -42,7 +44,6 @@ const PassengerInfoForm = (props) => {
                 setCity(data.city);
                 setState(data.state);
                 setZipCode(data.zip);
-                console.log(data)
             })
             .catch((error) => {
                 if(error.message === "403"){
@@ -107,6 +108,11 @@ const PassengerInfoForm = (props) => {
     const handleZipCodeChange = (event) => {
         setZipCode(event.target.value);
     };
+
+    const handleIsVeteranChange = (event) => {
+        console.log(isVeteran);
+        setIsVeteran(event.target.checked);
+    }
 
     return (
         <div>
@@ -231,7 +237,17 @@ const PassengerInfoForm = (props) => {
                             Please provide a ZIP code.
                         </Form.Control.Feedback>
                     </Form.Group>
+                    <Form.Group as={Col} sm={1} controlId="veteranForm">
+                        <Form.Label>Veteran*</Form.Label>
+                        <Form.Check
+                            type="checkbox"
+                            value={isVeteran}
+                            onChange={handleIsVeteranChange}
+                            style={{display: 'inline', alignItems: 'left'}}
+                        ></Form.Check>
+                    </Form.Group>
                 </Form.Row>
+
                 <Button className="submit" variant="primary" type="submit">
                     Continue
                 </Button>

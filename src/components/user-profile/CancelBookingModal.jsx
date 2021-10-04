@@ -38,7 +38,7 @@ const CancelBookingModal = (props) => {
 
     const cancelBooking = async (booking) => {
         setIsPending(true);
-        refundBooking(booking.id, refundAmount)
+        refundBooking(booking.id, refundAmount.toFixed(2))
         .then((data) => {
             setIsPending(false);
             props.handleCancelComplete();
