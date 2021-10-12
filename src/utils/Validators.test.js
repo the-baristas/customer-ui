@@ -1,4 +1,4 @@
-import {checkEmailIsValid, checkPhoneIsValid, checkPasswordIsValid} from './Validators';
+import {checkEmailIsValid, checkPhoneIsValid, checkPasswordIsValid, checkZipcodeIsValid, checkStateIsValid} from './Validators';
 
 it("check email validator works", () => {
     expect(checkEmailIsValid('valid@email.com')).toBeTruthy();
@@ -23,4 +23,20 @@ it("check password validator works", () => {
     expect(checkPasswordIsValid('StillNoGoAway55')).toBeFalsy();
     expect(checkPasswordIsValid('@@@no###^^NO')).toBeFalsy();
     expect(checkPasswordIsValid('No9$')).toBeFalsy();
+})
+
+it("check ZIP code validator works", () => {
+    expect(checkZipcodeIsValid('12345')).toBeTruthy();
+    expect(checkZipcodeIsValid('99999')).toBeTruthy();
+    expect(checkZipcodeIsValid('no')).toBeFalsy();
+    expect(checkZipcodeIsValid('123456789')).toBeFalsy();
+    expect(checkZipcodeIsValid('1234')).toBeFalsy();
+})
+
+it("check state validator works", () => {
+    expect(checkStateIsValid('CA')).toBeTruthy();
+    expect(checkStateIsValid('NY')).toBeTruthy();
+    expect(checkStateIsValid('no')).toBeFalsy();
+    expect(checkStateIsValid('nonono')).toBeFalsy();
+    expect(checkStateIsValid('ZJ')).toBeFalsy();
 })

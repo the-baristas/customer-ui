@@ -86,11 +86,11 @@ export const deleteBooking = async (id) => {
     }
 };
 
-export const getBookingsByUsername = async (username, index, size) => {
+export const getBookingsByUsername = async (username, pendingOnly, index, size, searchTerm = "") => {
     const url =
         `${process.env.REACT_APP_BOOKING_SERVICE_URL}/bookings/username/` +
         username +
-        `?index=${index}&size=${size}`;
+        `?index=${index}&size=${size}&pendingOnly=${pendingOnly}&term=${searchTerm}`;
     const response = await fetch(url, {
         method: "GET",
         headers: { "Content-Type": "application/json", "Authorization": getToken() }

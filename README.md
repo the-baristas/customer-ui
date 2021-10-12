@@ -46,10 +46,10 @@ npm install --save @fortawesome/react-fontawesome
 
     npm install jwt-decode
 
-## ant design
+## airport-timezone
 
-    Used for layout components.
-    npm install antd
+	npm i airport-timezone
+	https://npm.io/package/airport-timezone
 
 ---
 

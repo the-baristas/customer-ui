@@ -1,12 +1,17 @@
 import moment from "moment";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Col } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { STATE_REGEX, ZIPCODE_REGEX } from "../../utils/Validators";
 import "./PassengerInfoForm.css";
+import { useSelector } from "react-redux";
+import { getUserByUsername } from "../../api/UsersService";
 
 const PassengerInfoForm = (props) => {
+    const userStatus = useSelector((state) => state.userStatus);
+
     const [validated, setValidated] = useState(false);
     const [givenName, setGivenName] = useState("");
     const [familyName, setFamilyName] = useState("");
@@ -16,6 +21,40 @@ const PassengerInfoForm = (props) => {
     const [city, setCity] = useState("");
     const [state, setState] = useState("");
     const [zipCode, setZipCode] = useState("");
+
+    useEffect(() => {
+        getUserProfileInfo();
+    }, []);
+
+    const getUserProfileInfo = () => {
+        getUserByUsername(userStatus.username)
+            .then((res) => {
+                if (!res.ok) {
+                    throw Error(res.status);
+                }
+                return res.json();
+            })
+            .then((data) => {
+                setGivenName(data.givenName);
+                setFamilyName(data.familyName);
+                setDateOfBirth(data.dob);
+                setStreetAddress(data.streetAddress);
+                setCity(data.city);
+                setState(data.state);
+                setZipCode(data.zip);
+                console.log(data)
+            })
+            .catch((error) => {
+                if(error.message === "403"){
+                    return;
+                }
+                else{
+                    alert(
+                        "We are unable to load your information at this time. Please try again later."
+                    );
+                }
+            });
+    };
 
     const handleSubmit = (e) => {
         const form = e.currentTarget;
@@ -170,7 +209,7 @@ const PassengerInfoForm = (props) => {
                             type="text"
                             value={state}
                             onChange={handleStateChange}
-                            pattern="(A[LKSZR])|(C[AOT])|(D[EC])|(F[ML])|(G[AU])|(HI)|(I[DLNA])|(K[SY])|(LA)|(M[EHDAINSOT])|(N[EVHJMYCD])|(MP)|(O[HKR])|(P[WAR])|(RI)|(S[CD])|(T[NX])|(UT)|(V[TIA])|(W[AVIY])"
+                            pattern={STATE_REGEX}
                             maxLength="2"
                             required
                         ></Form.Control>
@@ -184,7 +223,7 @@ const PassengerInfoForm = (props) => {
                             type="text"
                             value={zipCode}
                             onChange={handleZipCodeChange}
-                            pattern="^[0-9]{5}(?:-[0-9]{4})?$"
+                            pattern={ZIPCODE_REGEX}
                             maxLength="5"
                             required
                         ></Form.Control>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import {
     BrowserRouter as Router,
     Redirect,
@@ -15,6 +15,8 @@ import UserProfile from "./components/user-profile/UserProfile";
 import store from "./redux/store";
 import ResetPasswordForm from './components/reset-password/ResetPasswordForm';
 import ForgotPasswordForm from './components/reset-password/ForgotPasswordForm';
+import FetchInterceptor from './utils/FetchInterceptor';
+import UserProfileBookingsList from './components/user-profile/UserProfileBookingsList';
 
 
 function App() {
@@ -22,6 +24,7 @@ function App() {
     return (
         <Provider store={store}>
             <Router>
+                <FetchInterceptor/>
                 <Header />
                 <Switch>
                     <Route exact path="/">
@@ -40,8 +43,12 @@ function App() {
                         <LoginForm />
                     </Route>
 
-                    <Route path='/profile'>
+                    <Route exact path='/profile'>
                         <UserProfile />
+                    </Route>
+
+                    <Route path='/profile/history'>
+                        <UserProfileBookingsList />
                     </Route>
 
                     <Route path='/forgotpassword'>

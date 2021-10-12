@@ -1,6 +1,11 @@
 .booking-list-title{
     text-align: center;
     padding: 10px;
+    display:flexbox;
+}
+
+.booking-list-search-field{
+    min-width: 500px;
 }
 
 .pagination{
