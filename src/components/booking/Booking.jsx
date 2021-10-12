@@ -1213,6 +1213,7 @@ const Booking = () => {
     
     const handlePaymentCreation = (clientSecret) => {
         // TO DO: CREATE NEW ENDPOINT HERE
+        history.push('/');
     };
 
     // Elements
