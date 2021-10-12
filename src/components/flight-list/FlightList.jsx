@@ -33,16 +33,16 @@ const FlightList = (props) => {
     }
 
     const depDuration = moment.duration(
-        moment(props.departureFlight.arrivalTime).diff(
-            props.departureFlight.departureTime
+        moment(props.selectedDepTrip[props.selectedDepTrip?.length - 1]?.arrivalTime).diff(
+            props.selectedDepTrip[0]?.departureTime
         )
     );
     const depDurationHours = Math.floor(depDuration.asHours());
     const depDurationMinutes = depDuration.minutes();
 
     const retDuration = moment.duration(
-        moment(props.returnFlight.arrivalTime).diff(
-            props.returnFlight.departureTime
+        moment(props.selectedRetTrip[props.selectedRetTrip?.length - 1]?.arrivalTime).diff(
+            props.selectedRetTrip[0]?.departureTime
         )
     );
     const retDurationHours = Math.floor(retDuration.asHours());
@@ -126,7 +126,7 @@ const FlightList = (props) => {
                         />
                     </div>
 
-                    {props.flightCards}
+                    {props.tripCards}
                     <br />
 
                     <div className="pagination">
@@ -195,7 +195,7 @@ const FlightList = (props) => {
                         </div>
                     )}
 
-                    <div id="depFlightCards">{props.departureFlightCards}</div>
+                    <div id="depFlightCards">{props.departureTripCards}</div>
                     <br />
 
                     {props.departureFlightPage.totalPages > 1 && (
@@ -263,7 +263,7 @@ const FlightList = (props) => {
                         </div>
                     )}
 
-                    <div id="retFlightCards">{props.returnFlightCards}</div>
+                    <div id="retFlightCards">{props.returnTripCards}</div>
                     <br />
 
                     {props.returnFlightPage.totalPages > 1 && (
@@ -290,30 +290,30 @@ const FlightList = (props) => {
                             <Row className="departure-selected">
                                 <Col xs={12} lg={3}>
                                     <center>
-                                        <b>Departure Flight Selected:</b>
+                                        <b>Departure Trip Selected:</b>
                                     </center>
                                 </Col>
                                 <Col xs={12} lg={3}>
                                     <Row className="origin-airport">
                                         {
-                                            props.departureFlight.route
+                                            props.selectedDepTrip[0].route
                                                 .originAirport.city
                                         }{" "}
                                         (
                                         {
-                                            props.departureFlight.route
+                                            props.selectedDepTrip[0].route
                                                 .originAirport.iataId
                                         }
                                         )
                                     </Row>
                                     <Row className="departure-time">
                                         {moment(
-                                            props.departureFlight.departureTime
+                                            props.selectedDepTrip[0].departureTime
                                         ).format("h:mm a")}
                                     </Row>
                                     <Row className="departure-date">
                                         {moment(
-                                            props.departureFlight.departureTime
+                                            props.selectedDepTrip[0].departureTime
                                         ).format("MMMM Do, YYYY")}
                                     </Row>
                                 </Col>
@@ -331,18 +331,18 @@ const FlightList = (props) => {
                                 <Col xs={12} lg={3}>
                                     <Row className="dest-airport">
                                         {
-                                            props.departureFlight.route
+                                            props.selectedDepTrip[props.selectedDepTrip.length-1].route
                                                 .destinationAirport.city
                                         }
                                     </Row>
                                     <Row className="arrival-time">
                                         {moment(
-                                            props.departureFlight.arrivalTime
+                                            props.selectedDepTrip[props.selectedDepTrip.length-1].arrivalTime
                                         ).format("h:mm a")}
                                     </Row>
                                     <Row className="arrival-date">
                                         {moment(
-                                            props.departureFlight.arrivalTime
+                                            props.selectedDepTrip[props.selectedDepTrip.length-1].arrivalTime
                                         ).format("MMMM Do, YYYY")}
                                     </Row>
 
@@ -354,11 +354,10 @@ const FlightList = (props) => {
                                         <p>
                                             <b>Boarding Group: </b> {"   "}{" "}
                                             {props.depCheckInGroup}{" "}
-                                        </p>
-                                        <p>
+                                        <br />
                                             <small>
                                                 <b>Class:</b>{" "}
-                                                {props.departureClass} ◦
+                                                {props.departureClass.toUpperCase()} ◦
                                                 <b> Price:</b> $
                                                 {props.departurePricePP}
                                             </small>
@@ -422,24 +421,24 @@ const FlightList = (props) => {
                                 <Col xs={12} lg={3}>
                                     <Row className="origin-airport">
                                         {
-                                            props.returnFlight.route
+                                            props.selectedRetTrip[0].route
                                                 .originAirport.city
                                         }{" "}
                                         (
                                         {
-                                            props.returnFlight.route
+                                            props.selectedRetTrip[0].route
                                                 .originAirport.iataId
                                         }
                                         )
                                     </Row>
                                     <Row className="departure-time">
                                         {moment(
-                                            props.returnFlight.departureTime
+                                            props.selectedRetTrip[0].departureTime
                                         ).format("h:mm a")}
                                     </Row>
                                     <Row className="departure-date">
                                         {moment(
-                                            props.returnFlight.departureTime
+                                            props.selectedRetTrip[0].departureTime
                                         ).format("MMMM Do, YYYY")}
                                     </Row>
                                 </Col>
@@ -457,18 +456,18 @@ const FlightList = (props) => {
                                 <Col xs={12} lg={3}>
                                     <Row className="dest-airport">
                                         {
-                                            props.returnFlight.route
+                                            props.selectedRetTrip[props.selectedRetTrip.length-1].route
                                                 .destinationAirport.city
                                         }
                                     </Row>
                                     <Row className="arrival-time">
                                         {moment(
-                                            props.returnFlight.arrivalTime
+                                            props.selectedRetTrip[props.selectedRetTrip.length-1].arrivalTime
                                         ).format("h:mm a")}
                                     </Row>
                                     <Row className="arrival-date">
                                         {moment(
-                                            props.returnFlight.arrivalTime
+                                            props.selectedRetTrip[props.selectedRetTrip.length-1].arrivalTime
                                         ).format("MMMM Do, YYYY")}
                                     </Row>
                                     <br />
@@ -479,11 +478,10 @@ const FlightList = (props) => {
                                         <p>
                                             <b>Boarding Group: </b>{" "}
                                             {props.retCheckInGroup}
-                                        </p>
-                                        <p>
+                                            <br />
                                             <small>
                                                 <b>Class:</b>{" "}
-                                                {props.returnClass} ◦
+                                                {props.returnClass.toUpperCase()} ◦
                                                 <b> Price:</b> $
                                                 {props.returnPricePP}
                                             </small>

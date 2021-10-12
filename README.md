@@ -46,6 +46,11 @@ npm install --save @fortawesome/react-fontawesome
 
     npm install jwt-decode
 
+## ant design
+
+    Used for layout components.
+    npm install antd
+
 ---
 
 ## Writing fetch requests to the APIs with CSRF

@@ -1,13 +1,15 @@
 import { faPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Col, Container, Row, Button, Image } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import "./FlightTable.css";
 import SeatClass from "./SeatClass";
 import flightplan1 from "./flightplan01.jpg";
 import flightplan2 from "./flightplan02.jpg";
+
+import SeatChoice from "./SeatChoice";
 
 import { getTakenSeats } from "../../api/PassengerApi";
 
@@ -101,10 +103,11 @@ const FlightTable = (props) => {
 
     }
 
-        const seatSelectRet = () => {
-            return (props.retSeats.map((seat) => (
-                <option value={seat}>{seat}</option>
-                    )));
+        const seatSelectRet = (x) => {
+            console.log(props.takenSeatsRet[x]);
+            return props.takenSeatsRet[x].map((seatNumber) => {
+                return <option key={seatNumber} value={seatNumber}>{seatNumber}</option>;
+            });
         };
 
         const handleRetSeatChoice = (event) => {
@@ -139,15 +142,32 @@ const FlightTable = (props) => {
             props.setRetSCUPricePP(0);
         }
 
+        const departureTripSeatChoice = props.selectedDepTrip.map((flight) => (
+            <SeatChoice 
+            flight={flight} 
+            seatClass={props.departureClass}
+            hasSeatChoiceUpgrade={props.hasDepSeatChoiceUpgrade} />
+        ));
+
+        const returnTripSeatChoice = props.selectedRetTrip.map((flight) => (
+            <SeatChoice 
+            flight={flight} 
+            seatClass={props.returnClass}
+            hasSeatChoiceUpgrade={props.hasRetSeatChoiceUpgrade} />
+        ));
+
 
     const USA_TAX_RATE = 0.075;
+
     const upgradesPricePP = props.CIUPricePP + props.SCUPricePP;
     const returnUpgradesPricePP = props.retUpgradesPricePP + props.retSCUPricePP;
     const departUpgradesPricePP = props.desUpgradesPricePP + props.depSCUPricePP;
+
     const taxesPP = Math.round((props.pricePerPassenger + upgradesPricePP) * USA_TAX_RATE * 100) / 100;
     const returnTaxesPP = Math.round((props.returnPricePP + returnUpgradesPricePP) * USA_TAX_RATE * 100) / 100;
     const departTaxesPP = Math.round((props.departurePricePP + departUpgradesPricePP) * USA_TAX_RATE * 100) / 100;
     const totalPerPassenger = props.pricePerPassenger + props.taxesPerPassenger + upgradesPricePP + (Math.round(upgradesPricePP * USA_TAX_RATE * 100)/100);
+    
     const departurePerPassengerTtl =
         props.departurePricePP +
         departUpgradesPricePP +
@@ -176,12 +196,24 @@ const FlightTable = (props) => {
         "MM/DD/YYYY hh:mm"
     );
     const duration = moment.duration(
-        moment(props.selectedFlight.arrivalTime).diff(
-            props.selectedFlight.departureTime
+        moment(props.selectedTrip[props.selectedTrip.length - 1]?.arrivalTime).diff(
+            props.selectedTrip[0]?.departureTime
         )
     );
     const durationHours = Math.floor(duration.asHours());
     const durationMinutes = duration.minutes();
+
+    const tripStops = () => {
+        let stops;
+        if (props.selectedTrip.length === 2) {
+           stops = "1 Stop"; 
+        } else if (props.selectedTrip.length === 3) {
+            stops = "2 Stops";
+        } else if (props.selectedTrip.length === 1) {
+            stops = "Non-Stop"
+        }
+        return stops;
+    }
 
     // RT values
     const f1DepartureTime = moment(props.departureFlight.departureTime).format(
@@ -197,13 +229,13 @@ const FlightTable = (props) => {
         "MM/DD/YYYY hh:mm"
     );
     const f1Duration = moment.duration(
-        moment(props.departureFlight.arrivalTime).diff(
-            props.departureFlight.departureTime
+        moment(props.selectedDepTrip[props.selectedDepTrip.length-1]?.arrivalTime).diff(
+            props.selectedDepTrip[0]?.departureTime
         )
     );
     const f2Duration = moment.duration(
-        moment(props.returnFlight.arrivalTime).diff(
-            props.returnFlight.departureTime
+        moment(props.selectedRetTrip[props.selectedRetTrip.length-1]?.arrivalTime).diff(
+            props.selectedRetTrip[0]?.departureTime
         )
     );
     const f1DurationHours = Math.floor(f1Duration.asHours());
@@ -226,57 +258,60 @@ const FlightTable = (props) => {
                 <br />
                 <Row className="border border-dark">
                     <Col xs={12} sm={12} className="p-2">
-                        <h5>Departure Flight Details</h5>
+                        <h5>Departure Trip Details</h5>
                     </Col>
                 </Row>
                 <Container>
                     <Row className="return-selected">
                         <Col xs={12} lg={3}>
                             <Row className="origin-airport">
-                                {props.departureFlight.route.originAirport.city}{" "}
+                                {props.selectedDepTrip[0].route.originAirport.city}{" "}
                                 (
                                 {
-                                    props.departureFlight.route.originAirport
+                                    props.selectedDepTrip[0].route.originAirport
                                         .iataId
                                 }
                                 )
                             </Row>
                             <Row className="departure-time">
                                 {moment(
-                                    props.departureFlight.departureTime
+                                    props.selectedDepTrip[0].departureTime
                                 ).format("h:mm a")}
                             </Row>
                             <Row className="departure-date">
                                 {moment(
-                                    props.departureFlight.departureTime
+                                    props.selectedDepTrip[0].departureTime
                                 ).format("MMMM Do, YYYY")}
                             </Row>
                         </Col>
 
                         <Col xs={12} lg={1}>
                             <Row className="duration">
-                                {f2DurationHours} hr {f2DurationMinutes} min
+                                {f1DurationHours} hr {f1DurationMinutes} min
                             </Row>
                             <Row className="duration-icon">
                                 <FontAwesomeIcon icon={faPlane} />
+                            </Row>
+                            <Row className="duration">
+                            {tripStops}
                             </Row>
                         </Col>
 
                         <Col xs={12} lg={3}>
                             <Row className="dest-airport">
                                 {
-                                    props.departureFlight.route
+                                    props.selectedDepTrip[props.selectedDepTrip.length -1].route
                                         .destinationAirport.city
                                 }
                             </Row>
                             <Row className="arrival-time">
                                 {moment(
-                                    props.departureFlight.arrivalTime
+                                    props.selectedDepTrip[props.selectedDepTrip.length -1].arrivalTime
                                 ).format("h:mm a")}
                             </Row>
                             <Row className="arrival-date">
                                 {moment(
-                                    props.departureFlight.arrivalTime
+                                    props.selectedDepTrip[props.selectedDepTrip.length -1].arrivalTime
                                 ).format("MMMM Do, YYYY")}
                             </Row>
                         </Col>
@@ -295,7 +330,7 @@ const FlightTable = (props) => {
                         </Col>
                         <Col xs={12} lg={3}>
                             <Row className="totals">
-                            Price Per Passenger: ${props.departurePricePP.toFixed(2)}
+                            Price Per Passenger: ${props.departurePricePP}
                                 <br /> <br />
                                 - Boarding Group Upgrade: ${props.desUpgradesPricePP.toFixed(2)}<br />
                                 - Seat Choice Upgrade: ${props.depSCUPricePP.toFixed(2)}<br />
@@ -317,25 +352,7 @@ const FlightTable = (props) => {
                     </Row>
                 </Container>
                 <br />
-                <Card className="upgrade-dep-bg">
-                            <Card.Body>
-                                <Card.Title>Choose Seat?</Card.Title>
-                                    <small>
-                                        { !props.hasDepSeatChoiceUpgrade && <>Your seat number is randomly assigned when you book your ticket. If you have a seating preference, you can make a selection below for an additional $25 fee.</>}
-                                        { props.hasDepSeatChoiceUpgrade && <>Your seat choice has been made and the upgrade is reflected above. You may still change your seat below for no additional fee.</>}
-                                    </small><br /><br />
-                                    <center>
-                                    <select style={{ "width": "300px", "height": "40px" }} onChange={handleDepSeatChoice}>
-                                    <option>Open this select menu</option>
-                                    {seatSelectDep()}
-                                    </select><br />
-                                    { !props.hasDepSeatChoiceUpgrade && <Button style={{ "width": "300px" }} variant="primary" disabled={depSeatChoiceMade} onClick={submitDepSeatChoice}>Submit Seat Choice Add-On</Button> }
-                                    <br />
-                                    <Button variant="link" onClick={() => handleDepRemoveSeatChoice()}>Remove Seat Choice Upgrade</Button><br />
-                                    </center>
-                            </Card.Body>
-                        </Card>
-
+                {departureTripSeatChoice}
                 <br />
                 <br />
 
@@ -348,24 +365,24 @@ const FlightTable = (props) => {
                     <Row className="return-selected">
                         <Col xs={12} lg={3}>
                             <Row className="origin-airport">
-                                {props.returnFlight.route.originAirport.city} (
-                                {props.returnFlight.route.originAirport.iataId})
+                                {props.selectedRetTrip[0].route.originAirport.city} (
+                                {props.selectedRetTrip[0].route.originAirport.iataId})
                             </Row>
                             <Row className="departure-time">
                                 {moment(
-                                    props.returnFlight.departureTime
+                                    props.selectedRetTrip[0].departureTime
                                 ).format("h:mm a")}
                             </Row>
                             <Row className="departure-date">
                                 {moment(
-                                    props.returnFlight.departureTime
+                                    props.selectedRetTrip[0].departureTime
                                 ).format("MMMM Do, YYYY")}
                             </Row>
                         </Col>
 
                         <Col xs={12} lg={1}>
                             <Row className="duration">
-                                {f1DurationHours} hr {f1DurationMinutes} min
+                                {f2DurationHours} hr {f2DurationMinutes} min
                             </Row>
                             <Row className="duration-icon">
                                 <FontAwesomeIcon icon={faPlane} />
@@ -375,17 +392,17 @@ const FlightTable = (props) => {
                         <Col xs={12} lg={3}>
                             <Row className="dest-airport">
                                 {
-                                    props.returnFlight.route.destinationAirport
+                                    props.selectedRetTrip[props.selectedRetTrip.length - 1].route.destinationAirport
                                         .city
                                 }
                             </Row>
                             <Row className="arrival-time">
-                                {moment(props.returnFlight.arrivalTime).format(
+                                {moment(props.selectedRetTrip[props.selectedRetTrip.length - 1].arrivalTime).format(
                                     "h:mm a"
                                 )}
                             </Row>
                             <Row className="arrival-date">
-                                {moment(props.returnFlight.arrivalTime).format(
+                                {moment(props.selectedRetTrip[props.selectedRetTrip.length - 1].arrivalTime).format(
                                     "MMMM Do, YYYY"
                                 )}
                             </Row>
@@ -405,7 +422,7 @@ const FlightTable = (props) => {
                         </Col>
                         <Col xs={12} lg={3}>
                             <Row className="totals">
-                                Price Per Passenger: ${props.returnPricePP.toFixed(2)}
+                                Price Per Passenger: ${props.returnPricePP}
                                 <br /><br />
                                 - Boarding Group Upgrade: ${props.retUpgradesPricePP.toFixed(2)}<br />
                                 - Seat Choice Upgrade: ${props.retSCUPricePP.toFixed(2)}<br />
@@ -426,24 +443,11 @@ const FlightTable = (props) => {
                         </Col>
                     </Row>
                     <br />
-                    <Card className="upgrade-dep-bg">
-                            <Card.Body>
-                                <Card.Title>Choose Seat?</Card.Title>
-                                    <small>
-                                        { !props.hasRetSeatChoiceUpgrade && <>Your seat number is randomly assigned when you book your ticket. If you have a seating preference, you can make a selection below for an additional $25 fee.</>}
-                                        { props.hasRetSeatChoiceUpgrade && <>Your seat choice has been made and the upgrade is reflected above. You may still change your seat below for no additional fee.</>}
-                                    </small><br /><br />
-                                    <center>
-                                    <select style={{ "width": "300px", "height": "40px" }} onChange={handleRetSeatChoice}>
-                                    <option>Open this select menu</option>
-                                    {seatSelectRet()}
-                                    </select><br />
-                                    { !props.hasRetSeatChoiceUpgrade && <Button style={{ "width": "300px" }} variant="primary" disabled={retSeatChoiceMade} onClick={submitRetSeatChoice}>Submit Seat Choice Add-On</Button> }
-                                    <br />
-                                    <Button variant="link" onClick={() => handleRetRemoveSeatChoice()}>Remove Seat Choice Upgrade</Button><br />
-                                    </center>
-                            </Card.Body>
-                        </Card>
+
+                        
+                    {returnTripSeatChoice}
+                                    
+    
                     <br />
                 </Container>
                 <br />
@@ -467,22 +471,22 @@ const FlightTable = (props) => {
                     <Row className="return-selected">
                         <Col xs={12} lg={3}>
                             <Row className="origin-airport">
-                                {props.selectedFlight.route.originAirport.city}{" "}
+                                {props.selectedTrip[0].route.originAirport.city}{" "}
                                 (
                                 {
-                                    props.selectedFlight.route.originAirport
+                                    props.selectedTrip[0].route.originAirport
                                         .iataId
                                 }
                                 )
                             </Row>
                             <Row className="departure-time">
                                 {moment(
-                                    props.selectedFlight.departureTime
+                                    props.selectedTrip[0].departureTime
                                 ).format("h:mm a")}
                             </Row>
                             <Row className="departure-date">
                                 {moment(
-                                    props.selectedFlight.departureTime
+                                    props.selectedTrip[0].departureTime
                                 ).format("MMMM Do, YYYY")}
                             </Row>
                         </Col>
@@ -494,23 +498,26 @@ const FlightTable = (props) => {
                             <Row className="duration-icon">
                                 <FontAwesomeIcon icon={faPlane} />
                             </Row>
+                            <Row className="duration">
+                                {tripStops()}
+                             </Row>   
                         </Col>
 
                         <Col xs={12} lg={3}>
                             <Row className="dest-airport">
                                 {
-                                    props.selectedFlight.route
+                                    props.selectedTrip[props.selectedTrip.length - 1].route
                                         .destinationAirport.city
                                 }
                             </Row>
                             <Row className="arrival-time">
                                 {moment(
-                                    props.selectedFlight.arrivalTime
+                                    props.selectedTrip[props.selectedTrip.length - 1].arrivalTime
                                 ).format("h:mm a")}
                             </Row>
                             <Row className="arrival-date">
                                 {moment(
-                                    props.selectedFlight.arrivalTime
+                                    props.selectedTrip[0].arrivalTime
                                 ).format("MMMM Do, YYYY")}
                             </Row>
                         </Col>
@@ -552,7 +559,6 @@ const FlightTable = (props) => {
                     </Row>
 
                     <br />
-
                     <Card className="upgrade-dep-bg">
                             <Card.Body>
                                 <Card.Title>Choose Seat?</Card.Title>
@@ -561,8 +567,8 @@ const FlightTable = (props) => {
                                         { props.hasSeatChoiceUpgrade && <>Your seat choice has been made and the upgrade is reflected above. You may still change your seat below for no additional fee.</>}
                                     </small><br /><br />
                                     <center>
-                                    { props.selectedFlight.airplane.model === "Airbus A220" && <><Image src={flightplan1} style={{"width": "90%"}} /><br /><br /></> }
-                                    { props.selectedFlight.airplane.model === "Boeing 737" && <><Image src={flightplan2} style={{"width": "90%"}} /><br /><br /></> }
+                                    {/* { selectedFlight.airplane.model === "Airbus A220" && <><Image src={flightplan1} style={{"width": "90%"}} /><br /><br /></> }
+                                    { selectedFlight.airplane.model === "Boeing 737" && <><Image src={flightplan2} style={{"width": "90%"}} /><br /><br /></> } */}
                                     <select style={{ "width": "300px", "height": "40px" }} onChange={handleSeatChoice}>
                                     <option>Open this select menu</option>
                                     {seatSelect()}
