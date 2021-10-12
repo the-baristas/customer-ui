@@ -100,8 +100,6 @@ const Booking = () => {
     const [totalPerPassenger, setTotalPerPassenger] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [flights, setFlights] = useState([]);
-    const [departureFlights, setDepartureFlights] = useState([]);
-    const [returnFlights, setReturnFlights] = useState([]);
     const [flightPage, setFlightPage] = useState({});
     const [departureFlightPage, setDepartureFlightPage] = useState({});
     const [returnFlightPage, setReturnFlightPage] = useState({});
@@ -175,23 +173,15 @@ const Booking = () => {
     const [departureFilter, setDepartureFilter] = useState("all");
     const [returnFilter, setReturnFilter] = useState("all");
 
+    // array of trips and selected trip (OW)
     const [trips, setTrips] = useState([]);
     const [selectedTrip, setSelectedTrip] = useState([]);
-    const [leg1Seats, setLeg1Seats] = useState([]);
-    const [leg2Seats, setLeg2Seats] = useState([]);
-    const [leg3Seats, setLeg3Seats] = useState([]);
 
+    // array of trips, and selected trips (RT)
     const [depTrips, setDepTrips] = useState([]);
     const [selectedDepTrip, setSelectedDepTrip] = useState([]);
-    const [depLeg1Seats, setDepLeg1Seats] = useState([]);
-    const [depLeg2Seats, setDepLeg2Seats] = useState([]);
-    const [depLeg3Seats, setDepLeg3Seats] = useState([]);
-
     const [retTrips, setRetTrips] = useState([]);
     const [selectedRetTrip, setSelectedRetTrip] = useState([]);
-    const [retLeg1Seats, setRetLeg1Seats] = useState([]);
-    const [retLeg2Seats, setRetLeg2Seats] = useState([]);
-    const [retLeg3Seats, setRetLeg3Seats] = useState([]);
 
     // sets price of check-in group upgrade
     const [CIUPricePP, setCIUPricePP] = useState(0);
@@ -620,7 +610,6 @@ const Booking = () => {
         )
             .then((resp) => resp.json())
             .then((data) => {
-                setDepartureFlights(data.content);
                 setDepartureFlightPage(data);
             })
             .catch((error) => {
@@ -659,7 +648,6 @@ const Booking = () => {
         )
             .then((resp) => resp.json())
             .then((data) => {
-                setReturnFlights(data.content);
                 setReturnFlightPage(data);
             })
             .catch((error) => {
@@ -736,7 +724,6 @@ const Booking = () => {
         )
             .then((resp) => resp.json())
             .then((data) => {
-                setDepartureFlights(data.content);
                 setDepartureFlightPage(data);
             })
             .catch((error) => {
@@ -774,7 +761,6 @@ const Booking = () => {
         )
             .then((resp) => resp.json())
             .then((data) => {
-                setReturnFlights(data.content);
                 setReturnFlightPage(data);
             })
             .catch((error) => {
@@ -813,19 +799,6 @@ const Booking = () => {
                         } 
                         seatsArray.push(economyClassSeats);
                     }); 
-
-                if(seatsArray.length === 1) {
-                    setLeg1Seats(economyClassSeats);
-                } else if(seatsArray.length === 2) {
-                    setLeg1Seats(seatsArray[0]);
-                    setLeg2Seats(seatsArray[1]);
-                } else if (seatsArray.length === 3) {
-                    setLeg1Seats(seatsArray[0]);
-                    setLeg2Seats(seatsArray[1]);
-                    setLeg3Seats(seatsArray[2]);
-                } else {
-                    // throw error
-                    }
                 });
                 break;
             case SeatClass.BUSINESS:
@@ -837,21 +810,9 @@ const Booking = () => {
                         for(let i = 0; i <= result.length; i++) {
                             businessClassSeats.splice(businessClassSeats.indexOf(result[i]), 1);
                         } 
-                })
+                });
                 seatsArray.push(businessClassSeats);
                     });
-                if(seatsArray.length === 1) {
-                    setLeg1Seats(seatsArray[0]);
-                } else if(seatsArray.length === 2) {
-                    setLeg1Seats(seatsArray[0]);
-                    setLeg2Seats(seatsArray[1]);
-                } else if (seatsArray.length === 3) {
-                    setLeg1Seats(seatsArray[0]);
-                    setLeg2Seats(seatsArray[1]);
-                    setLeg3Seats(seatsArray[2]);
-                } else {
-                    // throw error
-                    }
                 break;
             case SeatClass.FIRST:
                 setCheckInGroup(1);
@@ -864,19 +825,7 @@ const Booking = () => {
                     } 
                     seatsArray.push(firstClassSeats);
                 });
-                if(seatsArray.length === 1) {
-                    setLeg1Seats(seatsArray[0]);
-                } else if(seatsArray.length === 2) {
-                    setLeg1Seats(seatsArray[0]);
-                    setLeg2Seats(seatsArray[1]);
-                } else if (seatsArray.length === 3) {
-                    setLeg1Seats(seatsArray[0]);
-                    setLeg2Seats(seatsArray[1]);
-                    setLeg3Seats(seatsArray[2]);
-                } else {
-                    // throw error
-                    }
-                });
+            });
                 break;
             default:
                 // TODO: Go to error page.
@@ -1161,7 +1110,6 @@ const Booking = () => {
             )
                 .then((resp) => resp.json())
                 .then((data) => {
-                    setReturnFlights(data.content);
                     setReturnFlightPage(data);
                 })
                 .catch((error) => {
@@ -1200,7 +1148,6 @@ const Booking = () => {
             )
                 .then((resp) => resp.json())
                 .then((data) => {
-                    setDepartureFlights(data.content);
                     setDepartureFlightPage(data);
                 })
                 .catch((error) => {
