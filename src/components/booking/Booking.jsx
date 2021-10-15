@@ -403,112 +403,14 @@ const Booking = () => {
         returnTrip,
         returnseatClass
     ) => {
-        let departurePricePP = 0;
-        let returnPricePP = 0;
-        let pricePP = 0;
-
-        switch (departureClass) {
-            case SeatClass.ECONOMY:
-                let i = 0;
-                departureTrip.map((flight) => {
-                i+= flight.economyPrice;
-                });
-                console.log(i);
-                let layoverDiscount1 = .1;
-                let ecStops = departureTrip.length - 1;
-                let discountApplied1 = layoverDiscount1 * ecStops;
-                let economyDisc = discountApplied1 * (i/departureTrip.length);
-                departurePricePP = (i/departureTrip.length) - economyDisc;
-                departurePricePP = Math.round(departurePricePP * 100) / 100;
-                console.log("Departure Price PP w/i Switch:");
-                console.log(departurePricePP);
-                setDeparturePricePPState(departurePricePP);
-                break;
-            case SeatClass.BUSINESS:
-                let j = 0;
-                departureTrip.map((flight) => {
-                j+= flight.businessPrice;
-                });
-                let layoverDiscount2 = .1;
-                let bizStops = departureTrip.length - 1;
-                let discountApplied2 = layoverDiscount2 * bizStops;
-                let businessDisc = discountApplied2 * (i/departureTrip.length);
-                departurePricePP = (i/departureTrip.length) - businessDisc;
-                departurePricePP = Math.round(departurePricePP * 100) / 100;
-                setDeparturePricePPState(departurePricePP);
-                break;
-            case SeatClass.FIRST:
-                let k = 0;
-                departureTrip.map((flight) => {
-                k+= flight.firstPrice;
-                });
-                let layoverDiscount3 = .1;
-                let firstStops = departureTrip.length - 1;
-                let discountApplied3 = layoverDiscount3 * firstStops;
-                let firstDisc = discountApplied3 * (i/departureTrip.length);
-                departurePricePP = (i/departureTrip.length) - firstDisc;
-                departurePricePP = Math.round(departurePricePP * 100) / 100;
-                setDeparturePricePPState(departurePricePP);
-                break;
-            default:
-                // TODO: Go to error page.
-                break;
-        }
-
-        switch (returnClass) {
-            case SeatClass.ECONOMY:
-                let l = 0;
-                returnTrip.map((flight) => {
-                console.log(flight.economyPrice);
-                l+= flight.economyPrice;
-                });
-                let layoverDiscount1 = .1;
-                let ecStops = returnTrip.length - 1;
-                let discountApplied1 = layoverDiscount1 * ecStops;
-                let economyDisc = discountApplied1 * (l/returnTrip.length);
-                returnPricePP = (l/returnTrip.length) - economyDisc;
-                returnPricePP = Math.round(returnPricePP * 100) / 100;
-                setReturnPricePPState(returnPricePP);
-                break;
-            case SeatClass.BUSINESS:
-                let m = 0;
-                returnTrip.map((flight) => {
-                m+= flight.businessPrice;
-                });
-                let layoverDiscount2 = .1;
-                let bizStops = returnTrip.length - 1;
-                let discountApplied2 = layoverDiscount2 * bizStops;
-                let businessDisc = discountApplied2 * (m/returnTrip.length);
-                returnPricePP = (m/returnTrip.length) - businessDisc;
-                returnPricePP = Math.round(returnPricePP * 100) / 100;
-                setReturnPricePPState(returnPricePP);
-                break;
-            case SeatClass.FIRST:
-                let n = 0;
-                returnTrip.map((flight) => {
-                n+= flight.firstPrice;
-                });
-                let layoverDiscount3 = .1;
-                let firstStops = returnTrip.length - 1;
-                let discountApplied3 = layoverDiscount3 * firstStops;
-                let firstDisc = discountApplied3 * (n/returnTrip.length);
-                returnPricePP = (n/returnTrip.length) - firstDisc;
-                returnPricePP = Math.round(returnPricePP * 100) / 100;
-                setReturnPricePPState(returnPricePP);
-                break;
-            default:
-                // TODO: Go to error page.
-                break;
-        }
-
 
         let departureUpgradesPricePP = Math.round(desUpgradesPricePP * 100) / 100;
         let returnUpgradesPricePP = Math.round(retUpgradesPricePP * 100) / 100;
 
-        pricePP =
-            departurePricePP +
+        let pricePP =
+            departurePricePPState +
             departureUpgradesPricePP +
-            returnPricePP +
+            returnPricePPState +
             returnUpgradesPricePP;
 
         
@@ -518,12 +420,12 @@ const Booking = () => {
 
         const departureTaxesPerPassenger =
             Math.round(
-                (departurePricePP) * USA_TAX_RATE * 100
+                (departurePricePPState) * USA_TAX_RATE * 100
             ) / 100;
         setDepartureTaxesPP(departureTaxesPerPassenger);
 
         const returnTaxesPerPassenger =
-            Math.round((returnPricePP) * USA_TAX_RATE * 100) /
+            Math.round((returnPricePPState) * USA_TAX_RATE * 100) /
             100;
         setReturnTaxesPP(returnTaxesPerPassenger);
 
@@ -857,6 +759,56 @@ const Booking = () => {
     const handleDepartureTripSelection = (selectedDTrip, seatClassInput) => {
         setSelectedDepTrip(selectedDTrip);
         setDepartureClass(seatClassInput);
+
+        let departurePricePP = 0;
+        let pricePP = 0;
+        switch (seatClassInput) {
+            case SeatClass.ECONOMY:
+                let i = 0;
+                selectedDTrip.map((flight) => {
+                i+= flight.economyPrice;
+                });
+                console.log(i);
+                let layoverDiscount1 = .1;
+                let ecStops = selectedDTrip.length - 1;
+                let discountApplied1 = layoverDiscount1 * ecStops;
+                let economyDisc = discountApplied1 * (i/selectedDTrip.length);
+                departurePricePP = (i/selectedDTrip.length) - economyDisc;
+                departurePricePP = Math.round(departurePricePP * 100) / 100;
+                console.log("Departure Price PP w/i Switch:");
+                console.log(departurePricePP);
+                setDeparturePricePPState(departurePricePP);
+                break;
+            case SeatClass.BUSINESS:
+                let j = 0;
+                selectedDTrip.map((flight) => {
+                j+= flight.businessPrice;
+                });
+                let layoverDiscount2 = .1;
+                let bizStops = selectedDTrip.length - 1;
+                let discountApplied2 = layoverDiscount2 * bizStops;
+                let businessDisc = discountApplied2 * (i/selectedDTrip.length);
+                departurePricePP = (i/selectedDTrip.length) - businessDisc;
+                departurePricePP = Math.round(departurePricePP * 100) / 100;
+                setDeparturePricePPState(departurePricePP);
+                break;
+            case SeatClass.FIRST:
+                let k = 0;
+                selectedDTrip.map((flight) => {
+                k+= flight.firstPrice;
+                });
+                let layoverDiscount3 = .1;
+                let firstStops = selectedDTrip.length - 1;
+                let discountApplied3 = layoverDiscount3 * firstStops;
+                let firstDisc = discountApplied3 * (i/selectedDTrip.length);
+                departurePricePP = (i/selectedDTrip.length) - firstDisc;
+                departurePricePP = Math.round(departurePricePP * 100) / 100;
+                setDeparturePricePPState(departurePricePP);
+                break;
+            default:
+                // TODO: Go to error page.
+                break;
+        }
         let selectedFlightCard = document.getElementById(generateTripId(selectedDTrip));
         let flightCards = document.getElementById("depFlightCards");
         let departureSort = document.getElementById("departure-sort");
@@ -879,6 +831,54 @@ const Booking = () => {
     const handleReturnTripSelection = (selectedRTrip, seatClassInput) => {
         setSelectedRetTrip(selectedRTrip);
         setReturnClass(seatClassInput);
+
+    let returnPricePP = 0;
+        switch (seatClassInput) {
+            case SeatClass.ECONOMY:
+                let l = 0;
+                selectedRTrip.map((flight) => {
+                console.log(flight.economyPrice);
+                l+= flight.economyPrice;
+                });
+                let layoverDiscount1 = .1;
+                let ecStops = selectedRTrip.length - 1;
+                let discountApplied1 = layoverDiscount1 * ecStops;
+                let economyDisc = discountApplied1 * (l/selectedRTrip.length);
+                returnPricePP = (l/selectedRTrip.length) - economyDisc;
+                returnPricePP = Math.round(returnPricePP * 100) / 100;
+                setReturnPricePPState(returnPricePP);
+                break;
+            case SeatClass.BUSINESS:
+                let m = 0;
+                selectedRTrip.map((flight) => {
+                m+= flight.businessPrice;
+                });
+                let layoverDiscount2 = .1;
+                let bizStops = selectedRTrip.length - 1;
+                let discountApplied2 = layoverDiscount2 * bizStops;
+                let businessDisc = discountApplied2 * (m/selectedRTrip.length);
+                returnPricePP = (m/selectedRTrip.length) - businessDisc;
+                returnPricePP = Math.round(returnPricePP * 100) / 100;
+                setReturnPricePPState(returnPricePP);
+                break;
+            case SeatClass.FIRST:
+                let n = 0;
+                selectedRTrip.map((flight) => {
+                n+= flight.firstPrice;
+                });
+                let layoverDiscount3 = .1;
+                let firstStops = selectedRTrip.length - 1;
+                let discountApplied3 = layoverDiscount3 * firstStops;
+                let firstDisc = discountApplied3 * (n/selectedRTrip.length);
+                returnPricePP = (n/selectedRTrip.length) - firstDisc;
+                returnPricePP = Math.round(returnPricePP * 100) / 100;
+                setReturnPricePPState(returnPricePP);
+                break;
+            default:
+                // TODO: Go to error page.
+                break;
+        }
+
         let selectedFlightCard = document.getElementById(generateTripId(selectedRTrip));
         let flightCards = document.getElementById("retFlightCards");
         let departureSort = document.getElementById("return-sort");
