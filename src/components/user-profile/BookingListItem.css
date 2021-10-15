@@ -1,0 +1,30 @@
+.booking-list-item-component{
+    width: 90%;
+    margin: 0 auto;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid rgb(175, 175, 175);;
+    
+  }
+
+.heading{
+  width: '30%';
+  margin: 0 auto;
+  align-items: left;
+  justify-content: left;
+  text-align: left;
+  color: rgb(46, 46, 46);
+  }
+
+.secondary-heading{
+    width: '30%';
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: rgb(124, 124, 124);
+  }
+
+  .cancel-button{
+    float: right;
+  }

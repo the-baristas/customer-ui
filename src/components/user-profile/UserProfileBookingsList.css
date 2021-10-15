@@ -1,0 +1,16 @@
+.booking-list-title{
+    text-align: center;
+    padding: 10px;
+    display:flexbox;
+}
+
+.booking-list-search-field{
+    min-width: 500px;
+}
+
+.pagination{
+    padding: 35px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+  }

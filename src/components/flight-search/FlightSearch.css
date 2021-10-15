@@ -1,0 +1,76 @@
+body{
+    background-color: #fbf0ea;
+    width: 100%;
+}
+
+.search-container.container {
+    top: 40%;
+    z-index: 1;
+    position: absolute;
+    display: grid;
+    grid-template-rows: 50vh;
+    grid-template-columns: 100vw;
+}
+
+.input-group{
+    margin: 2px;
+    width: 100% !important;
+    flex-wrap: nowrap;
+}
+
+.search-form{
+    background-color: white;
+    width: 50%;
+    justify-self: center;
+    align-self: center;
+}
+
+.prepend-txt {
+    color: #c46329;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.input-group-prepend{
+    height: calc(1.5em + 0.75rem + 2px);
+}
+
+.font-awesome{
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.date-picker {
+    border-style: solid;
+    border-radius: 0px 4px 4px 0px;
+    border-width: 1px 1px 1px 1px;
+    border-color: lightgray;
+    height: calc(1.5em + 0.75rem + 2px);
+}
+
+.react-datepicker-wrapper{
+    width: 100%;
+    margin: 0 0 0 0;
+}
+
+#search-submit {
+    background-color: #c46329 !important;
+    border-color: #c46329 !important;
+}
+
+#booking-type{
+    width: 100% !important;
+    box-shadow: none;
+    border: 0;
+    padding: 0;
+}
+
+#cbs{
+    color: #c46329 !important;
+    font-size: .8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+    width: 100%;
+}
