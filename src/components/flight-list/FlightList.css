@@ -68,3 +68,24 @@
   .point {
     cursor: pointer;
   }
+
+  .ant-timeline-item-tail {
+  border-left: 2px solid #8c753b !important;
+  }
+
+  .ant-timeline{
+    margin-top: 20px;
+    width: 400px !important;
+  }
+
+  .ant-timeline-item-last {
+    padding-bottom: 0px !important;
+  }
+
+  .ant-timeline-item-content {
+    min-height: 0px !important;
+  }
+
+  .just-link {
+    box-shadow: 0 0 0 0 !important;
+  }

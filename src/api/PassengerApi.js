@@ -101,3 +101,28 @@ export const searchPassengers = async (searchTerm, index, size) => {
     }
     return data;
 };
+
+export const getTakenSeats = async (flightId) => {
+    const url =
+        `${process.env.REACT_APP_BOOKING_SERVICE_URL}/passengers/taken-seats?` +
+        `flightId=${flightId}`;
+    let data;
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: { "Content-Type": "application/json", "Authorization": getToken() }
+        });
+        if (response.ok === false) {
+            throw new Error(
+                `Response was unsuccessful. Status code: ${response.status}`
+            );
+        }
+        data = await response.json();
+    } catch (e) {
+        console.error(
+            "There has been a problem with getting the taken seats or there are no taken seats.",
+            e
+        );
+    }
+    return data;
+};
