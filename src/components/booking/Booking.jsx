@@ -11,6 +11,7 @@ import {
     createBooking,
     deleteBooking,
     emailBookingDetails,
+    purchaseBooking,
     updateBooking
 } from "../../api/BookingApi";
 import { createPassenger, deletePassenger, getTakenSeats } from "../../api/PassengerApi";
@@ -367,8 +368,8 @@ const Booking = () => {
                 let layoverDiscount2 = .1;
                 let bizStops = selectedTrip.length - 1;
                 let discountApplied2 = layoverDiscount2 * bizStops;
-                let businessDisc = discountApplied2 * (i/selectedTrip.length);
-                pricePerPassenger = (i/selectedTrip.length) - businessDisc;
+                let businessDisc = discountApplied2 * (j/selectedTrip.length);
+                pricePerPassenger = (j/selectedTrip.length) - businessDisc;
                 break;
             case SeatClass.FIRST:
                 let k = 0;
@@ -378,8 +379,8 @@ const Booking = () => {
                 let layoverDiscount3 = .1;
                 let firstStops = selectedTrip.length - 1;
                 let discountApplied3 = layoverDiscount3 * firstStops;
-                let firstDisc = discountApplied3 * (i/selectedTrip.length);
-                pricePerPassenger = (i/selectedTrip.length) - firstDisc;
+                let firstDisc = discountApplied3 * (k/selectedTrip.length);
+                pricePerPassenger = (k/selectedTrip.length) - firstDisc;
                 break;
             default:
                 // TODO: Go to error page.
@@ -536,8 +537,9 @@ const Booking = () => {
         setTotalPrice(totalPerPassenger * passengerCount);
     };
 
-    const handlePassengerInfoSubmit = (passengerInfo) => {
-        setPassengerInfo(passengerInfo);
+    const handlePassengerInfoSubmit = (passengerFormInfo) => {
+        setPassengerInfo(passengerFormInfo);
+        console.log(passengerFormInfo);
         history.push(`${path}/checkout`);
     };
 
@@ -1159,7 +1161,18 @@ const Booking = () => {
 
     
     const handlePaymentCreation = (clientSecret) => {
-        // TO DO: CREATE NEW ENDPOINT HERE
+        
+        let passengers = [];
+
+        for(let flight of selectedTrip){
+            passengers.push({givenName: passengerInfo.givenName, familyName: passengerInfo.familyName,
+                dateOfBirth: passengerInfo.dateOfBirth, gender: passengerInfo.gender, 
+                seatNumber: 1, flightId: flight.id, checkInGroup: checkInGroup, seatClass: seatClass,
+                address: `${passengerInfo.streetAddress} ${passengerInfo.city}, ${passengerInfo.state} ${passengerInfo.zipCode}`})
+
+        }
+
+        purchaseBooking(passengers, totalPrice, selectedTrip.length, userStatus.username, clientSecret);
         history.push('/');
     };
 
