@@ -21,7 +21,7 @@ const SeatChoice = (props) => {
             case SeatClass.ECONOMY:
                 let economySeats = Array.from(Array(flight.airplane.economyClassSeatsMax), (x, index) => (index + flight.airplane.businessClassSeatsMax + flight.airplane.firstClassSeatsMax) + 1);
                 await getTakenSeats(flight.id)?.then(result => {
-                    for(let i = 0; i <= result.length; i++) {
+                    for(let i = 0; i <= result?.length; i++) {
                         economySeats.splice(economySeats.indexOf(result[i]), 1);
                     } 
                 });
@@ -30,7 +30,7 @@ const SeatChoice = (props) => {
             case SeatClass.BUSINESS:
                 let businessSeats = Array.from(Array(flight.airplane.businessClassSeatsMax), (x, index) => (index + flight.airplane.firstClassSeatsMax) + 1);
                 await getTakenSeats(flight.id)?.then(result => {
-                    for(let i = 0; i <= result.length; i++) {
+                    for(let i = 0; i <= result?.length; i++) {
                         businessSeats.splice(businessSeats.indexOf(result[i]), 1);
                     } 
                 });
@@ -39,7 +39,7 @@ const SeatChoice = (props) => {
             case SeatClass.FIRST:
                 let firstSeats = Array.from(Array(flight.airplane.firstClassSeatsMax), (x, index) => index + 1);
                 await getTakenSeats(flight.id)?.then(result => {
-                    for(let i = 0; i <= result.length; i++) {
+                    for(let i = 0; i <= result?.length; i++) {
                         firstSeats.splice(firstSeats.indexOf(result[i]), 1);
                     } 
                 });
