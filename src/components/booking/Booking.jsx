@@ -175,13 +175,13 @@ const Booking = () => {
     const [returnFilter, setReturnFilter] = useState("all");
 
     // array of trips and selected trip (OW)
-    const [trips, setTrips] = useState([]);
+    const [trips, setTrips] = useState({content: []});
     const [selectedTrip, setSelectedTrip] = useState([]);
 
     // array of trips, and selected trips (RT)
-    const [depTrips, setDepTrips] = useState([]);
+    const [depTrips, setDepTrips] = useState({content: []});
     const [selectedDepTrip, setSelectedDepTrip] = useState([]);
-    const [retTrips, setRetTrips] = useState([]);
+    const [retTrips, setRetTrips] = useState({content: []});
     const [selectedRetTrip, setSelectedRetTrip] = useState([]);
 
     // sets price of check-in group upgrade
@@ -554,7 +554,7 @@ const Booking = () => {
         let theFilter = filter;
 
         fetch(
-            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${event.target.value}`,
+            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/new-search?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${event.target.value}`,
             {
                 method: "POST",
                 headers: {
@@ -573,8 +573,7 @@ const Booking = () => {
         )
             .then((resp) => resp.json())
             .then((data) => {
-                setFlights(data.content);
-                setFlightPage(data);
+                setTrips(data);
             })
             .catch((error) => {
                 console.error(error);
@@ -669,7 +668,7 @@ const Booking = () => {
         let theFilter = event.target.value;
 
         fetch(
-            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${sortBy}`,
+            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/new-search?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${sortBy}`,
             {
                 method: "POST",
                 headers: {
@@ -688,8 +687,7 @@ const Booking = () => {
         )
             .then((resp) => resp.json())
             .then((data) => {
-                setFlights(data.content);
-                setFlightPage(data);
+                setTrips(data);
             })
             .catch((error) => {
                 console.error(error);
@@ -937,8 +935,6 @@ const Booking = () => {
                 )
                     .then((resp) => resp.json())
                     .then((data) => {
-                        console.log('trips fetched:');
-                        console.log(data);
 
                         setTrips(data);
                         history.push("/booking/search-results");
@@ -1054,7 +1050,7 @@ const Booking = () => {
 
         trackPromise(
             fetch(
-                `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
+                `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/new-search?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
                 {
                     method: "POST",
                     headers: {
@@ -1073,8 +1069,7 @@ const Booking = () => {
             )
                 .then((resp) => resp.json())
                 .then((data) => {
-                    setFlights(data.content);
-                    setFlightPage(data);
+                    setTrips(data);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -1236,7 +1231,7 @@ const Booking = () => {
         process.env.REACT_APP_STRIPE_TEST_PUBLISHABLE_KEY
     );
 
-    const tripCards = trips.map((trip) => (
+    const tripCards = trips.content.map((trip) => (
         <TripCard
             key={generateTripId(trip)}
             trip={trip}
@@ -1245,14 +1240,14 @@ const Booking = () => {
     ));
 
 
-    const departureTripCards = depTrips.map((trip) => (
+    const departureTripCards = depTrips.content.map((trip) => (
         <TripCard
             trip={trip}
             onTripSelection={handleDepartureTripSelection}
         />
     ));
 
-    const returnTripCards = retTrips.map((trip) => (
+    const returnTripCards = retTrips.content.map((trip) => (
         <TripCard
             trip={trip}
             onTripSelection={handleReturnTripSelection}
@@ -1284,7 +1279,7 @@ const Booking = () => {
             </Route>
             <Route path={`${path}/search-results`}>
                 <FlightList
-                    flightPage={flightPage}
+                    flightPage={trips}
                     tripCards={tripCards}
                     departureTripCards={departureTripCards}
                     returnTripCards={returnTripCards}
