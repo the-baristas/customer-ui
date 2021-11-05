@@ -10,8 +10,13 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import "./FlightList.css";
+import Datetime from 'react-datetime';
+import "react-datetime/css/react-datetime.css";
 
 const FlightList = (props) => {
+
+    const [value, onChange] = useState(new Date());
+
     // helper function
     function handleClick(event, newPage) {
         setCurrentPage(newPage - 1);
@@ -30,6 +35,10 @@ const FlightList = (props) => {
 
     function handleRTFlightSelection(e) {
         props.onRTFlightSelection(e);
+    }
+
+    function handleFilterChange(e){
+        props.handleFilterChange(e);
     }
 
     const depDuration = moment.duration(
@@ -70,7 +79,6 @@ const FlightList = (props) => {
     return (
         <div className="search-results">
             <br />
-
             {props.isRoundTrip === false ? (
                 // renders one way flight list if isRoundTrip is false
                 <div className="one-way">
@@ -93,7 +101,8 @@ const FlightList = (props) => {
                             <option value="arrivalTime">Arrival</option>
                         </select>
                     </Container>
-
+                    
+                    
                     <Container>
                         <label htmlFor="filter">
                             <b>Filter:</b>
@@ -103,7 +112,7 @@ const FlightList = (props) => {
                         <select
                             name="filter"
                             id="filter"
-                            onChange={props.handleFilterChange}
+                            onChange={handleFilterChange}
                         >
                             <option value="all">All</option>
                             <option value="morning">
@@ -115,7 +124,10 @@ const FlightList = (props) => {
                             <option value="evening">
                                 Evening Flights Only
                             </option>
+                            <option value="departureRange">Custom Range</option>
                         </select>
+
+                        <div className="datetime-picker"><Datetime></Datetime><h5>to</h5><Datetime></Datetime></div>  
                     </Container>
 
                     <div className="pagination">

@@ -469,7 +469,8 @@ const Booking = () => {
                     year: theYear,
                     hours: theHours,
                     mins: theMins,
-                    filter: theFilter
+                    filter: theFilter,
+                    departureDay: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0,0,0)
                 })
             }
         )
@@ -583,7 +584,8 @@ const Booking = () => {
                     year: theYear,
                     hours: theHours,
                     mins: theMins,
-                    filter: event.target.value
+                    filter: event.target.value,
+                    departureDay:new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0,0,0)
                 })
             }
         )
@@ -672,6 +674,7 @@ const Booking = () => {
     }
 
     function onDateChange(date) {
+        console.log(date);
         setDate(date);
     }
 
@@ -901,6 +904,7 @@ const Booking = () => {
 
 
     function handleSubmit(event) {
+        console.log(date)
         event.preventDefault();
         setIsRoundTrip(false);
         if (origin === "" || dest === "" || date === "") {
@@ -929,7 +933,8 @@ const Booking = () => {
                             year: theYear,
                             hours: theHours,
                             mins: theMins,
-                            filter: theFilter
+                            filter: theFilter,
+                            departureDay:new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0,0,0)
                         })
                     }
                 )
@@ -981,7 +986,8 @@ const Booking = () => {
                             year: departureYear,
                             hours: departureHours,
                             mins: departureMins,
-                            filter: departureFilter
+                            filter: departureFilter,
+                            departureDay:new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 0,0,0)
                         })
                     }
                 )
@@ -1020,7 +1026,8 @@ const Booking = () => {
                             year: returnYear,
                             hours: returnHours,
                             mins: returnMins,
-                            filter: returnFilter
+                            filter: returnFilter,
+                            departureDay:new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 0,0,0)
                         })
                     }
                 )
@@ -1063,7 +1070,8 @@ const Booking = () => {
                         year: theYear,
                         hours: theHours,
                         mins: theMins,
-                        filter: theFilter
+                        filter: theFilter,
+                        departureDay:new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0,0,0)
                     })
                 }
             )
@@ -1101,7 +1109,8 @@ const Booking = () => {
                         year: theYear,
                         hours: theHours,
                         mins: theMins,
-                        filter: theFilter
+                        filter: theFilter,
+                        departureDay: startDate
                     })
                 }
             )
@@ -1139,7 +1148,8 @@ const Booking = () => {
                         year: theYear,
                         hours: theHours,
                         mins: theMins,
-                        filter: theFilter
+                        filter: theFilter,
+                        departureDay: endDate
                     })
                 }
             )
