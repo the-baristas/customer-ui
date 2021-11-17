@@ -8,7 +8,6 @@ import {
     ZIPCODE_REGEX
 } from "../../utils/Validators";
 import "./UserProfile.css";
-import UserProfileBookingsList from "./UserProfileBookingsList";
 import Paper from "@material-ui/core/Paper";
 import { Form } from "react-bootstrap";
 import EditButton from "./EditButton";

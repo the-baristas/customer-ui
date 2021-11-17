@@ -1,19 +1,13 @@
 import moment from 'moment';
 import React, {useState, useEffect} from 'react';
-import { Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import Container from 'react-bootstrap/Container';
-import ListGroup from 'react-bootstrap/ListGroup';
-import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import SeatClass from "../booking/SeatClass";
 import './FlightCard.css';
-import Pagination from 'react-bootstrap/Pagination';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Timeline } from 'antd';
-import * as airportTimezone from 'airport-timezone'
 
 const TripCard = (props) => {
 
@@ -71,31 +65,13 @@ const TripCard = (props) => {
         onTripSelection(trip, seatClass);
     };
 
-    const calculateTripDuration = (trip) => {
-        let totalDurationMinutes = 0;
-
-        for(let i = 0; i < trip.length; i++) {
-            totalDurationMinutes += calculateFlightDuration(trip[i]) ;
-        } 
-        return totalDurationMinutes;
-    }
-
-    const calculateFlightDuration = (flight) => {
-        let originAirportTimezoneInfo = airportTimezone.default.filter((airport) => {return airport.code === flight.route.originAirport.iataId})[0];
-        let destinationAirportTimezoneInfo = airportTimezone.default.filter((airport) => {return airport.code === flight.route.destinationAirport.iataId})[0];
-
-        //This is the duration between the arrival and departure times without considering timezones
-        let rawDuration = moment.duration(moment(flight.arrivalTime).diff(flight.departureTime));
-        console.log(flight);
-        console.log("Raw Duration hours: " + rawDuration.asHours())
-        console.log("Duration with timezones: " + rawDuration.add( (destinationAirportTimezoneInfo.offset.gmt - originAirportTimezoneInfo.offset.gmt), 'hours').asHours())
-        return rawDuration.add( (destinationAirportTimezoneInfo.offset.gmt - originAirportTimezoneInfo.offset.gmt), 'hours').asMinutes();
-
-    }
-
-    const duration = calculateTripDuration(trip);
-    const durationHours = Math.floor(duration / 60);
-    const durationMinutes = calculateTripDuration(trip);
+    const duration = moment.duration(
+        moment(flight1.arrivalTime).diff(
+            flight1.departureTime
+        )
+    );
+    const durationHours = Math.floor(duration.asHours());
+    const durationMinutes = duration.minutes();
 
     const getAllFlightsButLast = (value, index, array) => {
         return index !== trip.length-1;

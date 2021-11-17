@@ -17,6 +17,11 @@ const FlightList = (props) => {
 
     const [value, onChange] = useState(new Date());
 
+    const [filter, setFilter] = useState("");
+
+    const [timeRangeLowerBound, setTimeRangeLowerBound] = useState(props.selectedDate)
+    const [timeRangeUpperBound, setTimeRangeUpperBound] = useState(props.selectedDate)
+
     // helper function
     function handleClick(event, newPage) {
         setCurrentPage(newPage - 1);
@@ -38,7 +43,18 @@ const FlightList = (props) => {
     }
 
     function handleFilterChange(e){
+        setFilter(e.target.value);
+
+        //When searching with a time range, then the search will happen once the fields are filled and the Search button is clicked
+        if(e.target.value === "departureRange"){
+            return;
+        }
         props.handleFilterChange(e);
+    }
+
+    function handleSearchTimeRangeClick(e){
+        console.log("search")
+        props.handleTimeRangeSearch(timeRangeLowerBound, timeRangeUpperBound);
     }
 
     const depDuration = moment.duration(
@@ -127,7 +143,13 @@ const FlightList = (props) => {
                             <option value="departureRange">Custom Range</option>
                         </select>
 
-                        <div className="datetime-picker"><Datetime></Datetime><h5>to</h5><Datetime></Datetime></div>  
+                        {filter === "departureRange" &&
+                        <div className="datetime-picker">
+                            <Datetime value={timeRangeLowerBound} onChange={setTimeRangeLowerBound}></Datetime>
+                            <h5>to</h5>
+                            <Datetime value={timeRangeUpperBound} onChange={setTimeRangeUpperBound}></Datetime>
+                            <Button onClick={handleSearchTimeRangeClick}>Search</Button>
+                        </div>}  
                     </Container>
 
                     <div className="pagination">
