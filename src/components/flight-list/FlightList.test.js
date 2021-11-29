@@ -295,6 +295,9 @@ it("calls #onFlightSelection when sort dropdown is changed", async () => {
                     empty: false
                 };
 
+                let departureTrip = [flight];
+                let returnTrip = [returnFlight];
+
     render(
         <FlightList 
                 flight={flight} 
@@ -303,7 +306,9 @@ it("calls #onFlightSelection when sort dropdown is changed", async () => {
                 departureFlightPage={departureFlightPage}
                 returnFlight={returnFlight} 
                 returnFlightPage={returnFlightPage}
-                onDeparturesSortBy={onDeparturesSortBy} />
+                onDeparturesSortBy={onDeparturesSortBy}
+                selectedDepTrip={departureTrip} 
+                selectedRetTrip={returnTrip}/>
     );
 
     fireEvent.change(screen.getByTestId('search-1'), { target: { value: 'departureTime' } })

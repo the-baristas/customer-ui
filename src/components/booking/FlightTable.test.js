@@ -82,6 +82,9 @@ it("renders info for flight with economy seat class", async () => {
     const CIUPricePP = 3;
     const SCUPricePP = 3;
     const takenSeats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    let departureTrip = [departureFlight];
+    let returnTrip = [returnFlight];
+
     render(
         <FlightTable
             selectedFlight={selectedFlight}
@@ -95,6 +98,9 @@ it("renders info for flight with economy seat class", async () => {
             CIUPricePP={CIUPricePP}
             SCUPricePP={SCUPricePP}
             takenSeats={takenSeats}
+            selectedDepTrip={departureTrip}
+            selectedRetTrip={returnTrip}
+            selectedTrip={departureTrip}
         />
     );
 
@@ -181,6 +187,9 @@ it("renders info for flight with business seat class", async () => {
     const CIUPricePP = 3;
     const SCUPricePP = 3;
     const takenSeats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    let departureTrip = [departureFlight];
+    let returnTrip = [returnFlight];
+
     render(
         <FlightTable
             selectedFlight={selectedFlight}
@@ -194,6 +203,9 @@ it("renders info for flight with business seat class", async () => {
             CIUPricePP={CIUPricePP}
             SCUPricePP={SCUPricePP}
             takenSeats={takenSeats}
+            selectedDepTrip={departureTrip}
+            selectedRetTrip={returnTrip}
+            selectedTrip={departureTrip}
         />
     );
 
@@ -280,6 +292,9 @@ it("renders info for flight with first seat class", async () => {
     const CIUPricePP = 3;
     const SCUPricePP = 3;
     const takenSeats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    let departureTrip = [departureFlight];
+    let returnTrip = [returnFlight];
+
     render(
         <FlightTable
             selectedFlight={selectedFlight}
@@ -293,6 +308,9 @@ it("renders info for flight with first seat class", async () => {
             CIUPricePP={CIUPricePP}
             SCUPricePP={SCUPricePP}
             takenSeats={takenSeats}
+            selectedDepTrip={departureTrip}
+            selectedRetTrip={returnTrip}
+            selectedTrip={departureTrip}
         />
     );
 
@@ -384,6 +402,9 @@ it("has a check-in group", async () => {
     const CIUPricePP = 3;
     const SCUPricePP = 3;
     const takenSeats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    let departureTrip = [departureFlight];
+    let returnTrip = [returnFlight];
+
     render(
         <FlightTable
             selectedFlight={selectedFlight}
@@ -399,6 +420,9 @@ it("has a check-in group", async () => {
             CIUPricePP={CIUPricePP}
             SCUPricePP={SCUPricePP}
             takenSeats={takenSeats}
+            selectedDepTrip={departureTrip}
+            selectedRetTrip={returnTrip}
+            selectedTrip={departureTrip}
         />
     );
 
@@ -490,6 +514,9 @@ it("lets you change to boarding the boarding group", async () => {
     let CIUPricePP = 3;
     const SCUPricePP = 3;
     const takenSeats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    let departureTrip = [departureFlight];
+    let returnTrip = [returnFlight];
+
     render(
         <FlightTable
             selectedFlight={selectedFlight}
@@ -506,6 +533,9 @@ it("lets you change to boarding the boarding group", async () => {
             CIUPricePP={CIUPricePP}
             SCUPricePP={SCUPricePP}
             takenSeats={takenSeats}
+            selectedDepTrip={departureTrip}
+            selectedRetTrip={returnTrip}
+            selectedTrip={departureTrip}
         />
     );
 
@@ -604,6 +634,8 @@ it("lets you pick your seat", async () => {
     let CIUPricePP = 3;
     const SCUPricePP = 3;
     const takenSeats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    let departureTrip = [selectedFlight];
+    let returnTrip = [departureFlight];
     render(
         <FlightTable
             selectedFlight={selectedFlight}
@@ -621,6 +653,9 @@ it("lets you pick your seat", async () => {
             SCUPricePP={SCUPricePP}
             takenSeats={takenSeats}
             seatChoice={seatChoice}
+            selectedDepTrip={departureTrip}
+            selectedRetTrip={returnTrip}
+            selectedTrip={departureTrip}
         />
     );
 

@@ -127,3 +127,33 @@ export const refundBooking = async (bookingId, refundAmount) => {
         );
     }
 }
+
+export const purchaseBooking = async (
+    passengers,
+    totalPrice,
+    layoverCount,
+    username,
+    stripeId
+) => {
+    const url = `${process.env.REACT_APP_BOOKING_SERVICE_URL}/bookings/purchase`;
+    let response;
+    let data;
+    try {
+        response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": getToken() },
+            body: JSON.stringify({ layoverCount, username, stripeId, totalPrice, passengers }),
+            credentials: 'include'
+        });
+        if (response.ok === false) {
+            throw new Error(
+                `Response was not successful. Status code: ${response.statusText}`
+            );
+        }
+        data = await response.json();
+    } catch (e) {
+        console.error("There has been a problem with your fetch operation:", e);
+        data = {};
+    }
+    return data;
+};

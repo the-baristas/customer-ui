@@ -16,12 +16,6 @@ const FlightCard = (props) => {
 
     const originAirportTimezoneInfo = airportTimezone.default.filter((airport) => {return airport.code === props.flight.route.originAirport.iataId})[0];
     const destinationAirportTimezoneInfo = airportTimezone.default.filter((airport) => {return airport.code === props.flight.route.destinationAirport.iataId})[0];
-    
-
-    console.log(destinationAirportTimezoneInfo);
-    console.log(originAirportTimezoneInfo);
-    // console.log(props.flight.departureTime)
-    // console.log(props.flight.arrivalTime)
 
     const departureTimeTimezone = moment(props.flight.departureTime)
                                     .utcOffset(originAirportTimezoneInfo.offset.gmt);

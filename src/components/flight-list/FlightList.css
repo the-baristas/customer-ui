@@ -3,6 +3,10 @@
     justify-content: center;
   }
 
+  .datetime-picker{
+    width: 220px;
+  }
+
   .sort-by-container{
     margin-left: 10%;
     float: left;

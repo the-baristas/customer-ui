@@ -11,6 +11,7 @@ import {
     createBooking,
     deleteBooking,
     emailBookingDetails,
+    purchaseBooking,
     updateBooking
 } from "../../api/BookingApi";
 import { createPassenger, deletePassenger, getTakenSeats } from "../../api/PassengerApi";
@@ -25,6 +26,7 @@ import FlightTable from "./FlightTable";
 import PassengerInfoForm from "./PassengerInfoForm";
 import SeatChoice from "./SeatChoice";
 import SeatClass from "./SeatClass";
+import { searchTrips } from "../../api/FlightApi";
 
 const Booking = () => {
     // Constants
@@ -41,6 +43,11 @@ const Booking = () => {
     const history = useHistory();
 
     // States
+
+    const [customRangeSearchTimes, setCustomRangeSearchTimes] = useState({
+        lowerBound: new Date(Date.now()),
+        upperBound: new Date(Date.now())
+    })
 
     const [bookingToCreate, setBookingToCreate] = useState({
         confirmationCode: "",
@@ -174,13 +181,13 @@ const Booking = () => {
     const [returnFilter, setReturnFilter] = useState("all");
 
     // array of trips and selected trip (OW)
-    const [trips, setTrips] = useState([]);
+    const [trips, setTrips] = useState({content: []});
     const [selectedTrip, setSelectedTrip] = useState([]);
 
     // array of trips, and selected trips (RT)
-    const [depTrips, setDepTrips] = useState([]);
+    const [depTrips, setDepTrips] = useState({content: []});
     const [selectedDepTrip, setSelectedDepTrip] = useState([]);
-    const [retTrips, setRetTrips] = useState([]);
+    const [retTrips, setRetTrips] = useState({content: []});
     const [selectedRetTrip, setSelectedRetTrip] = useState([]);
 
     // sets price of check-in group upgrade
@@ -367,8 +374,8 @@ const Booking = () => {
                 let layoverDiscount2 = .1;
                 let bizStops = selectedTrip.length - 1;
                 let discountApplied2 = layoverDiscount2 * bizStops;
-                let businessDisc = discountApplied2 * (i/selectedTrip.length);
-                pricePerPassenger = (i/selectedTrip.length) - businessDisc;
+                let businessDisc = discountApplied2 * (j/selectedTrip.length);
+                pricePerPassenger = (j/selectedTrip.length) - businessDisc;
                 break;
             case SeatClass.FIRST:
                 let k = 0;
@@ -378,8 +385,8 @@ const Booking = () => {
                 let layoverDiscount3 = .1;
                 let firstStops = selectedTrip.length - 1;
                 let discountApplied3 = layoverDiscount3 * firstStops;
-                let firstDisc = discountApplied3 * (i/selectedTrip.length);
-                pricePerPassenger = (i/selectedTrip.length) - firstDisc;
+                let firstDisc = discountApplied3 * (k/selectedTrip.length);
+                pricePerPassenger = (k/selectedTrip.length) - firstDisc;
                 break;
             default:
                 // TODO: Go to error page.
@@ -438,43 +445,19 @@ const Booking = () => {
         setTotalPrice(totalPerPassenger * passengerCount);
     };
 
-    const handlePassengerInfoSubmit = (passengerInfo) => {
-        setPassengerInfo(passengerInfo);
+    const handlePassengerInfoSubmit = (passengerFormInfo) => {
+        setPassengerInfo(passengerFormInfo);
+        console.log(passengerFormInfo);
         history.push(`${path}/checkout`);
     };
 
     function handleSortByChange(event) {
         setSortBy(event.target.value);
 
-        let theMonth = date.getMonth() + 1;
-        let theDate = date.getDate();
-        let theYear = date.getFullYear();
-        let theHours = "00";
-        let theMins = "00";
-        let theFilter = filter;
-
-        fetch(
-            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=0&pageSize=10&sortBy=${event.target.value}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: localStorage.getItem("utopiaCustomerKey")
-                },
-                body: JSON.stringify({
-                    month: theMonth,
-                    date: theDate,
-                    year: theYear,
-                    hours: theHours,
-                    mins: theMins,
-                    filter: theFilter
-                })
-            }
-        )
+        searchTrips(origin, dest, 0, 10, event.target.value, date, filter)
             .then((resp) => resp.json())
             .then((data) => {
-                setFlights(data.content);
-                setFlightPage(data);
+                setTrips(data);
             })
             .catch((error) => {
                 console.error(error);
@@ -561,35 +544,10 @@ const Booking = () => {
     function handleFilterChange(event) {
         setFilter(event.target.value);
 
-        let theMonth = date.getMonth() + 1;
-        let theDate = date.getDate();
-        let theYear = date.getFullYear();
-        let theHours = "00";
-        let theMins = "00";
-        let theFilter = event.target.value;
-
-        fetch(
-            `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${flightPage.number}&pageSize=10&sortBy=${sortBy}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: localStorage.getItem("utopiaCustomerKey")
-                },
-                body: JSON.stringify({
-                    month: theMonth,
-                    date: theDate,
-                    year: theYear,
-                    hours: theHours,
-                    mins: theMins,
-                    filter: event.target.value
-                })
-            }
-        )
+        searchTrips(origin, dest, 0, 10, sortBy, date, event.target.value)
             .then((resp) => resp.json())
             .then((data) => {
-                setFlights(data.content);
-                setFlightPage(data);
+                setTrips(data);
             })
             .catch((error) => {
                 console.error(error);
@@ -672,6 +630,7 @@ const Booking = () => {
     }
 
     function onDateChange(date) {
+        console.log(date);
         setDate(date);
     }
 
@@ -901,49 +860,24 @@ const Booking = () => {
 
 
     function handleSubmit(event) {
+        console.log(date)
         event.preventDefault();
         setIsRoundTrip(false);
         if (origin === "" || dest === "" || date === "") {
             alert("Please make sure all search fields are completed.");
         } else {
-            let theMonth = date.getMonth() + 1;
-            let theDate = date.getDate();
-            let theYear = date.getFullYear();
-            let theHours = "00";
-            let theMins = "00";
-            let theFilter = "all";
 
             trackPromise(
-                fetch(
-                    `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/new-search?originId=${origin}&destinationId=${dest}`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization:
-                                localStorage.getItem("utopiaCustomerKey")
-                        },
-                        body: JSON.stringify({
-                            month: theMonth,
-                            date: theDate,
-                            year: theYear,
-                            hours: theHours,
-                            mins: theMins,
-                            filter: theFilter
-                        })
-                    }
-                )
+                searchTrips(origin, dest, 0, 10, "id", date, "all")
                     .then((resp) => resp.json())
                     .then((data) => {
-                        console.log('trips fetched:');
-                        console.log(data);
 
                         setTrips(data);
                         history.push("/booking/search-results");
                     })
                     .catch((error) => {
                         console.error(error);
-                        alert("No flights found, try again!");
+                        alert("No flights fund, try again!");
                     })
             );
         }
@@ -983,7 +917,8 @@ const Booking = () => {
                             year: departureYear,
                             hours: departureHours,
                             mins: departureMins,
-                            filter: departureFilter
+                            filter: departureFilter,
+                            departureDay:new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 0,0,0)
                         })
                     }
                 )
@@ -1022,7 +957,8 @@ const Booking = () => {
                             year: returnYear,
                             hours: returnHours,
                             mins: returnMins,
-                            filter: returnFilter
+                            filter: returnFilter,
+                            departureDay:new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 0,0,0)
                         })
                     }
                 )
@@ -1043,36 +979,11 @@ const Booking = () => {
     }
 
     function handlePageChange(newPage) {
-        let theMonth = date.getMonth() + 1;
-        let theDate = date.getDate();
-        let theYear = date.getFullYear();
-        let theHours = "00";
-        let theMins = "00";
-        let theFilter = filter;
-
         trackPromise(
-            fetch(
-                `${process.env.REACT_APP_FLIGHT_SERVICE_URL}/flights/query?originId=${origin}&destinationId=${dest}&pageNo=${newPage}&pageSize=10&sortBy=${sortBy}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: localStorage.getItem("utopiaCustomerKey")
-                    },
-                    body: JSON.stringify({
-                        month: theMonth,
-                        date: theDate,
-                        year: theYear,
-                        hours: theHours,
-                        mins: theMins,
-                        filter: theFilter
-                    })
-                }
-            )
+            searchTrips(origin, dest, newPage, 10, sortBy, date, filter, customRangeSearchTimes.lowerBound, customRangeSearchTimes.upperBound)
                 .then((resp) => resp.json())
                 .then((data) => {
-                    setFlights(data.content);
-                    setFlightPage(data);
+                    setTrips(data);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -1104,7 +1015,8 @@ const Booking = () => {
                         year: theYear,
                         hours: theHours,
                         mins: theMins,
-                        filter: theFilter
+                        filter: theFilter,
+                        departureDay: startDate
                     })
                 }
             )
@@ -1142,7 +1054,8 @@ const Booking = () => {
                         year: theYear,
                         hours: theHours,
                         mins: theMins,
-                        filter: theFilter
+                        filter: theFilter,
+                        departureDay: endDate
                     })
                 }
             )
@@ -1159,9 +1072,35 @@ const Booking = () => {
 
     
     const handlePaymentCreation = (clientSecret) => {
-        // TO DO: CREATE NEW ENDPOINT HERE
+        
+        let passengers = [];
+
+        for(let flight of selectedTrip){
+            passengers.push({givenName: passengerInfo.givenName, familyName: passengerInfo.familyName,
+                dateOfBirth: passengerInfo.dateOfBirth, gender: passengerInfo.gender, 
+                seatNumber: 1, flightId: flight.id, checkInGroup: checkInGroup, seatClass: seatClass,
+                address: `${passengerInfo.streetAddress} ${passengerInfo.city}, ${passengerInfo.state} ${passengerInfo.zipCode}`})
+
+        }
+
+        purchaseBooking(passengers, totalPrice, selectedTrip.length, userStatus.username, clientSecret);
         history.push('/');
     };
+
+    const handleTimeRangeSearch = (lowerBound, upperBound) => {
+        console.log("booking")
+        console.log({lowerBound: lowerBound._d, upperBound: upperBound._d});
+        setCustomRangeSearchTimes({lowerBound: lowerBound._d, upperBound: upperBound._d});
+        searchTrips(origin, dest, 0, 10, sortBy, date, "departureRange", lowerBound._d, upperBound._d)
+            .then((resp) => resp.json())
+            .then((data) => {
+                setTrips(data);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("No flights found, try again!");
+            });
+    }
 
     // Elements
 
@@ -1223,7 +1162,7 @@ const Booking = () => {
         process.env.REACT_APP_STRIPE_TEST_PUBLISHABLE_KEY
     );
 
-    const tripCards = trips.map((trip) => (
+    const tripCards = trips.content.map((trip) => (
         <TripCard
             key={generateTripId(trip)}
             trip={trip}
@@ -1232,14 +1171,14 @@ const Booking = () => {
     ));
 
 
-    const departureTripCards = depTrips.map((trip) => (
+    const departureTripCards = depTrips.content.map((trip) => (
         <TripCard
             trip={trip}
             onTripSelection={handleDepartureTripSelection}
         />
     ));
 
-    const returnTripCards = retTrips.map((trip) => (
+    const returnTripCards = retTrips.content.map((trip) => (
         <TripCard
             trip={trip}
             onTripSelection={handleReturnTripSelection}
@@ -1271,7 +1210,7 @@ const Booking = () => {
             </Route>
             <Route path={`${path}/search-results`}>
                 <FlightList
-                    flightPage={flightPage}
+                    flightPage={trips}
                     tripCards={tripCards}
                     departureTripCards={departureTripCards}
                     returnTripCards={returnTripCards}
@@ -1307,6 +1246,8 @@ const Booking = () => {
                     onReturnsSortBy={handleSortByChangeReturns}
                     onDeparturesSortBy={handleSortByChangeDepartures}
                     isRoundTrip={isRoundTrip}
+                    selectedDate={date}
+                    handleTimeRangeSearch={handleTimeRangeSearch}
                 />
             </Route>
             <Route path={`${path}/passenger-info`}>
